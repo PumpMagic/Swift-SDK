@@ -31,3 +31,5 @@ xcuserdata
 
 # Carthage
 Carthage/Build
+
+SwiftSDKTests/TestCredentials.swift
