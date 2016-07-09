@@ -7,9 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8840C9BD1D30A61400C501A3 /* HTTPRequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8840C9BC1D30A61400C501A3 /* HTTPRequestManager.swift */; };
 		88DDFE1A1D2ED47800C3C14D /* SwiftSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 88DDFE191D2ED47800C3C14D /* SwiftSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		88DDFE211D2ED47800C3C14D /* SwiftSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88DDFE161D2ED47800C3C14D /* SwiftSDK.framework */; };
-		88DDFE261D2ED47800C3C14D /* SwiftSDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DDFE251D2ED47800C3C14D /* SwiftSDKTests.swift */; };
+		88DDFE261D2ED47800C3C14D /* KnurldV1APITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DDFE251D2ED47800C3C14D /* KnurldV1APITests.swift */; };
 		88DDFE311D2ED61B00C3C14D /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88DDFE301D2ED61B00C3C14D /* Alamofire.framework */; };
 		88DDFE331D2ED61F00C3C14D /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88DDFE321D2ED61F00C3C14D /* SwiftyJSON.framework */; };
 		88DDFE361D2EE0A500C3C14D /* KnurldV1API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DDFE351D2EE0A500C3C14D /* KnurldV1API.swift */; };
@@ -29,11 +30,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8840C9BC1D30A61400C501A3 /* HTTPRequestManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPRequestManager.swift; sourceTree = "<group>"; };
 		88DDFE161D2ED47800C3C14D /* SwiftSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		88DDFE191D2ED47800C3C14D /* SwiftSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftSDK.h; sourceTree = "<group>"; };
 		88DDFE1B1D2ED47800C3C14D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		88DDFE201D2ED47800C3C14D /* SwiftSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		88DDFE251D2ED47800C3C14D /* SwiftSDKTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftSDKTests.swift; sourceTree = "<group>"; };
+		88DDFE251D2ED47800C3C14D /* KnurldV1APITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnurldV1APITests.swift; sourceTree = "<group>"; };
 		88DDFE271D2ED47800C3C14D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		88DDFE301D2ED61B00C3C14D /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "Carthage/Checkouts/Alamofire/build/Debug-iphoneos/Alamofire.framework"; sourceTree = "<group>"; };
 		88DDFE321D2ED61F00C3C14D /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = "Carthage/Checkouts/SwiftyJSON/build/Debug-iphoneos/SwiftyJSON.framework"; sourceTree = "<group>"; };
@@ -91,6 +93,7 @@
 				88DDFE191D2ED47800C3C14D /* SwiftSDK.h */,
 				88DDFE1B1D2ED47800C3C14D /* Info.plist */,
 				88DDFE351D2EE0A500C3C14D /* KnurldV1API.swift */,
+				8840C9BC1D30A61400C501A3 /* HTTPRequestManager.swift */,
 			);
 			path = SwiftSDK;
 			sourceTree = "<group>";
@@ -98,7 +101,7 @@
 		88DDFE241D2ED47800C3C14D /* SwiftSDKTests */ = {
 			isa = PBXGroup;
 			children = (
-				88DDFE251D2ED47800C3C14D /* SwiftSDKTests.swift */,
+				88DDFE251D2ED47800C3C14D /* KnurldV1APITests.swift */,
 				88DDFE271D2ED47800C3C14D /* Info.plist */,
 				88DDFE371D2EE0F900C3C14D /* TestCredentials.swift */,
 			);
@@ -225,6 +228,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				88DDFE361D2EE0A500C3C14D /* KnurldV1API.swift in Sources */,
+				8840C9BD1D30A61400C501A3 /* HTTPRequestManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -233,7 +237,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				88DDFE381D2EE0F900C3C14D /* TestCredentials.swift in Sources */,
-				88DDFE261D2ED47800C3C14D /* SwiftSDKTests.swift in Sources */,
+				88DDFE261D2ED47800C3C14D /* KnurldV1APITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -413,6 +417,7 @@
 				88DDFE2C1D2ED47800C3C14D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		88DDFE2D1D2ED47900C3C14D /* Build configuration list for PBXNativeTarget "SwiftSDKTests" */ = {
 			isa = XCConfigurationList;
@@ -421,6 +426,7 @@
 				88DDFE2F1D2ED47900C3C14D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
