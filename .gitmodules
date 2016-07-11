@@ -10,3 +10,9 @@
 [submodule "Carthage/Checkouts/Quick"]
 	path = Carthage/Checkouts/Quick
 	url = https://github.com/Quick/Quick.git
+[submodule "Carthage/Checkouts/Gloss"]
+	path = Carthage/Checkouts/Gloss
+	url = https://github.com/hkellaway/Gloss.git
+[submodule "Carthage/Checkouts/Freddy"]
+	path = Carthage/Checkouts/Freddy
+	url = https://github.com/bignerdranch/Freddy.git

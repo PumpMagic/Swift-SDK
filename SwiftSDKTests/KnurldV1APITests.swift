@@ -8,7 +8,7 @@
 
 import Quick
 import Nimble
-import SwiftSDK
+@testable import SwiftSDK
 
 
 let API_CALL_TIMEOUT: NSTimeInterval = 3 // seconds

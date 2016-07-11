@@ -10,7 +10,7 @@
 //
 
 import Foundation
-import SwiftyJSON
+import Freddy
 
 
 /// HTTPRequestError captures all reasons that an HTTP request made through HTTPRequestManager could fail.
@@ -20,7 +20,7 @@ public enum HTTPRequestError {
     case NetworkError
     case NoDataReturned
     case HTTPError
-    case ResponseInvalid
+    case ResponseDeserializationError
     case InternalError
 }
 
@@ -97,7 +97,6 @@ class HTTPRequestManager {
             newHeaders = headers
         }
         newHeaders.updateValue("application/x-www-form-urlencoded", forKey: "Content-Type")
-        //request.addValue("73", forHTTPHeaderField: "Content-Length")
         
         // Try encoding the body and executing the request. If serialization fails, call the failure handler immediately
         do {
@@ -120,7 +119,7 @@ class HTTPRequestManager {
         
         // Try encoding the body and executing the request. If serialization fails, call the failure handler immediately
         do {
-            let encodedBody = try body.rawData()
+            let encodedBody = try body.serialize()
             executeRequest(method: "POST", url: url, headers: newHeaders, body: encodedBody, successHandler: successHandler, failureHandler: failureHandler)
         } catch _ {
             failureHandler(.RequestSerializationError)
@@ -194,7 +193,14 @@ class HTTPRequestManager {
                     return
                 }
                 
-                successHandler(JSON(data: data))
+                do {
+                    let json = try JSON(data: data)
+                    successHandler(json)
+                    return
+                } catch {
+                    failureHandler(.ResponseDeserializationError)
+                    return
+                }
             }
         }
     }

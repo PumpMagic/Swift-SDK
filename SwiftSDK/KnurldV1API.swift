@@ -9,7 +9,7 @@
 //
 
 import Foundation
-import SwiftyJSON
+import Freddy
 
 
 // URL constants
@@ -22,10 +22,11 @@ let DEVELOPER_ID_PARAM_NAME = "Developer-Id"
 let AUTHORIZATION_PARAM_NAME = "Authorization"
 
 
-public class KnurldV1API {
+/// KnurldV1API abstracts out version 1 of the Knurld REST API.
+class KnurldV1API {
     private let requestManager: HTTPRequestManager
     
-    public init() {
+    init() {
         self.requestManager = HTTPRequestManager()
     }
     
@@ -34,139 +35,135 @@ public class KnurldV1API {
     }
     
     /// POST /oauth/...
-    public func authorize(clientID clientID: String, clientSecret: String, successHandler: (accessToken: String) -> Void, failureHandler: (error: HTTPRequestError) -> Void)
+    func authorize(clientID clientID: String, clientSecret: String, successHandler: (accessToken: String) -> Void, failureHandler: (error: HTTPRequestError) -> Void)
     {
         let url = HOST + "/oauth/client_credential/accesstoken?grant_type=client_credentials"
         let body = ["client_id": clientID, "client_secret": clientSecret]
         
         requestManager.postForm(url: url, headers: nil, body: body,
                                 successHandler: { json in
-                                    print("JSON: \(json)")
-                                    guard let accessToken = json["access_token"].string else {
-                                        failureHandler(error: .ResponseInvalid)
+                                    do {
+                                        let accessToken = try json.string("access_token")
+                                        successHandler(accessToken: accessToken)
+                                        return
+                                    } catch {
+                                        failureHandler(error: .ResponseDeserializationError)
                                         return
                                     }
-                                    successHandler(accessToken: accessToken) },
+                                },
+            
                                 failureHandler: { error in failureHandler(error: error) })
     }
     
     /// GET /status
-    public func getServiceStatus(developerID developerID: String, authorization: String, successHandler: (href: String, name: String, version: String) -> Void, failureHandler: (error: HTTPRequestError) -> Void)
+    func getServiceStatus(developerID developerID: String, authorization: String, successHandler: (href: String, name: String, version: String) -> Void, failureHandler: (error: HTTPRequestError) -> Void)
     {
         let url = API_URL + "/status"
         let headers = makeAuthHeaders(developerID: developerID, authorization: authorization)
         
         requestManager.get(url: url, headers: headers,
                            successHandler: { json in
-                                guard let href = json["href"].string, let name = json["name"].string, let version = json["version"].string else {
-                                    failureHandler(error: .ResponseInvalid)
+                                print("JSON: \(json)")
+                            
+                                do {
+                                    let href = try json.string("href")
+                                    let name = try json.string("name")
+                                    let version = try json.string("version")
+                                    successHandler(href: href, name: name, version: version)
+                                    return
+                                } catch {
+                                    failureHandler(error: .ResponseDeserializationError)
                                     return
                                 }
-                                successHandler(href: href, name: name, version: version) },
+                            },
                            failureHandler: { error in failureHandler(error: error) })
+    }
+    
+    /// POST /app-models
+    func createAppModel(developerID developerID: String, authorization: String, params: AppModelParams, successHandler: (href: String) -> Void, failureHandler: (error: HTTPRequestError) -> Void)
+    {
+        let url = API_URL + "/app-models"
+        let headers = makeAuthHeaders(developerID: developerID, authorization: authorization)
+        let parameters = params.toJSON()
+        
+        requestManager.postJSON(url: url, headers: headers, body: parameters,
+                                successHandler: { json in
+                                    print("JSON: \(json)")
+                                    
+                                    do {
+                                        let href = try json.string("href")
+                                        successHandler(href: href)
+                                        return
+                                    } catch {
+                                        failureHandler(error: .ResponseDeserializationError)
+                                        return
+                                    }
+                                },
+                                failureHandler: { error in failureHandler(error: error) })
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-protocol JSONRepresentable {
-    func toJsonDictionary() -> [String: AnyObject]
-    //init?(json: JSON)
-}
-
-public struct AppModelParams: JSONRepresentable {
+struct AppModelParams: JSONDecodable, JSONEncodable {
     let enrollmentRepeats: Int
     let vocabulary: [String]
     let verificationLength: Int
-    let threshold: Float? = nil
-    let autoThresholdEnable: Bool? = nil
-    let autoThresholdClearance: Int? = nil
-    let autoThresholdMaxRise: Int? = nil
-    let useModelUpdate: Bool? = nil
-    let modelUpdateDailyLimit: Int? = nil
+    let threshold: Double?
+    let autoThresholdEnable: Bool?
+    let autoThresholdClearance: Int?
+    let autoThresholdMaxRise: Int?
+    let useModelUpdate: Bool?
+    let modelUpdateDailyLimit: Int?
     
-    public init(enrollmentRepeats: Int, vocabulary: [String], verificationLength: Int) {
+    init(enrollmentRepeats: Int, vocabulary: [String], verificationLength: Int) {
         self.enrollmentRepeats = enrollmentRepeats
         self.vocabulary = vocabulary
         self.verificationLength = verificationLength
+        self.threshold = nil
+        self.autoThresholdEnable = nil
+        self.autoThresholdClearance = nil
+        self.autoThresholdMaxRise = nil
+        self.useModelUpdate = nil
+        self.modelUpdateDailyLimit = nil
     }
     
-    func toJsonDictionary() -> [String : AnyObject] {
-        var dict: [String : AnyObject] = ["enrollmentRepeats": self.enrollmentRepeats,
-                                          "vocabulary": self.vocabulary,
-                                          "verificationLength": self.verificationLength]
+    init(json: JSON) throws {
+        self.enrollmentRepeats = try json.int("enrollmentRepeats")
+        self.vocabulary = try json.array("vocabulary").map(String.init)
+        self.verificationLength = try json.int("verificationLength")
+        
+        self.threshold = try json.double("threshold", alongPath: [.MissingKeyBecomesNil, .NullBecomesNil])
+        self.autoThresholdEnable = try json.bool("autoThresholdEnable", alongPath: [.MissingKeyBecomesNil, .NullBecomesNil])
+        self.autoThresholdClearance = try json.int("autoThresholdClearance", alongPath: [.MissingKeyBecomesNil, .NullBecomesNil])
+        self.autoThresholdMaxRise = try json.int("autoThresholdMaxRise", alongPath: [.MissingKeyBecomesNil, .NullBecomesNil])
+        self.useModelUpdate = try json.bool("useModelUpdate", alongPath: [.MissingKeyBecomesNil, .NullBecomesNil])
+        self.modelUpdateDailyLimit = try json.int("modelUpdateDailyLimit", alongPath: [.MissingKeyBecomesNil, .NullBecomesNil])
+    }
+    
+    func toJSON() -> JSON {
+        var json: [String : Freddy.JSON] = [
+            "enrollmentRepeats": .Int(self.enrollmentRepeats),
+            "vocabulary": .Array(self.vocabulary.map(JSON.String)),
+            "verificationLength": .Int(self.verificationLength)]
         
         if let threshold = self.threshold {
-            dict["threshold"] = threshold
+            json.updateValue(JSON.Double(threshold), forKey: "threshold")
         }
         if let autoThresholdEnable = self.autoThresholdEnable {
-            dict["autoThresholdEnable"] = autoThresholdEnable
+            json.updateValue(JSON.Bool(autoThresholdEnable), forKey: "autoThresholdEnable")
         }
         if let autoThresholdClearance = self.autoThresholdClearance {
-            dict["autoThresholdClearance"] = autoThresholdClearance
+            json.updateValue(JSON.Int(autoThresholdClearance), forKey: "autoThresholdClearance")
         }
         if let autoThresholdMaxRise = self.autoThresholdMaxRise {
-            dict["autoThresholdMaxRise"] = autoThresholdMaxRise
+            json.updateValue(JSON.Int(autoThresholdMaxRise), forKey: "autoThresholdMaxRise")
         }
         if let useModelUpdate = self.useModelUpdate {
-            dict["useModelUpdate"] = useModelUpdate
+            json.updateValue(JSON.Bool(useModelUpdate), forKey: "useModelUpdate")
         }
         if let modelUpdateDailyLimit = self.modelUpdateDailyLimit {
-            dict["modelUpdateDailyLimit"] = modelUpdateDailyLimit
+            json.updateValue(JSON.Int(modelUpdateDailyLimit), forKey: "modelUpdateDailyLimit")
         }
         
-        return dict
-    }
-    
-    /*
-    init?(json: JSON) {
-        // Make sure we have all mandatory parameters
-        guard let er = json["enrollmentRepeats"].int,
-            let vocJSON = json["vocabulary"].array,
-            let vl = json["verificationLength"].string else //@todo dangerouselse
-        {
-            return nil
-        }
-        
-        self.enrollmentRepeats = er
-        
-    }
-     */
-}
-
-/*
-public func createAppModel(developerID developerID: String, authorization: String, params: AppModelParams, onSuccess: (href: String) -> Void, onFailure: (error: Error) -> Void)
-{
-    let url = API_URL + "/app-models"
-    
-    let headers = [DEVELOPER_ID_PARAM_NAME: developerID, AUTHORIZATION_PARAM_NAME: "Bearer \(authorization)"]
-    let parameters = params.toJsonDictionary()
-    
-    Alamofire.request(.POST, url, headers: headers, parameters: parameters, encoding: .JSON).validate().responseJSON() { response in
-        switch response.result {
-        case .Success:
-            if let value = response.result.value {
-                let json = JSON(value)
-                
-                if let href = json["href"].string {
-                    onSuccess(href: href)
-                    return
-                }
-            }
-        case .Failure(let error):
-            onFailure(error: .Internal)
-            return
-        }
-        
-        onFailure(error: .Internal)
+        return .Dictionary(json)
     }
 }
-*/
