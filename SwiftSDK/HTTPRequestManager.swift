@@ -75,7 +75,7 @@ extension Dictionary: RepresentableAsURLEncodedForm {
 /// HTTPRequestManager manages and enables the creation of HTTP requests.
 class HTTPRequestManager {
     let session: NSURLSession
-    static let requestTimeout: NSTimeInterval = 3.0 // seconds
+    static let requestTimeout: NSTimeInterval = 5.0 // seconds
     static let acceptableHTTPResponses = 200...299
     
     init() {
@@ -83,9 +83,23 @@ class HTTPRequestManager {
         self.session = NSURLSession(configuration: configuration)
     }
     
-    /// Perform an HTTP GET, with no body and requesting and expecting JSON in return.
+    /// Perform an HTTP GET, with no body and expecting JSON in return.
     func get(url url: String, headers: [String: String]?, successHandler: (JSON) -> Void, failureHandler: (HTTPRequestError) -> Void) {
-        executeRequest(method: "GET", url: url, headers: headers, body: nil, successHandler: successHandler, failureHandler: failureHandler)
+        executeRequest(method: "GET", url: url, headers: headers, body: nil,
+                       successHandler: { maybeResponse in
+                        guard let response = maybeResponse else {
+                            failureHandler(.NoDataReturned)
+                            return
+                        }
+                        successHandler(response)
+            }, failureHandler: failureHandler)
+    }
+    
+    /// Perform an HTTP DELETE, with no body and expecting nothing in return.
+    func delete(url url: String, headers: [String: String]?, successHandler: (Void) -> Void, failureHandler: (HTTPRequestError) -> Void) {
+        executeRequest(method: "DELETE", url: url, headers: headers, body: nil,
+                       successHandler: { _ in successHandler() },
+                       failureHandler: failureHandler)
     }
     
     /// Perform an HTTP POST, with a urlencoded form body and requesting and expecting JSON in return.
@@ -101,7 +115,14 @@ class HTTPRequestManager {
         // Try encoding the body and executing the request. If serialization fails, call the failure handler immediately
         do {
             let encodedBody = try body.asFormData()
-            executeRequest(method: "POST", url: url, headers: newHeaders, body: encodedBody, successHandler: successHandler, failureHandler: failureHandler)
+            executeRequest(method: "POST", url: url, headers: newHeaders, body: encodedBody,
+                           successHandler: { maybeResponse in
+                            guard let response = maybeResponse else {
+                                failureHandler(.NoDataReturned)
+                                return
+                            }
+                            successHandler(response)
+                }, failureHandler: failureHandler)
         } catch {
             failureHandler(.RequestSerializationError)
         }
@@ -120,14 +141,22 @@ class HTTPRequestManager {
         // Try encoding the body and executing the request. If serialization fails, call the failure handler immediately
         do {
             let encodedBody = try body.serialize()
-            executeRequest(method: "POST", url: url, headers: newHeaders, body: encodedBody, successHandler: successHandler, failureHandler: failureHandler)
+            executeRequest(method: "POST", url: url, headers: newHeaders, body: encodedBody,
+                           successHandler: { maybeResponse in
+                            guard let response = maybeResponse else {
+                                failureHandler(.NoDataReturned)
+                                return
+                            }
+                            successHandler(response)
+                           }, failureHandler: failureHandler)
         } catch _ {
             failureHandler(.RequestSerializationError)
         }
     }
     
     /// Execute an HTTP request.
-    internal func executeRequest(method method: String, url: String, headers: [String: String]?, body: NSData?, successHandler: (JSON) -> Void, failureHandler: (HTTPRequestError) -> Void)
+    //@todo take in an expectingData boolean, or add a new function
+    func executeRequest(method method: String, url: String, headers: [String: String]?, body: NSData?, successHandler: (JSON?) -> Void, failureHandler: (HTTPRequestError) -> Void)
     {
         // Let NSURL validate the URL for us
         guard let nsurl = NSURL(string: url) else {
@@ -164,12 +193,13 @@ class HTTPRequestManager {
     }
     
     
-    static func dataTaskCallback(successHandler successHandler: (JSON) -> Void,
+    static func dataTaskCallback(successHandler successHandler: (JSON?) -> Void,
                                                 failureHandler: (HTTPRequestError) -> Void,
                                                 data: NSData?, response: NSURLResponse?, error: NSError?)
     {
         if let _ = error {
             // The request did not complete successfully (regardless of return code)
+            print("Network error: \(error.debugDescription)")
             failureHandler(.NetworkError)
             return
         } else {
@@ -181,6 +211,9 @@ class HTTPRequestManager {
                     failureHandler(.InternalError)
                     return
                 }
+                
+                print("HTTP response code: \(httpResponse.statusCode)")
+                
                 if !(HTTPRequestManager.acceptableHTTPResponses ~= httpResponse.statusCode) {
                     failureHandler(.HTTPError)
                     return
