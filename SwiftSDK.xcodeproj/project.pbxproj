@@ -12,6 +12,9 @@
 		889CB5F41D3478DD00B74330 /* AppModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889CB5F31D3478DD00B74330 /* AppModels.swift */; };
 		889CB5F61D34792600B74330 /* Authorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889CB5F51D34792600B74330 /* Authorization.swift */; };
 		889CB5F81D34795500B74330 /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889CB5F71D34795500B74330 /* Status.swift */; };
+		88BED13A1D35628D004FB426 /* Consumers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BED1391D35628D004FB426 /* Consumers.swift */; };
+		88BED13C1D36F7CF004FB426 /* RESTEndpointFamily.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BED13B1D36F7CF004FB426 /* RESTEndpointFamily.swift */; };
+		88BED13E1D37046C004FB426 /* Enrollments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BED13D1D37046C004FB426 /* Enrollments.swift */; };
 		88DDFE1A1D2ED47800C3C14D /* SwiftSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 88DDFE191D2ED47800C3C14D /* SwiftSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		88DDFE211D2ED47800C3C14D /* SwiftSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88DDFE161D2ED47800C3C14D /* SwiftSDK.framework */; };
 		88DDFE261D2ED47800C3C14D /* KnurldV1APITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DDFE251D2ED47800C3C14D /* KnurldV1APITests.swift */; };
@@ -37,6 +40,9 @@
 		889CB5F31D3478DD00B74330 /* AppModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppModels.swift; sourceTree = "<group>"; };
 		889CB5F51D34792600B74330 /* Authorization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Authorization.swift; sourceTree = "<group>"; };
 		889CB5F71D34795500B74330 /* Status.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Status.swift; sourceTree = "<group>"; };
+		88BED1391D35628D004FB426 /* Consumers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Consumers.swift; sourceTree = "<group>"; };
+		88BED13B1D36F7CF004FB426 /* RESTEndpointFamily.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RESTEndpointFamily.swift; sourceTree = "<group>"; };
+		88BED13D1D37046C004FB426 /* Enrollments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enrollments.swift; sourceTree = "<group>"; };
 		88DDFE161D2ED47800C3C14D /* SwiftSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		88DDFE191D2ED47800C3C14D /* SwiftSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftSDK.h; sourceTree = "<group>"; };
 		88DDFE1B1D2ED47800C3C14D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -96,9 +102,12 @@
 				88DDFE191D2ED47800C3C14D /* SwiftSDK.h */,
 				88DDFE1B1D2ED47800C3C14D /* Info.plist */,
 				88DDFE351D2EE0A500C3C14D /* KnurldV1API.swift */,
+				88BED13B1D36F7CF004FB426 /* RESTEndpointFamily.swift */,
 				889CB5F51D34792600B74330 /* Authorization.swift */,
 				889CB5F71D34795500B74330 /* Status.swift */,
 				889CB5F31D3478DD00B74330 /* AppModels.swift */,
+				88BED1391D35628D004FB426 /* Consumers.swift */,
+				88BED13D1D37046C004FB426 /* Enrollments.swift */,
 				8840C9BC1D30A61400C501A3 /* HTTPRequestManager.swift */,
 			);
 			path = SwiftSDK;
@@ -232,11 +241,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				88BED13C1D36F7CF004FB426 /* RESTEndpointFamily.swift in Sources */,
 				88DDFE361D2EE0A500C3C14D /* KnurldV1API.swift in Sources */,
 				8840C9BD1D30A61400C501A3 /* HTTPRequestManager.swift in Sources */,
 				889CB5F41D3478DD00B74330 /* AppModels.swift in Sources */,
 				889CB5F61D34792600B74330 /* Authorization.swift in Sources */,
 				889CB5F81D34795500B74330 /* Status.swift in Sources */,
+				88BED13A1D35628D004FB426 /* Consumers.swift in Sources */,
+				88BED13E1D37046C004FB426 /* Enrollments.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

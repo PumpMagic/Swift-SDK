@@ -10,6 +10,21 @@ import Foundation
 import Freddy
 
 
+/// Some constants associated with the Authorization endpoint and credentials
+struct AuthorizationConstants {
+    static let clientIDParam = "client_id"
+    static let clientSecretParam = "client_secret"
+    static let accessTokenParam = "access_token"
+    
+    static let developerIDParam = "Developer-Id"
+    static let authorizationParam = "Authorization"
+    
+    static let developerIDPrefix = "Bearer: "
+    static let authorizationPrefix = "Bearer "
+}
+
+/// StringMapRepresentable captures items that can be represented as string:string maps
+/// This is for use with API endpoints that work with form bodies instead of JSON bodies
 protocol StringMapRepresentable {
     func toStringMap() -> [String : String]
 }
@@ -20,7 +35,7 @@ struct ClientCredentials: StringMapRepresentable {
     let clientSecret: String
     
     func toStringMap() -> [String : String] {
-        return ["client_id": clientID, "client_secret": clientSecret]
+        return [AuthorizationConstants.clientIDParam: clientID, AuthorizationConstants.clientSecretParam: clientSecret]
     }
 }
 
@@ -30,7 +45,7 @@ struct AuthorizationResponse: JSONDecodable {
     let accessToken: String
     
     init(json: JSON) throws {
-        self.accessToken = try json.string("access_token")
+        self.accessToken = try json.string(AuthorizationConstants.accessTokenParam)
     }
 }
 
@@ -46,11 +61,11 @@ struct KnurldCredentials: StringMapRepresentable {
     
     init(developerID: String, authorizationResponse: AuthorizationResponse) {
         self.developerID = developerID
-        self.authorization = "Bearer \(authorizationResponse.accessToken)"
+        self.authorization = AuthorizationConstants.authorizationPrefix + authorizationResponse.accessToken
     }
     
     func toStringMap() -> [String : String] {
-        return ["Developer-Id": developerID, "Authorization": authorization]
+        return [AuthorizationConstants.developerIDParam: developerID, AuthorizationConstants.authorizationParam: authorization]
     }
 }
 
@@ -73,7 +88,7 @@ extension KnurldV1API {
                                         failureHandler(error: .ResponseDeserializationError)
                                         return
                                     }
-            },
+                                },
                                 
                                 failureHandler: { error in failureHandler(error: error) })
     }

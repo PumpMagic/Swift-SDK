@@ -10,22 +10,40 @@ import Foundation
 import Freddy
 
 
-/// A Knurld application model
-struct AppModel: JSONEncodable, JSONDecodable {
+/// Constants associated with app models - just parameter names
+private struct AppModelConstants {
+    static let enrollmentRepeatsParam = "enrollmentRepeats"
+    static let vocabularyParam = "vocabulary"
+    static let verificationLengthParam = "verificationLength"
+    static let thresholdParam = "threshold"
+    static let autoThresholdEnableParam = "autoThresholdEnable"
+    static let autoThresholdClearanceParam = "autoThresholdClearance"
+    static let autoThresholdMaxRiseParam = "autoThresholdMaxRise"
+    static let useModelUpdateParam = "useModelUpdate"
+    static let modelUpdateDailyLimitParam = "modelUpdateDailyLimit"
+    static let limitParam = "limit"
+    static let nextParam = "next"
+    static let itemsParam = "items"
+    static let prevParam = "prev"
+    static let totalParam = "total"
+    static let hrefParam = "href"
+    static let offsetParam = "offset"
+}
+
+/// All parameters needed to create a Knurld application model creation request
+struct AppModelCreateRequest: JSONEncodable {
     // Mandatory fields
-    var enrollmentRepeats: Int
+    let enrollmentRepeats: Int
     let vocabulary: [String]
-    var verificationLength: Int
+    let verificationLength: Int
     
     // Optional fields
-    var threshold: Double?
+    let threshold: Double?
     let autoThresholdEnable: Bool?
     let autoThresholdClearance: Int?
     let autoThresholdMaxRise: Int?
     let useModelUpdate: Bool?
     let modelUpdateDailyLimit: Int?
-    
-    let locator: AppModelLocator?
     
     init(enrollmentRepeats: Int, vocabulary: [String], verificationLength: Int) {
         self.enrollmentRepeats = enrollmentRepeats
@@ -38,193 +56,120 @@ struct AppModel: JSONEncodable, JSONDecodable {
         self.autoThresholdMaxRise = nil
         self.useModelUpdate = nil
         self.modelUpdateDailyLimit = nil
-        
-        self.locator = nil
-    }
-    
-    init(json: JSON) throws {
-        self.enrollmentRepeats = try json.int("enrollmentRepeats")
-        self.vocabulary = try json.array("vocabulary").map(String.init)
-        self.verificationLength = try json.int("verificationLength")
-        
-        self.threshold = try json.double("threshold", alongPath: [.MissingKeyBecomesNil, .NullBecomesNil])
-        self.autoThresholdEnable = try json.bool("autoThresholdEnable", alongPath: [.MissingKeyBecomesNil, .NullBecomesNil])
-        self.autoThresholdClearance = try json.int("autoThresholdClearance", alongPath: [.MissingKeyBecomesNil, .NullBecomesNil])
-        self.autoThresholdMaxRise = try json.int("autoThresholdMaxRise", alongPath: [.MissingKeyBecomesNil, .NullBecomesNil])
-        self.useModelUpdate = try json.bool("useModelUpdate", alongPath: [.MissingKeyBecomesNil, .NullBecomesNil])
-        self.modelUpdateDailyLimit = try json.int("modelUpdateDailyLimit", alongPath: [.MissingKeyBecomesNil, .NullBecomesNil])
-        
-        self.locator = try json.decode("", alongPath: [.MissingKeyBecomesNil, .NullBecomesNil])
     }
     
     func toJSON() -> JSON {
         var json: [String : JSON] = [
-            "enrollmentRepeats": .Int(self.enrollmentRepeats),
-            "vocabulary": .Array(self.vocabulary.map(JSON.String)),
-            "verificationLength": .Int(self.verificationLength)]
+            AppModelConstants.enrollmentRepeatsParam: .Int(self.enrollmentRepeats),
+            AppModelConstants.vocabularyParam: .Array(self.vocabulary.map(JSON.String)),
+            AppModelConstants.verificationLengthParam: .Int(self.verificationLength)]
         
         if let threshold = self.threshold {
-            json.updateValue(JSON.Double(threshold), forKey: "threshold")
+            json.updateValue(JSON.Double(threshold), forKey: AppModelConstants.thresholdParam)
         }
         if let autoThresholdEnable = self.autoThresholdEnable {
-            json.updateValue(JSON.Bool(autoThresholdEnable), forKey: "autoThresholdEnable")
+            json.updateValue(JSON.Bool(autoThresholdEnable), forKey: AppModelConstants.autoThresholdEnableParam)
         }
         if let autoThresholdClearance = self.autoThresholdClearance {
-            json.updateValue(JSON.Int(autoThresholdClearance), forKey: "autoThresholdClearance")
+            json.updateValue(JSON.Int(autoThresholdClearance), forKey: AppModelConstants.autoThresholdClearanceParam)
         }
         if let autoThresholdMaxRise = self.autoThresholdMaxRise {
-            json.updateValue(JSON.Int(autoThresholdMaxRise), forKey: "autoThresholdMaxRise")
+            json.updateValue(JSON.Int(autoThresholdMaxRise), forKey: AppModelConstants.autoThresholdMaxRiseParam)
         }
         if let useModelUpdate = self.useModelUpdate {
-            json.updateValue(JSON.Bool(useModelUpdate), forKey: "useModelUpdate")
+            json.updateValue(JSON.Bool(useModelUpdate), forKey: AppModelConstants.useModelUpdateParam)
         }
         if let modelUpdateDailyLimit = self.modelUpdateDailyLimit {
-            json.updateValue(JSON.Int(modelUpdateDailyLimit), forKey: "modelUpdateDailyLimit")
+            json.updateValue(JSON.Int(modelUpdateDailyLimit), forKey: AppModelConstants.modelUpdateDailyLimitParam)
         }
         
         return .Dictionary(json)
     }
+}
+
+/// All parameters needed to create a Knurld application model update request
+struct AppModelUpdateRequest: JSONEncodable {
+    let enrollmentRepeats: Int?
+    let threshold: Double?
+    let verificationLength: Int?
     
-    func updatableParameters() -> JSON {
-        var json: [String : JSON] = [
-            "enrollmentRepeats": .Int(self.enrollmentRepeats),
-            "verificationLength": .Int(self.verificationLength)]
+    func toJSON() -> JSON {
+        var json: [String : JSON] = [:]
         
+        if let enrollmentRepeats = self.enrollmentRepeats {
+            json.updateValue(.Int(enrollmentRepeats), forKey: AppModelConstants.enrollmentRepeatsParam)
+        }
         if let threshold = self.threshold {
-            json.updateValue(JSON.Double(threshold), forKey: "threshold")
+            json.updateValue(.Double(threshold), forKey: AppModelConstants.thresholdParam)
+        }
+        if let verificationLength = self.verificationLength {
+            json.updateValue(.Int(verificationLength), forKey: AppModelConstants.verificationLengthParam)
         }
         
         return .Dictionary(json)
     }
 }
 
-
-/// A Knurld application model identifier
-typealias AppModelID = String
-
-protocol AppModelLocating {
-    func appModelLocation() -> AppModelLocator
-}
-
-extension AppModelID: AppModelLocating {
-    func appModelLocation() -> AppModelLocator {
-        return AppModelLocator(href: KnurldV1API.API_URL + "/app-models/\(self)")
-    }
-}
-
-/// A locator of a Knurld app model
-struct AppModelLocator: JSONDecodable, AppModelLocating {
-    let href: String
+/// A Knurld application model
+struct AppModel: JSONEncodable, JSONDecodable {
+    let enrollmentRepeats: Int
+    let vocabulary: [String]
+    let verificationLength: Int
+    let threshold: Double
+    let autoThresholdEnable: Bool
+    let autoThresholdClearance: Int
+    let autoThresholdMaxRise: Int
+    let useModelUpdate: Bool
+    let modelUpdateDailyLimit: Int
+    let locator: ResourceLocator
     
     init(json: JSON) throws {
-        self.href = try json.string("href")
+        self.enrollmentRepeats = try json.int(AppModelConstants.enrollmentRepeatsParam)
+        self.vocabulary = try json.array(AppModelConstants.vocabularyParam).map(String.init)
+        self.verificationLength = try json.int(AppModelConstants.verificationLengthParam)
+        self.threshold = try json.double(AppModelConstants.thresholdParam)
+        self.autoThresholdEnable = try json.bool(AppModelConstants.autoThresholdEnableParam)
+        self.autoThresholdClearance = try json.int(AppModelConstants.autoThresholdClearanceParam)
+        self.autoThresholdMaxRise = try json.int(AppModelConstants.autoThresholdMaxRiseParam)
+        self.useModelUpdate = try json.bool(AppModelConstants.useModelUpdateParam)
+        self.modelUpdateDailyLimit = try json.int(AppModelConstants.modelUpdateDailyLimitParam)
+        self.locator = try json.decode()
     }
     
-    init(href: String) {
-        self.href = href
+    func toJSON() -> JSON {
+        return .Dictionary([
+            AppModelConstants.enrollmentRepeatsParam: .Int(self.enrollmentRepeats),
+            AppModelConstants.vocabularyParam: .Array(self.vocabulary.map(JSON.String)),
+            AppModelConstants.verificationLengthParam: .Int(self.verificationLength),
+            AppModelConstants.thresholdParam: .Double(self.threshold),
+            AppModelConstants.autoThresholdEnableParam: .Bool(self.autoThresholdEnable),
+            AppModelConstants.autoThresholdClearanceParam: .Int(self.autoThresholdClearance),
+            AppModelConstants.autoThresholdMaxRiseParam: .Int(self.autoThresholdMaxRise),
+            AppModelConstants.useModelUpdateParam: .Bool(self.useModelUpdate),
+            AppModelConstants.modelUpdateDailyLimitParam: .Int(self.modelUpdateDailyLimit)])
     }
+}
+
+/// A subset of an application's app models with metadata and information on where the rest are
+struct AppModelPage: JSONDecodable {
+    let limit: Int
+    let next: WebAddress?
+    let items: [AppModel]
+    let prev: WebAddress?
+    let total: Int
+    let href: WebAddress
+    let offset: Int
     
-    func appModelLocation() -> AppModelLocator {
-        return self
+    init(json: JSON) throws {
+        self.limit = try json.int(AppModelConstants.limitParam)
+        self.next = try json.string(AppModelConstants.nextParam, alongPath: [.NullBecomesNil])
+        self.items = try json.array(AppModelConstants.itemsParam).map(AppModel.init)
+        self.prev = try json.string(AppModelConstants.prevParam, alongPath: [.NullBecomesNil])
+        self.total = try json.int(AppModelConstants.totalParam)
+        self.href = try json.string(AppModelConstants.hrefParam)
+        self.offset = try json.int(AppModelConstants.offsetParam)
     }
 }
 
 
-extension KnurldV1API {
-    /// Create a new app model (POST /app-models)
-    func createAppModel(credentials credentials: KnurldCredentials, model: AppModel, successHandler: (locator: AppModelLocator) -> Void, failureHandler: (error: HTTPRequestError) -> Void)
-    {
-        let url = KnurldV1API.API_URL + "/app-models"
-        let headers = credentials.toStringMap()
-        let parameters = model.toJSON()
-        
-        requestManager.postJSON(url: url, headers: headers, body: parameters,
-                                successHandler: { json in
-                                    do {
-                                        let locator = try AppModelLocator(json:json)
-                                        successHandler(locator: locator)
-                                        return
-                                    } catch {
-                                        failureHandler(error: .ResponseDeserializationError)
-                                        return
-                                    }
-            },
-                                failureHandler: { error in failureHandler(error: error) })
-    }
-    
-    /// Get "all" application models (GET /app-models)
-    func getAppModels(credentials credentials: KnurldCredentials, successHandler: (models: [AppModel]) -> Void, failureHandler: (error: HTTPRequestError) -> Void)
-    {
-        let url = KnurldV1API.API_URL + "/app-models"
-        let headers = credentials.toStringMap()
-        
-        requestManager.get(url: url, headers: headers,
-                           successHandler: { json in
-                            print("GET /app-models: Raw JSON: \(json)")
-                            do {
-                                let appModels = try json.array("items").map(AppModel.init)
-                                successHandler(models: appModels)
-                                return
-                            } catch {
-                                failureHandler(error: .ResponseDeserializationError)
-                                return
-                            }
-            },
-                           failureHandler: { error in failureHandler(error: error) })
-    }
-    
-    /// Get a specific app model (GET /app-models/{id})
-    func getAppModel(credentials credentials: KnurldCredentials, locator: AppModelLocating, successHandler: (model: AppModel) -> Void, failureHandler: (error: HTTPRequestError) -> Void)
-    {
-        let url = locator.appModelLocation().href
-        let headers = credentials.toStringMap()
-        
-        requestManager.get(url: url,
-                           headers: headers,
-                           successHandler: { json in
-                            do {
-                                let appModel = try AppModel(json: json)
-                                successHandler(model: appModel)
-                                return
-                            } catch {
-                                failureHandler(error: .ResponseDeserializationError)
-                                return
-                            }
-            },
-                           failureHandler: { error in failureHandler(error: error) })
-    }
-    
-    
-    /// Update a specific app model, as far as the API will allow (UPDATE /app-models/{id})
-    func updateAppModel(credentials credentials: KnurldCredentials, locator: AppModelLocating, model: AppModel, successHandler: (model: AppModel) -> Void, failureHandler: (error: HTTPRequestError) -> Void)
-    {
-        let url = locator.appModelLocation().href
-        let headers = credentials.toStringMap()
-        let body = model.updatableParameters()
-        
-        print("RAW: URL: \(url) headers: \(headers) body: \(body)")
-        
-        requestManager.postJSON(url: url, headers: headers, body: body,
-                                  successHandler: { json in
-                                    print("Update app model: Raw response JSON: \(json)")
-                                    do {
-                                        let appModel = try AppModel(json: json)
-                                        successHandler(model: appModel)
-                                        return
-                                    } catch {
-                                        failureHandler(error: .ResponseDeserializationError)
-                                    }
-                                   },
-                                   failureHandler: { error in failureHandler(error: error) })
-    }
-    
-    func deleteAppModel(credentials credentials: KnurldCredentials, locator: AppModelLocating, successHandler: (Void) -> Void, failureHandler: (error: HTTPRequestError) -> Void)
-    {
-        let url = locator.appModelLocation().href
-        let headers = credentials.toStringMap()
-        
-        print("Delete app model: URL: \(url) headers: \(headers)")
-        
-        requestManager.delete(url: url, headers: headers, successHandler: successHandler, failureHandler: failureHandler)
-    }
-}
+

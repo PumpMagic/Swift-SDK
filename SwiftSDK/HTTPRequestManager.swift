@@ -85,7 +85,7 @@ class HTTPRequestManager {
     
     /// Perform an HTTP GET, with no body and expecting JSON in return.
     func get(url url: String, headers: [String: String]?, successHandler: (JSON) -> Void, failureHandler: (HTTPRequestError) -> Void) {
-        executeRequest(method: "GET", url: url, headers: headers, body: nil,
+        executeRequest(method: "GET", url: url, headers: headers, body: nil, responseExpected: true,
                        successHandler: { maybeResponse in
                         guard let response = maybeResponse else {
                             failureHandler(.NoDataReturned)
@@ -97,12 +97,12 @@ class HTTPRequestManager {
     
     /// Perform an HTTP DELETE, with no body and expecting nothing in return.
     func delete(url url: String, headers: [String: String]?, successHandler: (Void) -> Void, failureHandler: (HTTPRequestError) -> Void) {
-        executeRequest(method: "DELETE", url: url, headers: headers, body: nil,
+        executeRequest(method: "DELETE", url: url, headers: headers, body: nil, responseExpected: false,
                        successHandler: { _ in successHandler() },
                        failureHandler: failureHandler)
     }
     
-    /// Perform an HTTP POST, with a urlencoded form body and requesting and expecting JSON in return.
+    /// Perform an HTTP POST, with a urlencoded form body and expecting JSON in return.
     func postForm(url url: String, headers: [String: String]?, body: RepresentableAsURLEncodedForm, successHandler: (JSON) -> Void, failureHandler: (HTTPRequestError) -> Void)
     {
         // Append the content-type header
@@ -115,7 +115,7 @@ class HTTPRequestManager {
         // Try encoding the body and executing the request. If serialization fails, call the failure handler immediately
         do {
             let encodedBody = try body.asFormData()
-            executeRequest(method: "POST", url: url, headers: newHeaders, body: encodedBody,
+            executeRequest(method: "POST", url: url, headers: newHeaders, body: encodedBody, responseExpected: true,
                            successHandler: { maybeResponse in
                             guard let response = maybeResponse else {
                                 failureHandler(.NoDataReturned)
@@ -128,7 +128,7 @@ class HTTPRequestManager {
         }
     }
     
-    /// Perform an HTTP POST, with a JSON body and requesting and expecting JSON in return.
+    /// Perform an HTTP POST, with a JSON body and expecting JSON in return.
     func postJSON(url url: String, headers: [String: String]?, body: JSON, successHandler: (JSON) -> Void, failureHandler: (HTTPRequestError) -> Void)
     {
         // Append the content-type header
@@ -141,7 +141,7 @@ class HTTPRequestManager {
         // Try encoding the body and executing the request. If serialization fails, call the failure handler immediately
         do {
             let encodedBody = try body.serialize()
-            executeRequest(method: "POST", url: url, headers: newHeaders, body: encodedBody,
+            executeRequest(method: "POST", url: url, headers: newHeaders, body: encodedBody, responseExpected: true,
                            successHandler: { maybeResponse in
                             guard let response = maybeResponse else {
                                 failureHandler(.NoDataReturned)
@@ -149,14 +149,14 @@ class HTTPRequestManager {
                             }
                             successHandler(response)
                            }, failureHandler: failureHandler)
-        } catch _ {
+        } catch {
             failureHandler(.RequestSerializationError)
         }
     }
     
-    /// Execute an HTTP request.
-    //@todo take in an expectingData boolean, or add a new function
-    func executeRequest(method method: String, url: String, headers: [String: String]?, body: NSData?, successHandler: (JSON?) -> Void, failureHandler: (HTTPRequestError) -> Void)
+    
+    /// Execute an HTTP request, optionally looking for JSON data in the response.
+    private func executeRequest(method method: String, url: String, headers: [String: String]?, body: NSData?, responseExpected: Bool, successHandler: (JSON?) -> Void, failureHandler: (HTTPRequestError) -> Void)
     {
         // Let NSURL validate the URL for us
         guard let nsurl = NSURL(string: url) else {
@@ -184,7 +184,8 @@ class HTTPRequestManager {
         
         // Make a data task out of our URL request
         let task = session.dataTaskWithRequest(request, completionHandler: { data, response, error in
-            HTTPRequestManager.dataTaskCallback(successHandler: successHandler,
+            HTTPRequestManager.dataTaskCallback(responseExpected: responseExpected,
+                successHandler: successHandler,
                 failureHandler: failureHandler,
                 data: data, response: response, error: error) })
         
@@ -193,9 +194,10 @@ class HTTPRequestManager {
     }
     
     
-    static func dataTaskCallback(successHandler successHandler: (JSON?) -> Void,
-                                                failureHandler: (HTTPRequestError) -> Void,
-                                                data: NSData?, response: NSURLResponse?, error: NSError?)
+    private static func dataTaskCallback(responseExpected responseExpected: Bool,
+                                                  successHandler: (JSON?) -> Void,
+                                                  failureHandler: (HTTPRequestError) -> Void,
+                                                  data: NSData?, response: NSURLResponse?, error: NSError?)
     {
         if let _ = error {
             // The request did not complete successfully (regardless of return code)
@@ -219,6 +221,11 @@ class HTTPRequestManager {
                     return
                 }
                 
+                // If no data is expected by our caller, we're done validating. The call was a success!
+                if !responseExpected {
+                    successHandler(nil)
+                }
+                
                 // Parse the received body of data
                 guard let data = data else {
                     // No data in the response
@@ -228,6 +235,7 @@ class HTTPRequestManager {
                 
                 do {
                     let json = try JSON(data: data)
+                    print("Received JSON: \(json)")
                     successHandler(json)
                     return
                 } catch {

@@ -12,9 +12,32 @@ import Foundation
 import Freddy
 
 
+typealias WebAddress = String
+
+struct KnurldV1APIConstants {
+    static let hrefParam = "href"
+}
+
+struct ResourceLocator: JSONDecodable {
+    let href: WebAddress
+    
+    init(json: JSON) throws {
+        self.href = try json.string(KnurldV1APIConstants.hrefParam)
+    }
+    
+    init(href: String) {
+        self.href = href
+    }
+    
+    func getURL() -> String { return self.href }
+}
+
 /// KnurldV1API abstracts out version 1 of the Knurld REST API.
 class KnurldV1API {
     let requestManager: HTTPRequestManager
+    let appModels: RESTEndpointFamily<AppModel, AppModelPage, AppModelCreateRequest, AppModelUpdateRequest>
+    let consumers: RESTEndpointFamily<Consumer, ConsumerPage, ConsumerCreateRequest, ConsumerUpdateRequest>
+    let enrollments: RESTEndpointFamily<Enrollment, EnrollmentPage, EnrollmentCreateRequest, EnrollmentUpdateRequest>
     
     // URL constants
     static let HOST = "https://api.knurld.io"
@@ -23,6 +46,9 @@ class KnurldV1API {
     
     init() {
         self.requestManager = HTTPRequestManager()
+        self.appModels = RESTEndpointFamily(url: KnurldV1API.API_URL + "/app-models", requestManager: self.requestManager)
+        self.consumers = RESTEndpointFamily(url: KnurldV1API.API_URL + "/consumers", requestManager: self.requestManager)
+        self.enrollments = RESTEndpointFamily(url: KnurldV1API.API_URL + "/enrollments", requestManager: self.requestManager)
     }
     
     // For HTTP operations, see individual extensions
