@@ -111,7 +111,7 @@ struct AppModelUpdateRequest: JSONEncodable {
 }
 
 /// A Knurld application model
-struct AppModel: JSONEncodable, JSONDecodable {
+struct AppModel: KnurldResource, JSONEncodable, JSONDecodable {
     let enrollmentRepeats: Int
     let vocabulary: [String]
     let verificationLength: Int
@@ -121,7 +121,7 @@ struct AppModel: JSONEncodable, JSONDecodable {
     let autoThresholdMaxRise: Int
     let useModelUpdate: Bool
     let modelUpdateDailyLimit: Int
-    let locator: ResourceLocator
+    let locator: ResourceLocator<AppModel>
     
     init(json: JSON) throws {
         self.enrollmentRepeats = try json.int(AppModelConstants.enrollmentRepeatsParam)

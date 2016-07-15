@@ -19,8 +19,8 @@ public enum HTTPRequestError {
     case RequestSerializationError
     case NetworkError
     case NoDataReturned
-    case HTTPError
-    case ResponseDeserializationError
+    case HTTPError(code: Int, body: String?)
+    case ResponseDeserializationError(error: JSON.Error?)
     case InternalError
 }
 
@@ -216,14 +216,20 @@ class HTTPRequestManager {
                 
                 print("HTTP response code: \(httpResponse.statusCode)")
                 
-                if !(HTTPRequestManager.acceptableHTTPResponses ~= httpResponse.statusCode) {
-                    failureHandler(.HTTPError)
+                let code = httpResponse.statusCode
+                if !(HTTPRequestManager.acceptableHTTPResponses ~= code) {
+                    if let data = data {
+                        failureHandler(.HTTPError(code: code, body: String(data: data, encoding: NSUTF8StringEncoding)))
+                    } else {
+                        failureHandler(.HTTPError(code: code, body: nil))
+                    }
                     return
                 }
                 
                 // If no data is expected by our caller, we're done validating. The call was a success!
                 if !responseExpected {
                     successHandler(nil)
+                    return
                 }
                 
                 // Parse the received body of data
@@ -239,7 +245,7 @@ class HTTPRequestManager {
                     successHandler(json)
                     return
                 } catch {
-                    failureHandler(.ResponseDeserializationError)
+                    failureHandler(.ResponseDeserializationError(error: error as? JSON.Error))
                     return
                 }
             }

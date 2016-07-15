@@ -90,14 +90,14 @@ struct ConsumerAuthenticateRequest: JSONEncodable, JSONDecodable {
     }
 }
 
-struct Consumer: JSONDecodable {
+struct Consumer: KnurldResource, JSONDecodable {
     let username: String
     let gender: String
     let lastCompletedEnrollment: String?
     let lastVerification: String?
     let phrases: String
     let role: String
-    let locator: ResourceLocator
+    let locator: ResourceLocator<Consumer>
     
     init(json: JSON) throws {
         self.username = try json.string(ConsumerConstants.usernameParam)
@@ -178,7 +178,7 @@ extension KnurldV1API {
                                         successHandler(token: token)
                                         return
                                     } catch {
-                                        failureHandler(error: .ResponseDeserializationError)
+                                        failureHandler(error: .ResponseDeserializationError(error: error as? JSON.Error))
                                         return
                                     }
                                 },

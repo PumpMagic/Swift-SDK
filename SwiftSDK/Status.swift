@@ -51,7 +51,7 @@ extension KnurldV1API {
                                 successHandler(status: serviceStatus)
                                 return
                             } catch {
-                                failureHandler(error: .ResponseDeserializationError)
+                                failureHandler(error: .ResponseDeserializationError(error: error as? JSON.Error))
                                 return
                             }
             },

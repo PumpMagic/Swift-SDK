@@ -70,26 +70,28 @@ struct KnurldCredentials: StringMapRepresentable {
 }
 
 
-extension KnurldV1API {
+
+
+/// /oauth/...
+class AuthorizationEndpoint: SupportsHeaderlessStringMapPosts {
+    typealias PostRequestType = ClientCredentials
+    typealias PostResponseType = AuthorizationResponse
+    
+    let requestManager: HTTPRequestManager
+    let url: String
+    
+    init(requestManager: HTTPRequestManager) {
+        self.requestManager = requestManager
+        self.url = KnurldV1API.HOST + "/oauth/client_credential/accesstoken?grant_type=client_credentials"
+    }
+    
     /// POST /oauth/...
     /// Get OAuth credentials
-    func authorize(credentials credentials: ClientCredentials, successHandler: (response: AuthorizationResponse) -> Void, failureHandler: (error: HTTPRequestError) -> Void)
+    func post(headers headers: Void,
+                      body: ClientCredentials,
+                      successHandler: (response: AuthorizationResponse) -> Void,
+                      failureHandler: (error: HTTPRequestError) -> Void)
     {
-        let url = KnurldV1API.HOST + "/oauth/client_credential/accesstoken?grant_type=client_credentials"
-        let body = credentials.toStringMap()
-        
-        requestManager.postForm(url: url, headers: nil, body: body,
-                                successHandler: { json in
-                                    do {
-                                        let authorizationResponse = try AuthorizationResponse(json: json)
-                                        successHandler(response: authorizationResponse)
-                                        return
-                                    } catch {
-                                        failureHandler(error: .ResponseDeserializationError)
-                                        return
-                                    }
-                                },
-                                
-                                failureHandler: { error in failureHandler(error: error) })
+        postHelper(body: body, successHandler: successHandler, failureHandler: failureHandler)
     }
 }

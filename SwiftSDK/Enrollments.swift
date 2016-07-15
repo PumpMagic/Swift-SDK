@@ -12,7 +12,7 @@ import Freddy
 
 private struct EnrollmentConstants {
     static let consumerParam = "consumer"
-    static let applicationParam = "app-model"
+    static let appModelParam = "app-model"
     static let hrefParam = "href"
     
     static let enrollmentWavParam = "enrollment.wav"
@@ -44,22 +44,22 @@ private struct EnrollmentConstants {
 
 struct EnrollmentCreateRequest: JSONEncodable, JSONDecodable {
     let consumer: String
-    let application: String
+    let appModel: String
     
     func toJSON() -> JSON {
         return .Dictionary([
             EnrollmentConstants.consumerParam: .String(self.consumer),
-            EnrollmentConstants.applicationParam: .String(self.application)])
+            EnrollmentConstants.appModelParam: .String(self.appModel)])
     }
     
     init(json: JSON) throws {
         self.consumer = try json.string(EnrollmentConstants.consumerParam)
-        self.application = try json.string(EnrollmentConstants.applicationParam)
+        self.appModel = try json.string(EnrollmentConstants.appModelParam)
     }
     
-    init(consumer: String, application: String) {
+    init(consumer: String, appModel: String) {
         self.consumer = consumer
-        self.application = application
+        self.appModel = appModel
     }
 }
 
@@ -155,19 +155,19 @@ struct EnrollmentInstructions: JSONDecodable {
     }
 }
 
-struct Enrollment: JSONDecodable {
+struct Enrollment: KnurldResource, JSONDecodable {
     let application: EnrollmentApplication
     let consumer: EnrollmentConsumer
     let createdTime: String
-    let href: String
+    let locator: ResourceLocator<Enrollment>
     let instructions: EnrollmentInstructions
     let status: String
     
     init(json: JSON) throws {
-        self.application = try json.decode(EnrollmentConstants.applicationParam)
+        self.application = try json.decode(EnrollmentConstants.appModelParam)
         self.consumer = try json.decode(EnrollmentConstants.consumerParam)
         self.createdTime = try json.string(EnrollmentConstants.createdTimeParam)
-        self.href = try json.string(EnrollmentConstants.hrefParam)
+        self.locator = try json.decode()
         self.instructions = try json.decode(EnrollmentConstants.instructionsParam)
         self.status = try json.string(EnrollmentConstants.statusParam)
     }
