@@ -172,16 +172,17 @@ struct ConsumersEndpoint: SupportsJSONPosts, SupportsJSONGets {
     typealias GetHeadersType = KnurldCredentials
     typealias GetResponseType = ConsumerPage
     
-    let url = KnurldV1API.HOST + "/consumers"
+    let url = KnurldV1API.API_URL + "/consumers"
 }
 
 /// /consumers/{id}
-struct ConsumerEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets {
+struct ConsumerEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets, SupportsDeletes {
     typealias PostHeadersType = KnurldCredentials
     typealias PostRequestType = ConsumerUpdateRequest
     typealias PostResponseType = ConsumerEndpoint
     typealias GetHeadersType = KnurldCredentials
     typealias GetResponseType = Consumer
+    typealias DeleteHeadersType = KnurldCredentials
     
     let url: String
     

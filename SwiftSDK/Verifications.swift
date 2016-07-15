@@ -206,16 +206,17 @@ struct VerificationsEndpoint: SupportsJSONPosts, SupportsJSONGets {
     typealias GetHeadersType = KnurldCredentials
     typealias GetResponseType = VerificationPage
     
-    let url = KnurldV1API.HOST + "/verifications"
+    let url = KnurldV1API.API_URL + "/verifications"
 }
 
 /// /verifications/{id}
-struct VerificationEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets {
+struct VerificationEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets, SupportsDeletes {
     typealias PostHeadersType = KnurldCredentials
     typealias PostRequestType = VerificationUpdateRequest
     typealias PostResponseType = VerificationEndpoint
     typealias GetHeadersType = KnurldCredentials
     typealias GetResponseType = Verification
+    typealias DeleteHeadersType = KnurldCredentials
     
     let url: String
     

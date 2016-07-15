@@ -14,31 +14,6 @@ import Nimble
 let API_CALL_TIMEOUT: NSTimeInterval = 5 // seconds
 let validOAuthCredentials = OAuthCredentials(clientID: TEST_CLIENT_ID, clientSecret: TEST_CLIENT_SECRET)
 
-extension AppModel: Equatable {}
-func ==(lhs: AppModel, rhs: AppModel) -> Bool {
-    if lhs.enrollmentRepeats == rhs.enrollmentRepeats &&
-        lhs.vocabulary == rhs.vocabulary &&
-        lhs.verificationLength == rhs.verificationLength
-    {
-        return true
-    }
-    
-    return false
-}
-
-func randomAlphanumericString(length length: Int) -> String {
-    let allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-    let allowedCharsCount = UInt32(allowedChars.characters.count)
-    var randomString = ""
-    
-    for _ in (0..<length) {
-        let randomNum = Int(arc4random_uniform(allowedCharsCount))
-        let newCharacter = allowedChars[allowedChars.startIndex.advancedBy(randomNum)]
-        randomString += String(newCharacter)
-    }
-    
-    return randomString
-}
 
 class AuthorizationSpec: QuickSpec {
     override func spec() {
@@ -97,22 +72,6 @@ class StatusSpec: QuickSpec {
 }
 
 
-func appModelCreateSync(api: KnurldV1API, credentials: KnurldCredentials, request: AppModelCreateRequest) -> AppModelEndpoint {
-    var endpoint: AppModelEndpoint!
-    
-    api.createAppModel(credentials: credentials,
-                       request: request,
-                       successHandler: { ep in endpoint = ep },
-                       failureHandler: { error in print("ERROR: \(error)")})
-    sleep(UInt32(API_CALL_TIMEOUT))
-    
-    if endpoint == nil {
-        fail("Unable to create app model")
-    }
-    
-    return endpoint
-}
-
 class AppModelsSpec: QuickSpec {
     override func spec() {
         let api = KnurldV1API()
@@ -155,21 +114,21 @@ class AppModelsSpec: QuickSpec {
         describe("the get app model API") {
             it("works on a freshly created app model") {
                 let request = AppModelCreateRequest(enrollmentRepeats: 3, vocabulary: ["Toronto", "Paris", "Berlin"], verificationLength: 3)
-                let endpoint: AppModelEndpoint! = appModelCreateSync(api, credentials: knurldCredentials, request: request)
+                let endpoint = appModelCreateSync(api, credentials: knurldCredentials, request: request)
                 if endpoint == nil { return }
                 
                 var model: AppModel! = nil
-                endpoint.get(credentials: knurldCredentials,
-                                         locator: locator,
-                                         successHandler: { mdl in model = mdl },
-                                         failureHandler: { error in print("ERROR: \(error)") })
+                api.getAppModel(credentials: knurldCredentials,
+                                endpoint: endpoint,
+                                successHandler: { mdl in model = mdl },
+                                failureHandler: { error in print("ERROR: \(error)") })
                 sleep(UInt32(API_CALL_TIMEOUT))
                 if model == nil {
                     fail("Get app model failed")
                     return
                 }
                 
-                expect(model.enrollmentRepeats).to(equal(createRequest.enrollmentRepeats))
+                expect(model.enrollmentRepeats).to(equal(request.enrollmentRepeats))
             }
         }
         
@@ -179,41 +138,33 @@ class AppModelsSpec: QuickSpec {
                 let targetEnrollmentRepeats = 5
                 
                 // Create an app model
-                var locator1: ResourceLocator<AppModel>! = nil
-                let createRequest = AppModelCreateRequest(enrollmentRepeats: initialEnrollmentRepeats, vocabulary: ["Toronto", "Paris", "Berlin"], verificationLength: 3)
-                api.appModels.create(credentials: knurldCredentials,
-                                            request: createRequest,
-                                            successHandler: { loc in locator1 = loc },
-                                            failureHandler: { error in print("ERROR: \(error)")})
-                sleep(UInt32(API_CALL_TIMEOUT))
-                if locator1 == nil {
-                    fail("Unable to create app model for retrieving")
-                    return
-                }
+                let request1 = AppModelCreateRequest(enrollmentRepeats: initialEnrollmentRepeats, vocabulary: ["Toronto", "Paris", "Berlin"], verificationLength: 3)
+                let endpoint1 = appModelCreateSync(api, credentials: knurldCredentials, request: request1)
+                if endpoint1 == nil { return }
                 
                 // Update the app model
-                var locator2: ResourceLocator<AppModel>! = nil
-                let request = AppModelUpdateRequest(enrollmentRepeats: targetEnrollmentRepeats, threshold: nil, verificationLength: nil)
-                api.appModels.update(credentials: knurldCredentials,
-                                            locator: locator1,
-                                            request: request,
-                                            successHandler: { loc in locator2 = loc },
-                                            failureHandler: { error in print("ERROR: \(error)")})
+                let request2 = AppModelUpdateRequest(enrollmentRepeats: targetEnrollmentRepeats, threshold: nil, verificationLength: nil)
+                var endpoint2: AppModelEndpoint! = nil
+                api.updateAppModel(credentials: knurldCredentials,
+                                   endpoint: endpoint1,
+                                   request: request2,
+                                   successHandler: { loc in endpoint2 = loc },
+                                   failureHandler: { error in print("ERROR: \(error)")})
                 sleep(UInt32(API_CALL_TIMEOUT))
-                if locator2 == nil {
+                if endpoint2 == nil {
                     fail("Unable to update app model")
                     return
                 }
                 
                 // Make sure the locator returned by update matches that returned by create
-                expect(locator1).to(equal(locator2))
+                expect(endpoint1).to(equal(endpoint2))
                 
                 // Retrieve the (hopefully updated) app model
                 var modelRetrieved: AppModel! = nil
-                api.appModels.get(credentials: knurldCredentials,
-                                         locator: locator2,
-                                         successHandler: { mdl in modelRetrieved = mdl },
-                                         failureHandler: { error in print("ERROR: \(error)") })
+                api.getAppModel(credentials: knurldCredentials,
+                                endpoint: endpoint2,
+                                successHandler: { mdl in modelRetrieved = mdl },
+                                failureHandler: { error in print("ERROR: \(error)") })
                 sleep(UInt32(API_CALL_TIMEOUT))
                 if modelRetrieved == nil {
                     fail("unable to retrieve updated app model")
@@ -228,23 +179,16 @@ class AppModelsSpec: QuickSpec {
         describe("the delete app model API") {
             it("works on a freshly created app model") {
                 // Create an app model
-                var locator: ResourceLocator<AppModel>! = nil
                 let request = AppModelCreateRequest(enrollmentRepeats: 3, vocabulary: ["Toronto", "Paris", "Berlin"], verificationLength: 3)
-                api.appModels.create(credentials: knurldCredentials,
-                                            request: request,
-                                            successHandler: { loc in locator = loc },
-                                            failureHandler: { error in print("ERROR: \(error)")})
-                sleep(UInt32(API_CALL_TIMEOUT))
-                if locator == nil {
-                    fail("Unable to create app model for deleting")
-                    return
-                }
+                let endpoint = appModelCreateSync(api, credentials: knurldCredentials, request: request)
+                if endpoint == nil { return }
                 
                 // Delete the app model
                 var deleted: Bool = false
-                api.appModels.delete(credentials: knurldCredentials, locator: locator,
-                                            successHandler: { deleted = true },
-                                            failureHandler: { error in print("ERROR: \(error)")})
+                api.deleteAppModel(credentials: knurldCredentials,
+                                   endpoint: endpoint,
+                                   successHandler: { deleted = true },
+                                   failureHandler: { error in print("ERROR: \(error)")})
                 
                 expect(deleted).toEventually(beTrue(), timeout: API_CALL_TIMEOUT)
             }
@@ -273,14 +217,14 @@ class ConsumersSpec: QuickSpec {
                 let gender = "M"
                 
                 let consumerCreateRequest = ConsumerCreateRequest(username: username, password: password, gender: gender)
-                var locator: ResourceLocator<Consumer>? = nil
+                var endpoint: ConsumerEndpoint? = nil
                 
-                api.consumers.create(credentials: knurldCredentials,
-                                            request: consumerCreateRequest,
-                                            successHandler: { loc in locator = loc },
-                                            failureHandler: { error in print("ERROR: \(error)")})
+                api.createConsumer(credentials: knurldCredentials,
+                                   request: consumerCreateRequest,
+                                   successHandler: { ep in endpoint = ep },
+                                   failureHandler: { error in print("ERROR: \(error)")})
                 
-                expect(locator).toEventuallyNot(beNil(), timeout: API_CALL_TIMEOUT)
+                expect(endpoint).toEventuallyNot(beNil(), timeout: API_CALL_TIMEOUT)
             }
         }
         
@@ -288,9 +232,9 @@ class ConsumersSpec: QuickSpec {
             it("returns success when given good parameters") {
                 var page: ConsumerPage? = nil
                 
-                api.consumers.getPage(credentials: knurldCredentials,
-                                      successHandler: { pg in page = pg },
-                                      failureHandler: { error in print("ERROR: \(error)")})
+                api.getConsumerPage(credentials: knurldCredentials,
+                                    successHandler: { pg in page = pg },
+                                    failureHandler: { error in print("ERROR: \(error)")})
                 
                 expect(page).toEventuallyNot(beNil(), timeout: API_CALL_TIMEOUT)
             }
@@ -303,26 +247,16 @@ class ConsumersSpec: QuickSpec {
                 let gender = "M"
                 
                 // Create a consumer
-                let consumerCreateRequest = ConsumerCreateRequest(username: username, password: password, gender: gender)
-                var locator: ResourceLocator<Consumer>! = nil
-                
-                api.consumers.create(credentials: knurldCredentials,
-                                            request: consumerCreateRequest,
-                                            successHandler: { loc in locator = loc },
-                                            failureHandler: { error in print("ERROR: \(error)")})
-                
-                sleep(UInt32(API_CALL_TIMEOUT))
-                if locator == nil {
-                    fail("Unable to create consumer")
-                    return
-                }
+                let request = ConsumerCreateRequest(username: username, password: password, gender: gender)
+                let endpoint = consumerCreateSync(api, credentials: knurldCredentials, request: request)
+                if endpoint == nil { return }
                 
                 // Retrieve the just-created consumer
                 var consumer: Consumer! = nil
-                api.consumers.get(credentials: knurldCredentials,
-                                         locator: locator,
-                                         successHandler: { cnsmr in consumer = cnsmr },
-                                         failureHandler: { error in print("ERROR: \(error)") })
+                api.getConsumer(credentials: knurldCredentials,
+                                endpoint: endpoint,
+                                successHandler: { cnsmr in consumer = cnsmr },
+                                failureHandler: { error in print("ERROR: \(error)") })
                 sleep(UInt32(API_CALL_TIMEOUT))
                 if consumer == nil {
                     fail("Unable to retrieve consumer")
@@ -340,33 +274,26 @@ class ConsumersSpec: QuickSpec {
                 let gender = "M"
                 
                 // Create a consumer
-                let consumerCreateRequest = ConsumerCreateRequest(username: username, password: password, gender: gender)
-                var locator1: ResourceLocator<Consumer>! = nil
-                
-                api.consumers.create(credentials: knurldCredentials,
-                                            request: consumerCreateRequest,
-                                            successHandler: { loc in locator1 = loc },
-                                            failureHandler: { error in print("ERROR: \(error)")})
-                sleep(UInt32(API_CALL_TIMEOUT))
-                if locator1 == nil {
-                    fail("Unable to create consumer for retrieving")
-                    return
-                }
+                let request1 = ConsumerCreateRequest(username: username, password: password, gender: gender)
+                let endpoint1 = consumerCreateSync(api, credentials: knurldCredentials, request: request1)
+                if endpoint1 == nil { return }
                 
                 // Update the consumer
-                var locator2: ResourceLocator<Consumer>! = nil
-                let updateRequest = ConsumerUpdateRequest(password: "bjkhjklsdhlkdjaskfl")
-                api.consumers.update(credentials: knurldCredentials, locator: locator1, request: updateRequest,
-                                            successHandler: { loc in locator2 = loc },
-                                            failureHandler: { error in print("ERROR: \(error)")})
+                let request2 = ConsumerUpdateRequest(password: "bjkhjklsdhlkdjaskfl")
+                var endpoint2: ConsumerEndpoint! = nil
+                api.updateConsumer(credentials: knurldCredentials,
+                                   endpoint: endpoint1,
+                                   request: request2,
+                                   successHandler: { ep in endpoint2 = ep },
+                                   failureHandler: { error in print("ERROR: \(error)")})
                 sleep(UInt32(API_CALL_TIMEOUT))
-                if locator2 == nil {
+                if endpoint2 == nil {
                     fail("Unable to update consumer")
                     return
                 }
                 
                 // Make sure the locator returned by update matches that returned by create
-                expect(locator1).to(equal(locator2))
+                expect(endpoint1).to(equal(endpoint2))
                 
                 //@todo verify consumer password update by attempting to log in
             }
@@ -379,24 +306,16 @@ class ConsumersSpec: QuickSpec {
                 let gender = "M"
                 
                 // Create a consumer
-                let consumerCreateRequest = ConsumerCreateRequest(username: username, password: password, gender: gender)
-                var locator: ResourceLocator<Consumer>! = nil
-                
-                api.consumers.create(credentials: knurldCredentials,
-                                            request: consumerCreateRequest,
-                                            successHandler: { loc in locator = loc },
-                                            failureHandler: { error in print("ERROR: \(error)")})
-                sleep(UInt32(API_CALL_TIMEOUT))
-                if locator == nil {
-                    fail("Unable to create consumer for deleting")
-                    return
-                }
+                let request = ConsumerCreateRequest(username: username, password: password, gender: gender)
+                let endpoint = consumerCreateSync(api, credentials: knurldCredentials, request: request)
+                if endpoint == nil { return }
                 
                 // Delete the app model
                 var deleted: Bool = false
-                api.consumers.delete(credentials: knurldCredentials, locator: locator,
-                                            successHandler: { deleted = true },
-                                            failureHandler: { error in print("ERROR: \(error)")})
+                api.deleteConsumer(credentials: knurldCredentials,
+                                   endpoint: endpoint,
+                                   successHandler: { deleted = true },
+                                   failureHandler: { error in print("ERROR: \(error)")})
                 
                 expect(deleted).toEventually(beTrue(), timeout: API_CALL_TIMEOUT)
             }
@@ -419,75 +338,61 @@ class EnrollmentSpec: QuickSpec {
                       failureHandler: { error in print("ERROR: \(error)") })
         sleep(UInt32(API_CALL_TIMEOUT))
         
-        var appModelLocator: ResourceLocator<AppModel>!
-        var consumerLocator: ResourceLocator<Consumer>!
-        var enrollmentLocator: ResourceLocator<Enrollment>!
+        
+        var appModelEndpoint: AppModelEndpoint!
+        var consumerEndpoint: ConsumerEndpoint!
+        var enrollmentEndpoint: EnrollmentEndpoint!
+        
         beforeEach {
             // Create an app model
             let appModelRequest = AppModelCreateRequest(enrollmentRepeats: 3, vocabulary: ["Toronto", "Paris", "Berlin"], verificationLength: 3)
-            api.appModels.create(credentials: knurldCredentials,
-                request: appModelRequest,
-                successHandler: { loc in appModelLocator = loc },
-                failureHandler: { error in print("ERROR: \(error)")})
-            
-            sleep(UInt32(API_CALL_TIMEOUT))
-            if appModelLocator == nil {
-                fail("Unable to create application model")
-                return
-            }
+            appModelEndpoint = appModelCreateSync(api, credentials: knurldCredentials, request: appModelRequest)
+            if appModelEndpoint == nil { return }
             
             // Create a consumer
             let username = randomAlphanumericString(length: 10)
             let password = randomAlphanumericString(length: 10)
             let gender = "M"
             let consumerCreateRequest = ConsumerCreateRequest(username: username, password: password, gender: gender)
+            consumerEndpoint = consumerCreateSync(api, credentials: knurldCredentials, request: consumerCreateRequest)
+            if consumerEndpoint == nil { return }
             
-            api.consumers.create(credentials: knurldCredentials,
-                request: consumerCreateRequest,
-                successHandler: { loc in consumerLocator = loc },
-                failureHandler: { error in print("ERROR: \(error)")})
-            
-            sleep(UInt32(API_CALL_TIMEOUT))
-            if consumerLocator == nil {
-                fail("Unable to create consumer")
-                return
-            }
-            
-            // Create the enrollment
-            let request = EnrollmentCreateRequest(consumer: consumerLocator.getURL(), appModel: appModelLocator.getURL())
-            
-            api.enrollments.create(credentials: knurldCredentials,
-                request: request,
-                successHandler: { loc in enrollmentLocator = loc },
-                failureHandler: { error in print("ERROR: \(error)")})
-            
-            sleep(UInt32(API_CALL_TIMEOUT))
-            if enrollmentLocator == nil {
-                fail("Unable to create enrollment")
-                return
-            }
+            // Create an enrollment
+            let enrollmentRequest = EnrollmentCreateRequest(consumer: consumerEndpoint.url, appModel: appModelEndpoint.url)
+            enrollmentEndpoint = enrollmentCreateSync(api, credentials: knurldCredentials, request: enrollmentRequest)
+            if enrollmentEndpoint == nil { return }
         }
         
         describe("the create enrollment API") {
             it("returns a good response when called properly") {
-                // Create the enrollment
-                let request = EnrollmentCreateRequest(consumer: consumerLocator.getURL(), appModel: appModelLocator.getURL())
-                var locator: ResourceLocator<Enrollment>? = nil
+                if appModelEndpoint == nil || consumerEndpoint == nil {
+                    fail("Missing prerequisite")
+                    return
+                }
                 
-                api.enrollments.create(credentials: knurldCredentials,
+                // Create the enrollment
+                let request = EnrollmentCreateRequest(consumer: consumerEndpoint.url, appModel: appModelEndpoint.url)
+                var endpoint: EnrollmentEndpoint? = nil
+                
+                api.createEnrollment(credentials: knurldCredentials,
                                        request: request,
-                                       successHandler: { loc in locator = loc },
+                                       successHandler: { ep in endpoint = ep },
                                        failureHandler: { error in print("ERROR: \(error)")})
                 
-                expect(locator).toEventuallyNot(beNil(), timeout: API_CALL_TIMEOUT)
+                expect(endpoint).toEventuallyNot(beNil(), timeout: API_CALL_TIMEOUT)
             }
         }
         
         describe("the get enrollments API") {
             it("returns success when given good parameters") {
+                if appModelEndpoint == nil || consumerEndpoint == nil || enrollmentEndpoint == nil {
+                    fail("Missing prerequisite")
+                    return
+                }
+                
                 var page: EnrollmentPage? = nil
                 
-                api.enrollments.getPage(credentials: knurldCredentials,
+                api.getEnrollmentPage(credentials: knurldCredentials,
                                         successHandler: { pg in page = pg },
                                         failureHandler: { error in print("ERROR: \(error)")})
                 
@@ -497,10 +402,15 @@ class EnrollmentSpec: QuickSpec {
         
         describe("the get enrollment API") {
             it("works on a freshly created enrollment") {
+                if appModelEndpoint == nil || consumerEndpoint == nil || enrollmentEndpoint == nil {
+                    fail("Missing prerequisite")
+                    return
+                }
+                
                 // Retrieve the just-created enrollment
                 var enrollment: Enrollment! = nil
-                api.enrollments.get(credentials: knurldCredentials,
-                                  locator: enrollmentLocator,
+                api.getEnrollment(credentials: knurldCredentials,
+                                  endpoint: enrollmentEndpoint,
                                   successHandler: { enrlmnt in enrollment = enrlmnt },
                                   failureHandler: { error in print("ERROR: \(error)") })
                 sleep(UInt32(API_CALL_TIMEOUT))
@@ -509,26 +419,33 @@ class EnrollmentSpec: QuickSpec {
                     return
                 }
                 
-                expect(enrollment.consumer.href).to(equal(consumerLocator.getURL()))
+                expect(enrollment.consumer.href).to(equal(consumerEndpoint.url))
             }
         }
         
         describe("the update enrollment API") {
             it("doesn't fail internally") {
+                if appModelEndpoint == nil || consumerEndpoint == nil || enrollmentEndpoint == nil {
+                    fail("Missing prerequisite")
+                    return
+                }
+                
                 // Update the enrollment
-                var locator: ResourceLocator<Enrollment>! = nil
+                var endpoint: EnrollmentEndpoint! = nil
                 let request = EnrollmentUpdateRequest(enrollmentWav: "bjkhjklsdhlkdjaskfl", intervals: [EnrollmentInterval(phrase: "beep", start: 1, stop: 5)])
-                api.enrollments.update(credentials: knurldCredentials, locator: enrollmentLocator, request: request,
-                                       successHandler: { loc in locator = loc },
-                                       failureHandler: { error in print("ERROR: \(error)")})
+                api.updateEnrollment(credentials: knurldCredentials,
+                                     endpoint: enrollmentEndpoint,
+                                     request: request,
+                                     successHandler: { ep in endpoint = ep },
+                                     failureHandler: { error in print("ERROR: \(error)")})
                 sleep(UInt32(API_CALL_TIMEOUT))
-                if locator == nil {
+                if endpoint == nil {
                     fail("Unable to update enrollment")
                     return
                 }
                 
-                // Make sure the locator returned by update matches that returned by create
-                expect(locator).to(equal(enrollmentLocator))
+                // Make sure the endpoint returned by update matches that returned by create
+                expect(endpoint).to(equal(enrollmentEndpoint))
                 
                 //@todo verify consumer password update by attempting to log in
             }
@@ -536,11 +453,17 @@ class EnrollmentSpec: QuickSpec {
         
         describe("the delete enrollment API") {
             it("works on a freshly created enrollment") {
+                if appModelEndpoint == nil || consumerEndpoint == nil || enrollmentEndpoint == nil {
+                    fail("Missing prerequisite")
+                    return
+                }
+                
                 // Delete the enrollment
                 var deleted: Bool = false
-                api.enrollments.delete(credentials: knurldCredentials, locator: enrollmentLocator,
-                                       successHandler: { deleted = true },
-                                       failureHandler: { error in print("ERROR: \(error)")})
+                api.deleteEnrollment(credentials: knurldCredentials,
+                                     endpoint: enrollmentEndpoint,
+                                     successHandler: { deleted = true },
+                                     failureHandler: { error in print("ERROR: \(error)")})
                 
                 expect(deleted).toEventually(beTrue(), timeout: API_CALL_TIMEOUT)
             }
@@ -562,77 +485,68 @@ class VerificationSpec: QuickSpec {
                       failureHandler: { error in print("ERROR: \(error)") })
         sleep(UInt32(API_CALL_TIMEOUT))
         
-        var appModelLocator: ResourceLocator<AppModel>!
-        var consumerLocator: ResourceLocator<Consumer>!
-        var enrollmentLocator: ResourceLocator<Enrollment>!
+        var appModelEndpoint: AppModelEndpoint!
+        var consumerEndpoint: ConsumerEndpoint!
+        var enrollmentEndpoint: EnrollmentEndpoint!
+        var verificationEndpoint: VerificationEndpoint!
+        
         beforeEach {
             // Create an app model
             let appModelRequest = AppModelCreateRequest(enrollmentRepeats: 3, vocabulary: ["Toronto", "Paris", "Berlin"], verificationLength: 3)
-            api.appModels.create(credentials: knurldCredentials,
-                request: appModelRequest,
-                successHandler: { loc in appModelLocator = loc },
-                failureHandler: { error in print("ERROR: \(error)")})
-            
-            sleep(UInt32(API_CALL_TIMEOUT))
-            if appModelLocator == nil {
-                fail("Unable to create application model")
-                return
-            }
+            appModelEndpoint = appModelCreateSync(api, credentials: knurldCredentials, request: appModelRequest)
+            if appModelEndpoint == nil { return }
             
             // Create a consumer
             let username = randomAlphanumericString(length: 10)
             let password = randomAlphanumericString(length: 10)
             let gender = "M"
             let consumerCreateRequest = ConsumerCreateRequest(username: username, password: password, gender: gender)
-            
-            api.consumers.create(credentials: knurldCredentials,
-                request: consumerCreateRequest,
-                successHandler: { loc in consumerLocator = loc },
-                failureHandler: { error in print("ERROR: \(error)")})
-            
-            sleep(UInt32(API_CALL_TIMEOUT))
-            if consumerLocator == nil {
-                fail("Unable to create consumer")
-                return
-            }
+            consumerEndpoint = consumerCreateSync(api, credentials: knurldCredentials, request: consumerCreateRequest)
+            if consumerEndpoint == nil { return }
             
             // Create an enrollment
-            let request = EnrollmentCreateRequest(consumer: consumerLocator.getURL(), appModel: appModelLocator.getURL())
+            let enrollmentRequest = EnrollmentCreateRequest(consumer: consumerEndpoint.url, appModel: appModelEndpoint.url)
+            enrollmentEndpoint = enrollmentCreateSync(api, credentials: knurldCredentials, request: enrollmentRequest)
+            if enrollmentEndpoint == nil { return }
             
-            api.enrollments.create(credentials: knurldCredentials,
-                request: request,
-                successHandler: { loc in enrollmentLocator = loc },
-                failureHandler: { error in print("ERROR: \(error)")})
-            
-            sleep(UInt32(API_CALL_TIMEOUT))
-            if enrollmentLocator == nil {
-                fail("Unable to create enrollment")
-                return
-            }
+            // Create a verification
+            let verificationRequest = VerificationCreateRequest(consumer: consumerEndpoint.url, appModel: appModelEndpoint.url)
+            verificationEndpoint = verificationCreateSync(api, credentials: knurldCredentials, request: verificationRequest)
+            if verificationEndpoint == nil { return }
         }
         
         describe("the create verification API") {
             it("returns a good response when called properly") {
+                if appModelEndpoint == nil || consumerEndpoint == nil || enrollmentEndpoint == nil {
+                    fail("Missing prerequisite")
+                    return
+                }
+                
                 // Create the verification
-                let request = VerificationCreateRequest(consumer: consumerLocator.getURL(), appModel: appModelLocator.getURL())
-                var locator: ResourceLocator<Verification>? = nil
+                let request = VerificationCreateRequest(consumer: consumerEndpoint.url, appModel: appModelEndpoint.url)
+                var endpoint: VerificationEndpoint? = nil
                 
-                api.verifications.create(credentials: knurldCredentials,
-                                         request: request,
-                                         successHandler: { loc in locator = loc },
-                                         failureHandler: { error in print("ERROR: \(error)")})
+                api.createVerification(credentials: knurldCredentials,
+                                       request: request,
+                                       successHandler: { ep in endpoint = ep },
+                                       failureHandler: { error in print("ERROR: \(error)")})
                 
-                expect(locator).toEventuallyNot(beNil(), timeout: API_CALL_TIMEOUT)
+                expect(endpoint).toEventuallyNot(beNil(), timeout: API_CALL_TIMEOUT)
             }
         }
         
         describe("the get verifications API") {
             it("returns success when given good parameters") {
+                if appModelEndpoint == nil || consumerEndpoint == nil || enrollmentEndpoint == nil || verificationEndpoint == nil {
+                    fail("Missing prerequisite")
+                    return
+                }
+                
                 var page: VerificationPage? = nil
                 
-                api.verifications.getPage(credentials: knurldCredentials,
-                                          successHandler: { pg in page = pg },
-                                          failureHandler: { error in print("ERROR: \(error)")})
+                api.getVerificationPage(credentials: knurldCredentials,
+                                        successHandler: { pg in page = pg },
+                                        failureHandler: { error in print("ERROR: \(error)")})
                 
                 expect(page).toEventuallyNot(beNil(), timeout: API_CALL_TIMEOUT)
             }
@@ -640,25 +554,15 @@ class VerificationSpec: QuickSpec {
         
         describe("the get verification API") {
             it("works on a freshly created verification") {
-                // Create a verification
-                let request = VerificationCreateRequest(consumer: consumerLocator.getURL(), appModel: appModelLocator.getURL())
-                var locator: ResourceLocator<Verification>!
-                
-                api.verifications.create(credentials: knurldCredentials,
-                                         request: request,
-                                         successHandler: { loc in locator = loc },
-                                         failureHandler: { error in print("ERROR: \(error)")})
-                
-                sleep(UInt32(API_CALL_TIMEOUT))
-                if locator == nil {
-                    fail("Unable to create verification")
+                if appModelEndpoint == nil || consumerEndpoint == nil || enrollmentEndpoint == nil || verificationEndpoint == nil {
+                    fail("Missing prerequisite")
                     return
                 }
                 
                 // Retrieve the just-created verification
                 var verification: Verification! = nil
-                api.verifications.get(credentials: knurldCredentials,
-                                      locator: locator,
+                api.getVerification(credentials: knurldCredentials,
+                                      endpoint: verificationEndpoint,
                                       successHandler: { vrfctn in verification = vrfctn },
                                       failureHandler: { error in print("ERROR: \(error)") })
                 sleep(UInt32(API_CALL_TIMEOUT))
@@ -666,67 +570,50 @@ class VerificationSpec: QuickSpec {
                     fail("Unable to retrieve verification")
                     return
                 }
-                
-                expect(verification.consumer.href).to(equal(consumerLocator.getURL()))
+            
+                expect(verification.consumer.href).to(equal(consumerEndpoint.url))
             }
         }
         
         describe("the update verification API") {
             it("doesn't fail internally") {
-                // Create a verification
-                let request1 = VerificationCreateRequest(consumer: consumerLocator.getURL(), appModel: appModelLocator.getURL())
-                var locator1: ResourceLocator<Verification>! = nil
-                
-                api.verifications.create(credentials: knurldCredentials,
-                                         request: request1,
-                                         successHandler: { loc in locator1 = loc },
-                                         failureHandler: { error in print("ERROR: \(error)")})
-                
-                sleep(UInt32(API_CALL_TIMEOUT))
-                if locator1 == nil {
-                    fail("Unable to create verification")
+                if appModelEndpoint == nil || consumerEndpoint == nil || enrollmentEndpoint == nil || verificationEndpoint == nil {
+                    fail("Missing prerequisite")
                     return
                 }
                 
                 // Update the verification
-                var locator2: ResourceLocator<Verification>! = nil
-                let request2 = VerificationUpdateRequest(verificationWav: "bjkhjklsdhlkdjaskfl", intervals: [VerificationInterval(phrase: "beep", start: 1, stop: 5)])
-                api.verifications.update(credentials: knurldCredentials, locator: locator1, request: request2,
-                                         successHandler: { loc in locator2 = loc },
-                                         failureHandler: { error in print("ERROR: \(error)")})
+                let request = VerificationUpdateRequest(verificationWav: "bjkhjklsdhlkdjaskfl", intervals: [VerificationInterval(phrase: "beep", start: 1, stop: 5)])
+                var endpoint: VerificationEndpoint! = nil
+                api.updateVerification(credentials: knurldCredentials,
+                                       endpoint: verificationEndpoint,
+                                       request: request,
+                                       successHandler: { ep in endpoint = ep },
+                                       failureHandler: { error in print("ERROR: \(error)")})
                 sleep(UInt32(API_CALL_TIMEOUT))
-                if locator2 == nil {
+                if endpoint == nil {
                     fail("Unable to update verification")
                     return
                 }
                 
-                // Make sure the locator returned by update matches that returned by create
-                expect(locator1.getURL()).to(equal(locator2.getURL()))
+                // Make sure the endpoint returned by update matches that returned by create
+                expect(endpoint.url).to(equal(verificationEndpoint.url))
             }
         }
         
         describe("the delete verification API") {
             it("works on a freshly created verification") {
-                // Create a verification
-                let request = VerificationCreateRequest(consumer: consumerLocator.getURL(), appModel: appModelLocator.getURL())
-                var locator: ResourceLocator<Verification>! = nil
-                
-                api.verifications.create(credentials: knurldCredentials,
-                                         request: request,
-                                         successHandler: { loc in locator = loc },
-                                         failureHandler: { error in print("ERROR: \(error)")})
-                
-                sleep(UInt32(API_CALL_TIMEOUT))
-                if locator == nil {
-                    fail("Unable to create verification")
+                if appModelEndpoint == nil || consumerEndpoint == nil || enrollmentEndpoint == nil || verificationEndpoint == nil {
+                    fail("Missing prerequisite")
                     return
                 }
                 
                 // Delete the verification
                 var deleted: Bool = false
-                api.verifications.delete(credentials: knurldCredentials, locator: locator,
-                                         successHandler: { deleted = true },
-                                         failureHandler: { error in print("ERROR: \(error)")})
+                api.deleteVerification(credentials: knurldCredentials,
+                                       endpoint: verificationEndpoint,
+                                       successHandler: { deleted = true },
+                                       failureHandler: { error in print("ERROR: \(error)")})
                 
                 expect(deleted).toEventually(beTrue(), timeout: API_CALL_TIMEOUT)
             }

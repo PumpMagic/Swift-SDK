@@ -179,16 +179,17 @@ struct AppModelsEndpoint: SupportsJSONPosts, SupportsJSONGets {
     typealias GetHeadersType = KnurldCredentials
     typealias GetResponseType = AppModelPage
     
-    let url = KnurldV1API.HOST + "/app-models"
+    let url = KnurldV1API.API_URL + "/app-models"
 }
 
 /// /app-models/{id}
-struct AppModelEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets {
+struct AppModelEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets, SupportsDeletes {
     typealias PostHeadersType = KnurldCredentials
     typealias PostRequestType = AppModelUpdateRequest
     typealias PostResponseType = AppModelEndpoint
     typealias GetHeadersType = KnurldCredentials
     typealias GetResponseType = AppModel
+    typealias DeleteHeadersType = KnurldCredentials
     
     let url: String
     

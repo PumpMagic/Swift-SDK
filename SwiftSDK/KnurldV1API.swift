@@ -80,5 +80,156 @@ class KnurldV1API {
     {
         self.appModels.get(manager: self.requestManager, headers: credentials, successHandler: successHandler, failureHandler: failureHandler)
     }
+    
+    //@todo consider moving non-fixed-location functions like these to the relevant endpoint classes
+    func getAppModel(credentials credentials: KnurldCredentials,
+                                 endpoint: AppModelEndpoint,
+                                 successHandler: (AppModel) -> Void,
+                                 failureHandler: (HTTPRequestError) -> Void)
+    {
+        endpoint.get(manager: self.requestManager, headers: credentials, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    func updateAppModel(credentials credentials: KnurldCredentials,
+                                    endpoint: AppModelEndpoint,
+                                    request: AppModelUpdateRequest,
+                                    successHandler: (AppModelEndpoint) -> Void,
+                                    failureHandler: (HTTPRequestError) -> Void)
+    {
+        endpoint.post(manager: self.requestManager, headers: credentials, body: request, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    func deleteAppModel(credentials credentials: KnurldCredentials,
+                                    endpoint: AppModelEndpoint,
+                                    successHandler: () -> Void,
+                                    failureHandler: (HTTPRequestError) -> Void)
+    {
+        endpoint.delete(manager: self.requestManager, headers: credentials, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    
+    func createConsumer(credentials credentials: KnurldCredentials,
+                                    request: ConsumerCreateRequest,
+                                    successHandler: (ConsumerEndpoint) -> Void,
+                                    failureHandler: (HTTPRequestError) -> Void)
+    {
+        self.consumers.post(manager: self.requestManager, headers: credentials, body: request, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    func getConsumerPage(credentials credentials: KnurldCredentials,
+                                     successHandler: (ConsumerPage) -> Void,
+                                     failureHandler: (HTTPRequestError) -> Void)
+    {
+        self.consumers.get(manager: self.requestManager, headers: credentials, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    func getConsumer(credentials credentials: KnurldCredentials,
+                                 endpoint: ConsumerEndpoint,
+                                 successHandler: (Consumer) -> Void,
+                                 failureHandler: (HTTPRequestError) -> Void)
+    {
+        endpoint.get(manager: self.requestManager, headers: credentials, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    func updateConsumer(credentials credentials: KnurldCredentials,
+                                    endpoint: ConsumerEndpoint,
+                                    request: ConsumerUpdateRequest,
+                                    successHandler: (ConsumerEndpoint) -> Void,
+                                    failureHandler: (HTTPRequestError) -> Void)
+    {
+        endpoint.post(manager: self.requestManager, headers: credentials, body: request, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    func deleteConsumer(credentials credentials: KnurldCredentials,
+                                    endpoint: ConsumerEndpoint,
+                                    successHandler: () -> Void,
+                                    failureHandler: (HTTPRequestError) -> Void)
+    {
+        endpoint.delete(manager: self.requestManager, headers: credentials, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    
+    func createEnrollment(credentials credentials: KnurldCredentials,
+                                      request: EnrollmentCreateRequest,
+                                      successHandler: (EnrollmentEndpoint) -> Void,
+                                      failureHandler: (HTTPRequestError) -> Void)
+    {
+        self.enrollments.post(manager: self.requestManager, headers: credentials, body: request, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    func getEnrollmentPage(credentials credentials: KnurldCredentials,
+                                       successHandler: (EnrollmentPage) -> Void,
+                                       failureHandler: (HTTPRequestError) -> Void)
+    {
+        self.enrollments.get(manager: self.requestManager, headers: credentials, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    func getEnrollment(credentials credentials: KnurldCredentials,
+                                   endpoint: EnrollmentEndpoint,
+                                   successHandler: (Enrollment) -> Void,
+                                   failureHandler: (HTTPRequestError) -> Void)
+    {
+        endpoint.get(manager: self.requestManager, headers: credentials, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    func updateEnrollment(credentials credentials: KnurldCredentials,
+                                      endpoint: EnrollmentEndpoint,
+                                      request: EnrollmentUpdateRequest,
+                                      successHandler: (EnrollmentEndpoint) -> Void,
+                                      failureHandler: (HTTPRequestError) -> Void)
+    {
+        endpoint.post(manager: self.requestManager, headers: credentials, body: request, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    func deleteEnrollment(credentials credentials: KnurldCredentials,
+                                      endpoint: EnrollmentEndpoint,
+                                      successHandler: () -> Void,
+                                      failureHandler: (HTTPRequestError) -> Void)
+    {
+        endpoint.delete(manager: self.requestManager, headers: credentials, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    
+    func createVerification(credentials credentials: KnurldCredentials,
+                                      request: VerificationCreateRequest,
+                                      successHandler: (VerificationEndpoint) -> Void,
+                                      failureHandler: (HTTPRequestError) -> Void)
+    {
+        self.verifications.post(manager: self.requestManager, headers: credentials, body: request, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    func getVerificationPage(credentials credentials: KnurldCredentials,
+                                       successHandler: (VerificationPage) -> Void,
+                                       failureHandler: (HTTPRequestError) -> Void)
+    {
+        self.verifications.get(manager: self.requestManager, headers: credentials, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    func getVerification(credentials credentials: KnurldCredentials,
+                                   endpoint: VerificationEndpoint,
+                                   successHandler: (Verification) -> Void,
+                                   failureHandler: (HTTPRequestError) -> Void)
+    {
+        endpoint.get(manager: self.requestManager, headers: credentials, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    func updateVerification(credentials credentials: KnurldCredentials,
+                                      endpoint: VerificationEndpoint,
+                                      request: VerificationUpdateRequest,
+                                      successHandler: (VerificationEndpoint) -> Void,
+                                      failureHandler: (HTTPRequestError) -> Void)
+    {
+        endpoint.post(manager: self.requestManager, headers: credentials, body: request, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    func deleteVerification(credentials credentials: KnurldCredentials,
+                                      endpoint: VerificationEndpoint,
+                                      successHandler: () -> Void,
+                                      failureHandler: (HTTPRequestError) -> Void)
+    {
+        endpoint.delete(manager: self.requestManager, headers: credentials, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    
 }
 
