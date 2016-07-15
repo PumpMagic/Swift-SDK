@@ -206,7 +206,7 @@ struct VerificationsEndpoint: SupportsJSONPosts, SupportsJSONGets {
     typealias GetHeadersType = KnurldCredentials
     typealias GetResponseType = VerificationPage
     
-    let url = KnurldV1API.API_URL + "/verifications"
+    let url: String
 }
 
 /// /verifications/{id}
@@ -221,6 +221,6 @@ struct VerificationEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets,
     let url: String
     
     init(json: JSON) throws {
-        self.url = try json.string(KnurldV1APIConstants.hrefParam)
+        self.url = try json.string(VerificationConstants.hrefParam)
     }
 }

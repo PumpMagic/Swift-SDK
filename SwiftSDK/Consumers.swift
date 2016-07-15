@@ -172,7 +172,7 @@ struct ConsumersEndpoint: SupportsJSONPosts, SupportsJSONGets {
     typealias GetHeadersType = KnurldCredentials
     typealias GetResponseType = ConsumerPage
     
-    let url = KnurldV1API.API_URL + "/consumers"
+    let url: String
 }
 
 /// /consumers/{id}
@@ -187,29 +187,14 @@ struct ConsumerEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets, Sup
     let url: String
     
     init(json: JSON) throws {
-        self.url = try json.string(KnurldV1APIConstants.hrefParam)
+        self.url = try json.string(ConsumerConstants.hrefParam)
     }
 }
 
-//@todo model using SupportsJSONPosts
-extension KnurldV1API {
-    func authenticateConsumer(credentials credentials: KnurldCredentials, request: ConsumerAuthenticateRequest, successHandler: (token: ConsumerToken) -> Void, failureHandler: (error: HTTPRequestError) -> Void)
-    {
-        let url = KnurldV1API.API_URL + "/consumers/token"
-        let headers = credentials.toStringMap()
-        let parameters = request.toJSON()
-        
-        requestManager.postJSON(url: url, headers: headers, body: parameters,
-                                successHandler: { json in
-                                    do {
-                                        let token = try ConsumerToken(json: json)
-                                        successHandler(token: token)
-                                        return
-                                    } catch {
-                                        failureHandler(error: .ResponseDeserializationError(error: error as? JSON.Error))
-                                        return
-                                    }
-                                },
-                                failureHandler: { error in failureHandler(error: error) })
-    }
+struct AuthenticateConsumerEndpoint: SupportsJSONPosts {
+    typealias PostHeadersType = KnurldCredentials
+    typealias PostRequestType = ConsumerAuthenticateRequest
+    typealias PostResponseType = ConsumerToken
+    
+    let url: String
 }

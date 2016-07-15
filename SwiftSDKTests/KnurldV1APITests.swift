@@ -20,7 +20,7 @@ let SAMPLE_AUDIO_NUM_WORDS = 3
 
 class AuthorizationSpec: QuickSpec {
     override func spec() {
-        let api = KnurldV1API()
+        let api = KnurldAPI()
         let invalidCredentials = OAuthCredentials(clientID: "asdf", clientSecret: "asdf")
         
         it("returns a response when given valid credentials") {
@@ -49,7 +49,7 @@ class AuthorizationSpec: QuickSpec {
 
 class StatusSpec: QuickSpec {
     override func spec() {
-        let api = KnurldV1API()
+        let api = KnurldAPI()
         
         var knurldCredentials: KnurldCredentials!
         api.authorize(credentials: validOAuthCredentials,
@@ -77,7 +77,7 @@ class StatusSpec: QuickSpec {
 
 class AppModelsSpec: QuickSpec {
     override func spec() {
-        let api = KnurldV1API()
+        let api = KnurldAPI()
         
         var knurldCredentials: KnurldCredentials!
         api.authorize(credentials: validOAuthCredentials,
@@ -202,7 +202,7 @@ class AppModelsSpec: QuickSpec {
 
 class ConsumersSpec: QuickSpec {
     override func spec() {
-        let api = KnurldV1API()
+        let api = KnurldAPI()
         
         var knurldCredentials: KnurldCredentials!
         api.authorize(credentials: validOAuthCredentials,
@@ -330,7 +330,7 @@ class ConsumersSpec: QuickSpec {
 
 class EnrollmentSpec: QuickSpec {
     override func spec() {
-        let api = KnurldV1API()
+        let api = KnurldAPI()
         
         var knurldCredentials: KnurldCredentials!
         api.authorize(credentials: validOAuthCredentials,
@@ -477,7 +477,7 @@ class EnrollmentSpec: QuickSpec {
 
 class VerificationSpec: QuickSpec {
     override func spec() {
-        let api = KnurldV1API()
+        let api = KnurldAPI()
         
         var knurldCredentials: KnurldCredentials!
         api.authorize(credentials: validOAuthCredentials,
@@ -626,7 +626,7 @@ class VerificationSpec: QuickSpec {
 
 class EndpointAnalysisSpec: QuickSpec {
     override func spec() {
-        let api = KnurldV1API()
+        let api = KnurldAPI()
         
         var knurldCredentials: KnurldCredentials!
         api.authorize(credentials: validOAuthCredentials,

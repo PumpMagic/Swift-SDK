@@ -203,7 +203,7 @@ struct EnrollmentsEndpoint: SupportsJSONPosts, SupportsJSONGets {
     typealias GetHeadersType = KnurldCredentials
     typealias GetResponseType = EnrollmentPage
     
-    let url = KnurldV1API.API_URL + "/enrollments"
+    let url: String
 }
 
 /// /enrollments/{id}
@@ -218,6 +218,6 @@ struct EnrollmentEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets, S
     let url: String
     
     init(json: JSON) throws {
-        self.url = try json.string(KnurldV1APIConstants.hrefParam)
+        self.url = try json.string(EnrollmentConstants.hrefParam)
     }
 }

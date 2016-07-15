@@ -37,10 +37,9 @@ struct ServiceStatus: JSONEncodable, JSONDecodable {
 }
 
 
-/// /status
 struct StatusEndpoint: SupportsJSONGets {
     typealias GetHeadersType = KnurldCredentials
     typealias GetResponseType = ServiceStatus
     
-    let url = KnurldV1API.HOST + "/status"
+    let url: String
 }

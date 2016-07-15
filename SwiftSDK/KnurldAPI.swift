@@ -1,53 +1,61 @@
 //
-//  KnurldV1API.swift
+//  KnurldAPI.swift
 //  SwiftSDK
 //
-//  An abstraction of version 1 of the Knurld REST API.
+//  An abstraction of the Knurld web API.
 //
 //  Created by Ryan Conway on 7/6/16.
 //  Copyright © 2016 Knurld. All rights reserved.
 //
 
 import Foundation
-import Freddy
 
 
-typealias WebAddress = String
-
-struct KnurldV1APIConstants {
-    static let hrefParam = "href"
-}
-
-/// KnurldV1API abstracts out version 1 of the Knurld REST API.
-class KnurldV1API {
+/// KnurldAPI abstracts out the Knurld web API.
+public class KnurldAPI {
     let requestManager: HTTPRequestManager
+    
+    let baseURL: String
+    let versionPath: String
+    var url: String { get { return self.baseURL + self.versionPath } }
     
     // Endpoints with fixed locations
     let authorization: AuthorizationEndpoint
     let status: StatusEndpoint
     let appModels: AppModelsEndpoint
     let consumers: ConsumersEndpoint
+    let authenticateConsumerEndpoint: AuthenticateConsumerEndpoint
     let enrollments: EnrollmentsEndpoint
     let verifications: VerificationsEndpoint
     let urlEndpointAnalysis: URLEndpointAnalysisEndpoint
     
-    // URL constants
-    static let HOST = "https://api.knurld.io"
-    static let BASE_PATH = "/v1"
-    static let API_URL = HOST + BASE_PATH
-    
-    init() {
+    /// Initialize a Knurld API using a custom URL and version path, instead of e.g. "https://api.knurld.io" and "/v1"
+    init(baseURL: String, versionPath: String) {
         self.requestManager = HTTPRequestManager()
-        self.authorization = AuthorizationEndpoint()
-        self.status = StatusEndpoint()
-        self.appModels = AppModelsEndpoint()
-        self.consumers = ConsumersEndpoint()
-        self.enrollments = EnrollmentsEndpoint()
-        self.verifications = VerificationsEndpoint()
-        self.urlEndpointAnalysis = URLEndpointAnalysisEndpoint()
+        
+        self.baseURL = baseURL
+        self.versionPath = versionPath
+        
+        let url = self.baseURL + self.versionPath
+        self.authorization = AuthorizationEndpoint(url: self.baseURL + "/oauth/client_credential/accesstoken?grant_type=client_credentials")
+        self.status = StatusEndpoint(url: url + "/status")
+        self.appModels = AppModelsEndpoint(url: url + "/app-models")
+        self.consumers = ConsumersEndpoint(url: url + "/consumers")
+        self.authenticateConsumerEndpoint = AuthenticateConsumerEndpoint(url: url + "/consumers/token")
+        self.enrollments = EnrollmentsEndpoint(url: url + "/enrollments")
+        self.verifications = VerificationsEndpoint(url: url + "/verifications")
+        self.urlEndpointAnalysis = URLEndpointAnalysisEndpoint(url: url + "/endpointAnalysis/url")
     }
     
-    // For HTTP operations, see individual extensions
+    /// Initialize a Knurld API using a custom URL, instead of e.g. "https://api.knurld.io"
+    public convenience init(url: String) {
+        self.init(baseURL: url, versionPath: EndpointCommons.DEFAULT_VERSION_PATH)
+    }
+    
+    /// Initialize a Knurld API using the default URL
+    public convenience init() {
+        self.init(baseURL: EndpointCommons.DEFAULT_BASE_URL, versionPath: EndpointCommons.DEFAULT_VERSION_PATH)
+    }
     
     
     // Aliases (consider moving these to a higher abstraction)

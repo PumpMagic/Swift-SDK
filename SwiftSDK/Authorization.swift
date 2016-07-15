@@ -77,5 +77,5 @@ struct AuthorizationEndpoint: SupportsHeaderlessStringMapPosts {
     typealias PostRequestType = OAuthCredentials
     typealias PostResponseType = AuthorizationResponse
     
-    let url = KnurldV1API.HOST + "/oauth/client_credential/accesstoken?grant_type=client_credentials"
+    let url: String
 }

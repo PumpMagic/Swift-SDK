@@ -179,7 +179,7 @@ struct AppModelsEndpoint: SupportsJSONPosts, SupportsJSONGets {
     typealias GetHeadersType = KnurldCredentials
     typealias GetResponseType = AppModelPage
     
-    let url = KnurldV1API.API_URL + "/app-models"
+    let url: String
 }
 
 /// /app-models/{id}
@@ -194,6 +194,6 @@ struct AppModelEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets, Sup
     let url: String
     
     init(json: JSON) throws {
-        self.url = try json.string(KnurldV1APIConstants.hrefParam)
+        self.url = try json.string(AppModelConstants.hrefParam)
     }
 }

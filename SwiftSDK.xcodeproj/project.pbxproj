@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8840C9BD1D30A61400C501A3 /* HTTPRequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8840C9BC1D30A61400C501A3 /* HTTPRequestManager.swift */; };
+		884E3C2C1D39A10300FF5B8C /* EndpointCommons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884E3C2B1D39A10300FF5B8C /* EndpointCommons.swift */; };
 		889CB5F01D34273700B74330 /* Freddy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 889CB5EF1D34273700B74330 /* Freddy.framework */; };
 		889CB5F41D3478DD00B74330 /* AppModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889CB5F31D3478DD00B74330 /* AppModels.swift */; };
 		889CB5F61D34792600B74330 /* Authorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889CB5F51D34792600B74330 /* Authorization.swift */; };
@@ -21,7 +22,7 @@
 		88DDFE1A1D2ED47800C3C14D /* SwiftSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 88DDFE191D2ED47800C3C14D /* SwiftSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		88DDFE211D2ED47800C3C14D /* SwiftSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88DDFE161D2ED47800C3C14D /* SwiftSDK.framework */; };
 		88DDFE261D2ED47800C3C14D /* KnurldV1APITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DDFE251D2ED47800C3C14D /* KnurldV1APITests.swift */; };
-		88DDFE361D2EE0A500C3C14D /* KnurldV1API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DDFE351D2EE0A500C3C14D /* KnurldV1API.swift */; };
+		88DDFE361D2EE0A500C3C14D /* KnurldAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DDFE351D2EE0A500C3C14D /* KnurldAPI.swift */; };
 		88DDFE381D2EE0F900C3C14D /* TestCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DDFE371D2EE0F900C3C14D /* TestCredentials.swift */; };
 		88DDFE3A1D2EF99B00C3C14D /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88DDFE391D2EF99B00C3C14D /* Quick.framework */; };
 		88DDFE3C1D2EF9A300C3C14D /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88DDFE3B1D2EF9A300C3C14D /* Nimble.framework */; };
@@ -39,6 +40,7 @@
 
 /* Begin PBXFileReference section */
 		8840C9BC1D30A61400C501A3 /* HTTPRequestManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPRequestManager.swift; sourceTree = "<group>"; };
+		884E3C2B1D39A10300FF5B8C /* EndpointCommons.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndpointCommons.swift; sourceTree = "<group>"; };
 		889CB5EF1D34273700B74330 /* Freddy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Freddy.framework; path = "Carthage/Checkouts/Freddy/build/Debug-iphoneos/Freddy.framework"; sourceTree = "<group>"; };
 		889CB5F31D3478DD00B74330 /* AppModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppModels.swift; sourceTree = "<group>"; };
 		889CB5F51D34792600B74330 /* Authorization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Authorization.swift; sourceTree = "<group>"; };
@@ -55,7 +57,7 @@
 		88DDFE201D2ED47800C3C14D /* SwiftSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		88DDFE251D2ED47800C3C14D /* KnurldV1APITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnurldV1APITests.swift; sourceTree = "<group>"; };
 		88DDFE271D2ED47800C3C14D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		88DDFE351D2EE0A500C3C14D /* KnurldV1API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KnurldV1API.swift; sourceTree = "<group>"; };
+		88DDFE351D2EE0A500C3C14D /* KnurldAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KnurldAPI.swift; sourceTree = "<group>"; };
 		88DDFE371D2EE0F900C3C14D /* TestCredentials.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestCredentials.swift; sourceTree = "<group>"; };
 		88DDFE391D2EF99B00C3C14D /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = "Carthage/Checkouts/Quick/build/Debug-iphoneos/Quick.framework"; sourceTree = "<group>"; };
 		88DDFE3B1D2EF9A300C3C14D /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = "Carthage/Checkouts/Nimble/build/Debug-iphoneos/Nimble.framework"; sourceTree = "<group>"; };
@@ -83,6 +85,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		884E3C2A1D39A0C700FF5B8C /* Endpoints */ = {
+			isa = PBXGroup;
+			children = (
+				88BED13B1D36F7CF004FB426 /* RESTEndpoint.swift */,
+				884E3C2B1D39A10300FF5B8C /* EndpointCommons.swift */,
+				889CB5F51D34792600B74330 /* Authorization.swift */,
+				889CB5F71D34795500B74330 /* Status.swift */,
+				889CB5F31D3478DD00B74330 /* AppModels.swift */,
+				88BED1391D35628D004FB426 /* Consumers.swift */,
+				88BED13D1D37046C004FB426 /* Enrollments.swift */,
+				88BED13F1D380670004FB426 /* Verifications.swift */,
+				88BED1431D3975DF004FB426 /* EndpointAnalysis.swift */,
+			);
+			name = Endpoints;
+			sourceTree = "<group>";
+		};
 		88DDFE0C1D2ED47800C3C14D = {
 			isa = PBXGroup;
 			children = (
@@ -107,15 +125,8 @@
 			children = (
 				88DDFE191D2ED47800C3C14D /* SwiftSDK.h */,
 				88DDFE1B1D2ED47800C3C14D /* Info.plist */,
-				88DDFE351D2EE0A500C3C14D /* KnurldV1API.swift */,
-				889CB5F51D34792600B74330 /* Authorization.swift */,
-				889CB5F71D34795500B74330 /* Status.swift */,
-				889CB5F31D3478DD00B74330 /* AppModels.swift */,
-				88BED1391D35628D004FB426 /* Consumers.swift */,
-				88BED13D1D37046C004FB426 /* Enrollments.swift */,
-				88BED13F1D380670004FB426 /* Verifications.swift */,
-				88BED1431D3975DF004FB426 /* EndpointAnalysis.swift */,
-				88BED13B1D36F7CF004FB426 /* RESTEndpoint.swift */,
+				88DDFE351D2EE0A500C3C14D /* KnurldAPI.swift */,
+				884E3C2A1D39A0C700FF5B8C /* Endpoints */,
 				8840C9BC1D30A61400C501A3 /* HTTPRequestManager.swift */,
 			);
 			path = SwiftSDK;
@@ -251,10 +262,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				88BED13C1D36F7CF004FB426 /* RESTEndpoint.swift in Sources */,
-				88DDFE361D2EE0A500C3C14D /* KnurldV1API.swift in Sources */,
+				88DDFE361D2EE0A500C3C14D /* KnurldAPI.swift in Sources */,
 				8840C9BD1D30A61400C501A3 /* HTTPRequestManager.swift in Sources */,
 				889CB5F41D3478DD00B74330 /* AppModels.swift in Sources */,
 				889CB5F61D34792600B74330 /* Authorization.swift in Sources */,
+				884E3C2C1D39A10300FF5B8C /* EndpointCommons.swift in Sources */,
 				889CB5F81D34795500B74330 /* Status.swift in Sources */,
 				88BED1401D380670004FB426 /* Verifications.swift in Sources */,
 				88BED13A1D35628D004FB426 /* Consumers.swift in Sources */,

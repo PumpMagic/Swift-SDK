@@ -73,7 +73,7 @@ struct EndpointAnalysisEndpoint: SupportsJSONGets {
     let url: String
     
     init(summary: EndpointAnalysisSummary) {
-        self.url = KnurldV1API.API_URL + "/endpointAnalysis/\(summary.taskName)"
+        self.url = EndpointCommons.DEFAULT_URL + "/endpointAnalysis/\(summary.taskName)"
     }
 }
 
@@ -82,5 +82,5 @@ struct URLEndpointAnalysisEndpoint: SupportsJSONPosts {
     typealias PostRequestType = URLEndpointAnalysisCreateRequest
     typealias PostResponseType = EndpointAnalysisSummary
     
-    let url = KnurldV1API.API_URL + "/endpointAnalysis/url"
+    let url: String
 }

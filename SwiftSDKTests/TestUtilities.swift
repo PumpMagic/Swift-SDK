@@ -53,7 +53,7 @@ func randomAlphanumericString(length length: Int) -> String {
 }
 
 
-func appModelCreateSync(api: KnurldV1API, credentials: KnurldCredentials, request: AppModelCreateRequest) -> AppModelEndpoint! {
+func appModelCreateSync(api: KnurldAPI, credentials: KnurldCredentials, request: AppModelCreateRequest) -> AppModelEndpoint! {
     var endpoint: AppModelEndpoint!
     
     api.createAppModel(credentials: credentials,
@@ -69,7 +69,7 @@ func appModelCreateSync(api: KnurldV1API, credentials: KnurldCredentials, reques
     return endpoint
 }
 
-func consumerCreateSync(api: KnurldV1API, credentials: KnurldCredentials, request: ConsumerCreateRequest) -> ConsumerEndpoint! {
+func consumerCreateSync(api: KnurldAPI, credentials: KnurldCredentials, request: ConsumerCreateRequest) -> ConsumerEndpoint! {
     var endpoint: ConsumerEndpoint!
     
     api.createConsumer(credentials: credentials,
@@ -85,7 +85,7 @@ func consumerCreateSync(api: KnurldV1API, credentials: KnurldCredentials, reques
     return endpoint
 }
 
-func enrollmentCreateSync(api: KnurldV1API, credentials: KnurldCredentials, request: EnrollmentCreateRequest) -> EnrollmentEndpoint! {
+func enrollmentCreateSync(api: KnurldAPI, credentials: KnurldCredentials, request: EnrollmentCreateRequest) -> EnrollmentEndpoint! {
     var endpoint: EnrollmentEndpoint!
     
     api.createEnrollment(credentials: credentials,
@@ -101,7 +101,7 @@ func enrollmentCreateSync(api: KnurldV1API, credentials: KnurldCredentials, requ
     return endpoint
 }
 
-func verificationCreateSync(api: KnurldV1API, credentials: KnurldCredentials, request: VerificationCreateRequest) -> VerificationEndpoint! {
+func verificationCreateSync(api: KnurldAPI, credentials: KnurldCredentials, request: VerificationCreateRequest) -> VerificationEndpoint! {
     var endpoint: VerificationEndpoint!
     
     api.createVerification(credentials: credentials,
@@ -117,7 +117,7 @@ func verificationCreateSync(api: KnurldV1API, credentials: KnurldCredentials, re
     return endpoint
 }
 
-func endpointURLSync(api: KnurldV1API, credentials: KnurldCredentials, request: URLEndpointAnalysisCreateRequest) -> EndpointAnalysisEndpoint! {
+func endpointURLSync(api: KnurldAPI, credentials: KnurldCredentials, request: URLEndpointAnalysisCreateRequest) -> EndpointAnalysisEndpoint! {
     var endpoint: EndpointAnalysisEndpoint!
     api.endpointURL(credentials: credentials,
                     request: request,
