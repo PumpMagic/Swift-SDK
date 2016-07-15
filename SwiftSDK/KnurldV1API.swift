@@ -18,30 +18,16 @@ struct KnurldV1APIConstants {
     static let hrefParam = "href"
 }
 
-protocol KnurldResource {}
-
-struct ResourceLocator<ResourceType: KnurldResource>: JSONDecodable {
-    let href: WebAddress
-    
-    init(json: JSON) throws {
-        self.href = try json.string(KnurldV1APIConstants.hrefParam)
-    }
-    
-    init(href: String) {
-        self.href = href
-    }
-    
-    func getURL() -> String { return self.href }
-}
-
 /// KnurldV1API abstracts out version 1 of the Knurld REST API.
 class KnurldV1API {
     let requestManager: HTTPRequestManager
+    
     let authorization: AuthorizationEndpoint
-    let appModels: RESTEndpointFamily<AppModel, AppModelPage, AppModelCreateRequest, AppModelUpdateRequest>
-    let consumers: RESTEndpointFamily<Consumer, ConsumerPage, ConsumerCreateRequest, ConsumerUpdateRequest>
-    let enrollments: RESTEndpointFamily<Enrollment, EnrollmentPage, EnrollmentCreateRequest, EnrollmentUpdateRequest>
-    let verifications: RESTEndpointFamily<Verification, VerificationPage, VerificationCreateRequest, VerificationUpdateRequest>
+    let status: StatusEndpoint
+    let appModels: AppModelsEndpoint
+    let consumers: ConsumersEndpoint
+    let enrollments: EnrollmentsEndpoint
+    let verifications: VerificationsEndpoint
     
     // URL constants
     static let HOST = "https://api.knurld.io"
@@ -50,13 +36,49 @@ class KnurldV1API {
     
     init() {
         self.requestManager = HTTPRequestManager()
-        self.authorization = AuthorizationEndpoint(requestManager: self.requestManager)
-        self.appModels = RESTEndpointFamily(url: KnurldV1API.API_URL + "/app-models", requestManager: self.requestManager)
-        self.consumers = RESTEndpointFamily(url: KnurldV1API.API_URL + "/consumers", requestManager: self.requestManager)
-        self.enrollments = RESTEndpointFamily(url: KnurldV1API.API_URL + "/enrollments", requestManager: self.requestManager)
-        self.verifications = RESTEndpointFamily(url: KnurldV1API.API_URL + "/verifications", requestManager: self.requestManager)
+        self.authorization = AuthorizationEndpoint()
+        self.status = StatusEndpoint()
+        self.appModels = AppModelsEndpoint()
+        self.consumers = ConsumersEndpoint()
+        self.enrollments = EnrollmentsEndpoint()
+        self.verifications = VerificationsEndpoint()
     }
     
     // For HTTP operations, see individual extensions
+    
+    // Aliases (consider moving these to a higher abstraction)
+    func authorize(credentials credentials: OAuthCredentials,
+                               developerID: String,
+                               successHandler: (knurldCredentials: KnurldCredentials) -> Void,
+                               failureHandler: (error: HTTPRequestError) -> Void)
+    {
+        self.authorization.post(manager: self.requestManager, headers: (), body: credentials,
+                                successHandler: { response in
+                                    successHandler(knurldCredentials: KnurldCredentials(developerID: developerID, authorizationResponse: response))
+                                },
+                                failureHandler: failureHandler)
+    }
+    
+    func getStatus(credentials credentials: KnurldCredentials,
+                               successHandler: (ServiceStatus) -> Void,
+                               failureHandler: (HTTPRequestError) -> Void)
+    {
+        self.status.get(manager: self.requestManager, headers: credentials, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    func createAppModel(credentials credentials: KnurldCredentials,
+                                    request: AppModelCreateRequest,
+                                    successHandler: (AppModelEndpoint) -> Void,
+                                    failureHandler: (HTTPRequestError) -> Void)
+    {
+        self.appModels.post(manager: self.requestManager, headers: credentials, body: request, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    func getAppModelPage(credentials credentials: KnurldCredentials,
+                                     successHandler: (AppModelPage) -> Void,
+                                     failureHandler: (HTTPRequestError) -> Void)
+    {
+        self.appModels.get(manager: self.requestManager, headers: credentials, successHandler: successHandler, failureHandler: failureHandler)
+    }
 }
 

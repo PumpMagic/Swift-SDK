@@ -30,7 +30,7 @@ protocol StringMapRepresentable {
 }
 
 /// OAuth credentials
-struct ClientCredentials: StringMapRepresentable {
+struct OAuthCredentials: StringMapRepresentable {
     let clientID: String
     let clientSecret: String
     
@@ -72,26 +72,10 @@ struct KnurldCredentials: StringMapRepresentable {
 
 
 
-/// /oauth/...
-class AuthorizationEndpoint: SupportsHeaderlessStringMapPosts {
-    typealias PostRequestType = ClientCredentials
+/// /oauth/client_credential/accesstoken?grant_type=client_credentials
+struct AuthorizationEndpoint: SupportsHeaderlessStringMapPosts {
+    typealias PostRequestType = OAuthCredentials
     typealias PostResponseType = AuthorizationResponse
     
-    let requestManager: HTTPRequestManager
-    let url: String
-    
-    init(requestManager: HTTPRequestManager) {
-        self.requestManager = requestManager
-        self.url = KnurldV1API.HOST + "/oauth/client_credential/accesstoken?grant_type=client_credentials"
-    }
-    
-    /// POST /oauth/...
-    /// Get OAuth credentials
-    func post(headers headers: Void,
-                      body: ClientCredentials,
-                      successHandler: (response: AuthorizationResponse) -> Void,
-                      failureHandler: (error: HTTPRequestError) -> Void)
-    {
-        postHelper(body: body, successHandler: successHandler, failureHandler: failureHandler)
-    }
+    let url = KnurldV1API.HOST + "/oauth/client_credential/accesstoken?grant_type=client_credentials"
 }

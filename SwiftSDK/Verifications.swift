@@ -154,11 +154,11 @@ struct VerificationInstructions: JSONDecodable {
     }
 }
 
-struct Verification: KnurldResource, JSONDecodable {
+struct Verification: JSONDecodable {
     let application: VerificationApplication
     let consumer: VerificationConsumer
     let createdTime: String
-    let locator: ResourceLocator<Verification>
+    let href: String
     let instructions: VerificationInstructions
     let status: String
     let verified: String?
@@ -168,7 +168,7 @@ struct Verification: KnurldResource, JSONDecodable {
         self.application = try json.decode(VerificationConstants.appModelParam)
         self.consumer = try json.decode(VerificationConstants.consumerParam)
         self.createdTime = try json.string(VerificationConstants.createdTimeParam)
-        self.locator = try json.decode()
+        self.href = try json.string(VerificationConstants.hrefParam)
         self.instructions = try json.decode(VerificationConstants.instructionsParam)
         self.status = try json.string(VerificationConstants.statusParam)
         self.verified = try json.string(VerificationConstants.verifiedParam, alongPath: [.NullBecomesNil, .MissingKeyBecomesNil])
@@ -194,5 +194,32 @@ struct VerificationPage: JSONDecodable {
         self.total = try json.int(VerificationConstants.totalParam)
         self.href = try json.string(VerificationConstants.hrefParam)
         self.offset = try json.int(VerificationConstants.offsetParam)
+    }
+}
+
+
+/// /verifications
+struct VerificationsEndpoint: SupportsJSONPosts, SupportsJSONGets {
+    typealias PostHeadersType = KnurldCredentials
+    typealias PostRequestType = VerificationCreateRequest
+    typealias PostResponseType = VerificationEndpoint
+    typealias GetHeadersType = KnurldCredentials
+    typealias GetResponseType = VerificationPage
+    
+    let url = KnurldV1API.HOST + "/verifications"
+}
+
+/// /verifications/{id}
+struct VerificationEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets {
+    typealias PostHeadersType = KnurldCredentials
+    typealias PostRequestType = VerificationUpdateRequest
+    typealias PostResponseType = VerificationEndpoint
+    typealias GetHeadersType = KnurldCredentials
+    typealias GetResponseType = Verification
+    
+    let url: String
+    
+    init(json: JSON) throws {
+        self.url = try json.string(KnurldV1APIConstants.hrefParam)
     }
 }

@@ -37,24 +37,10 @@ struct ServiceStatus: JSONEncodable, JSONDecodable {
 }
 
 
-extension KnurldV1API {
-    /// Get the service status (GET /status)
-    func getServiceStatus(credentials credentials: KnurldCredentials, successHandler: (status: ServiceStatus) -> Void, failureHandler: (error: HTTPRequestError) -> Void)
-    {
-        let url = KnurldV1API.API_URL + "/status"
-        let headers = credentials.toStringMap()
-        
-        requestManager.get(url: url, headers: headers,
-                           successHandler: { json in
-                            do {
-                                let serviceStatus = try ServiceStatus(json: json)
-                                successHandler(status: serviceStatus)
-                                return
-                            } catch {
-                                failureHandler(error: .ResponseDeserializationError(error: error as? JSON.Error))
-                                return
-                            }
-            },
-                           failureHandler: { error in failureHandler(error: error) })
-    }
+/// /status
+struct StatusEndpoint: SupportsJSONGets {
+    typealias GetHeadersType = KnurldCredentials
+    typealias GetResponseType = ServiceStatus
+    
+    let url = KnurldV1API.HOST + "/status"
 }

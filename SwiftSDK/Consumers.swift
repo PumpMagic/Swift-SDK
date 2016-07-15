@@ -90,14 +90,14 @@ struct ConsumerAuthenticateRequest: JSONEncodable, JSONDecodable {
     }
 }
 
-struct Consumer: KnurldResource, JSONDecodable {
+struct Consumer: JSONDecodable {
     let username: String
     let gender: String
     let lastCompletedEnrollment: String?
     let lastVerification: String?
     let phrases: String
     let role: String
-    let locator: ResourceLocator<Consumer>
+    let href: String
     
     init(json: JSON) throws {
         self.username = try json.string(ConsumerConstants.usernameParam)
@@ -106,7 +106,7 @@ struct Consumer: KnurldResource, JSONDecodable {
         self.lastVerification = try json.string(ConsumerConstants.lastVerificationParam, alongPath: .NullBecomesNil)
         self.phrases = try json.string(ConsumerConstants.phrasesParam)
         self.role = try json.string(ConsumerConstants.roleParam)
-        self.locator = try json.decode()
+        self.href = try json.string(ConsumerConstants.hrefParam)
     }
 }
 
@@ -164,6 +164,33 @@ struct ConsumerCredentials: StringMapRepresentable {
 }
 
 
+/// /consumers
+struct ConsumersEndpoint: SupportsJSONPosts, SupportsJSONGets {
+    typealias PostHeadersType = KnurldCredentials
+    typealias PostRequestType = ConsumerCreateRequest
+    typealias PostResponseType = ConsumerEndpoint
+    typealias GetHeadersType = KnurldCredentials
+    typealias GetResponseType = ConsumerPage
+    
+    let url = KnurldV1API.HOST + "/consumers"
+}
+
+/// /consumers/{id}
+struct ConsumerEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets {
+    typealias PostHeadersType = KnurldCredentials
+    typealias PostRequestType = ConsumerUpdateRequest
+    typealias PostResponseType = ConsumerEndpoint
+    typealias GetHeadersType = KnurldCredentials
+    typealias GetResponseType = Consumer
+    
+    let url: String
+    
+    init(json: JSON) throws {
+        self.url = try json.string(KnurldV1APIConstants.hrefParam)
+    }
+}
+
+//@todo model using SupportsJSONPosts
 extension KnurldV1API {
     func authenticateConsumer(credentials credentials: KnurldCredentials, request: ConsumerAuthenticateRequest, successHandler: (token: ConsumerToken) -> Void, failureHandler: (error: HTTPRequestError) -> Void)
     {

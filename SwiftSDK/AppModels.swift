@@ -111,7 +111,7 @@ struct AppModelUpdateRequest: JSONEncodable {
 }
 
 /// A Knurld application model
-struct AppModel: KnurldResource, JSONEncodable, JSONDecodable {
+struct AppModel: JSONEncodable, JSONDecodable {
     let enrollmentRepeats: Int
     let vocabulary: [String]
     let verificationLength: Int
@@ -121,7 +121,7 @@ struct AppModel: KnurldResource, JSONEncodable, JSONDecodable {
     let autoThresholdMaxRise: Int
     let useModelUpdate: Bool
     let modelUpdateDailyLimit: Int
-    let locator: ResourceLocator<AppModel>
+    let href: String
     
     init(json: JSON) throws {
         self.enrollmentRepeats = try json.int(AppModelConstants.enrollmentRepeatsParam)
@@ -133,7 +133,7 @@ struct AppModel: KnurldResource, JSONEncodable, JSONDecodable {
         self.autoThresholdMaxRise = try json.int(AppModelConstants.autoThresholdMaxRiseParam)
         self.useModelUpdate = try json.bool(AppModelConstants.useModelUpdateParam)
         self.modelUpdateDailyLimit = try json.int(AppModelConstants.modelUpdateDailyLimitParam)
-        self.locator = try json.decode()
+        self.href = try json.string(AppModelConstants.hrefParam)
     }
     
     func toJSON() -> JSON {
@@ -171,5 +171,28 @@ struct AppModelPage: JSONDecodable {
     }
 }
 
+/// /app-models
+struct AppModelsEndpoint: SupportsJSONPosts, SupportsJSONGets {
+    typealias PostHeadersType = KnurldCredentials
+    typealias PostRequestType = AppModelCreateRequest
+    typealias PostResponseType = AppModelEndpoint
+    typealias GetHeadersType = KnurldCredentials
+    typealias GetResponseType = AppModelPage
+    
+    let url = KnurldV1API.HOST + "/app-models"
+}
 
-
+/// /app-models/{id}
+struct AppModelEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets {
+    typealias PostHeadersType = KnurldCredentials
+    typealias PostRequestType = AppModelUpdateRequest
+    typealias PostResponseType = AppModelEndpoint
+    typealias GetHeadersType = KnurldCredentials
+    typealias GetResponseType = AppModel
+    
+    let url: String
+    
+    init(json: JSON) throws {
+        self.url = try json.string(KnurldV1APIConstants.hrefParam)
+    }
+}

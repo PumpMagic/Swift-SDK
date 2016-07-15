@@ -11,52 +11,59 @@ import Freddy
 
 
 protocol IsAPIEndpoint {
-    var requestManager: HTTPRequestManager { get }
     var url: String { get }
 }
 
+
+/** Begin POST methods */
+
 protocol SupportsPosts: IsAPIEndpoint {
-    associatedtype HeadersType
+    associatedtype PostHeadersType
     associatedtype PostRequestType
     associatedtype PostResponseType
     
-    func post(headers headers: HeadersType,
+    func post(manager manager: HTTPRequestManager,
+                      headers: PostHeadersType,
                       body: PostRequestType,
                       successHandler: (response: PostResponseType) -> Void,
                       failureHandler: (error: HTTPRequestError) -> Void)
 }
 
 protocol SupportsHeaderlessStringMapPosts: SupportsPosts {
-    associatedtype HeadersType = Void
+    associatedtype PostHeadersType = Void
     associatedtype PostRequestType: StringMapRepresentable
     associatedtype PostResponseType: JSONDecodable
     
-    func post(headers headers: Void,
+    func post(manager manager: HTTPRequestManager,
+                      headers: Void,
                       body: PostRequestType,
                       successHandler: (response: PostResponseType) -> Void,
                       failureHandler: (error: HTTPRequestError) -> Void)
 }
 
 protocol SupportsJSONPosts: SupportsPosts {
-    associatedtype HeadersType: StringMapRepresentable
+    associatedtype PostHeadersType: StringMapRepresentable
     associatedtype PostRequestType: JSONEncodable
     associatedtype PostResponseType: JSONDecodable
     
-    func post(headers headers: HeadersType,
+    func post(manager manager: HTTPRequestManager,
+                      headers: PostHeadersType,
                       body: PostRequestType,
                       successHandler: (response: PostResponseType) -> Void,
                       failureHandler: (error: HTTPRequestError) -> Void)
 }
 
 extension SupportsHeaderlessStringMapPosts {
-    func postHelper(body body: PostRequestType,
-                         successHandler: (response: PostResponseType) -> Void,
-                         failureHandler: (error: HTTPRequestError) -> Void)
+    func post(manager manager: HTTPRequestManager,
+                      headers: PostHeadersType,
+                      body: PostRequestType,
+                      successHandler: (response: PostResponseType) -> Void,
+                      failureHandler: (error: HTTPRequestError) -> Void)
     {
         let url = self.url
         let body = body.toStringMap()
         
-        self.requestManager.postForm(url: url, headers: nil, body: body,
+        manager.postForm(url: url, headers: nil, body: body,
                                           successHandler: { json in
                                             do {
                                                 let authorizationResponse = try PostResponseType(json: json)
@@ -72,16 +79,17 @@ extension SupportsHeaderlessStringMapPosts {
 }
 
 extension SupportsJSONPosts {
-    func post(headers headers: HeadersType,
-                            body: PostRequestType,
-                            successHandler: (response: PostResponseType) -> Void,
-                            failureHandler: (error: HTTPRequestError) -> Void)
+    func post(manager manager: HTTPRequestManager,
+                      headers: PostHeadersType,
+                      body: PostRequestType,
+                      successHandler: (response: PostResponseType) -> Void,
+                      failureHandler: (error: HTTPRequestError) -> Void)
     {
         let url = self.url
         let headers = headers.toStringMap()
         let body = body.toJSON()
         
-        self.requestManager.postJSON(url: url, headers: headers, body: body,
+        manager.postJSON(url: url, headers: headers, body: body,
                                           successHandler: { json in
                                             do {
                                                 let authorizationResponse = try PostResponseType(json: json)
@@ -96,144 +104,81 @@ extension SupportsJSONPosts {
     }
 }
 
+/** End POST methods */
 
-class EndpointCRUDFamily<Creator: SupportsJSONPosts> {
-    let creator: Creator
+
+/** Begin GET methods */
+
+protocol SupportsGets: IsAPIEndpoint {
+    associatedtype GetHeadersType
+    associatedtype GetResponseType
     
-    init(creator: Creator) {
-        self.creator = creator
+    func get(manager manager: HTTPRequestManager,
+                     headers: GetHeadersType,
+                     successHandler: (response: GetResponseType) -> Void,
+                     failureHandler: (error: HTTPRequestError) -> Void)
+}
+
+protocol SupportsJSONGets: SupportsGets {
+    associatedtype GetHeadersType: StringMapRepresentable
+    associatedtype GetResponseType: JSONDecodable
+    
+    func get(manager manager: HTTPRequestManager,
+                     headers: GetHeadersType,
+                     successHandler: (response: GetResponseType) -> Void,
+                     failureHandler: (error: HTTPRequestError) -> Void)
+}
+
+extension SupportsJSONGets {
+    func get(manager manager: HTTPRequestManager,
+                     headers: GetHeadersType,
+                     successHandler: (response: GetResponseType) -> Void,
+                     failureHandler: (error: HTTPRequestError) -> Void)
+    {
+        let url = self.url
+        let headers = headers.toStringMap()
+        
+        manager.get(url: url, headers: headers,
+                    successHandler: { json in
+                        do {
+                            let authorizationResponse = try GetResponseType(json: json)
+                            successHandler(response: authorizationResponse)
+                            return
+                        } catch {
+                            failureHandler(error: .ResponseDeserializationError(error: error as? JSON.Error))
+                            return
+                        }
+            },
+                    failureHandler: { error in failureHandler(error: error) })
     }
+}
+
+/** End GET methods */
+
+/** Begin DELETE methods */
+
+protocol SupportsDeletes: IsAPIEndpoint {
+    associatedtype DeleteHeadersType: StringMapRepresentable
     
-    func create(headers headers: Creator.HeadersType,
-                        request: Creator.PostRequestType,
-                        successHandler: (response: Creator.PostResponseType) -> Void,
+    func delete(manager manager: HTTPRequestManager,
+                        headers: DeleteHeadersType,
+                        successHandler: () -> Void,
+                        failureHandler: (error: HTTPRequestError) -> Void)
+}
+
+extension SupportsDeletes {
+    func delete(manager manager: HTTPRequestManager,
+                        headers: DeleteHeadersType,
+                        successHandler: () -> Void,
                         failureHandler: (error: HTTPRequestError) -> Void)
     {
-        self.creator.post(credentials: credentials, request: request, successHandler: successHandler, failureHandler: failureHandler)
+        let url = self.url
+        let headers = headers.toStringMap()
+        
+        manager.delete(url: url, headers: headers,
+                       successHandler: successHandler,
+                       failureHandler: { error in failureHandler(error: error) })
     }
 }
 
-
-
-/// A class of REST endpoints that combined implement CRUD operations for a single data type
-class RESTEndpointFamily<ResourceType: protocol<KnurldResource, JSONDecodable>, ResourcePageType: JSONDecodable, ResourceCreateRequestType: JSONEncodable, ResourceUpdateRequestType: JSONEncodable>
-{
-    let url: String
-    let requestManager: HTTPRequestManager
-    
-    init(url: String, requestManager: HTTPRequestManager) {
-        self.url = url
-        self.requestManager = requestManager
-    }
-    
-    func create(credentials credentials: KnurldCredentials,
-                            request: ResourceCreateRequestType,
-                            successHandler: (locator: ResourceLocator<ResourceType>) -> Void,
-                            failureHandler: (error: HTTPRequestError) -> Void)
-    {
-        let url = self.url
-        let headers = credentials.toStringMap()
-        let body = request.toJSON()
-        
-        print("CREATE (POST): URL: \(url) headers: \(headers) body: \(body)")
-        
-        requestManager.postJSON(url: url, headers: headers, body: body,
-                                successHandler: { json in
-                                    do {
-                                        let locator = try ResourceLocator<ResourceType>(json: json)
-                                        successHandler(locator: locator)
-                                        return
-                                    } catch {
-                                        failureHandler(error: .ResponseDeserializationError(error: error as? JSON.Error))
-                                        return
-                                    }
-            },
-                                failureHandler: { error in failureHandler(error: error) })
-    }
-    
-    func get(credentials credentials: KnurldCredentials,
-                         locator: ResourceLocator<ResourceType>,
-                         successHandler: (resource: ResourceType) -> Void,
-                         failureHandler: (error: HTTPRequestError) -> Void)
-    {
-        let url = locator.getURL()
-        let headers = credentials.toStringMap()
-        
-        print("GET: URL: \(url) headers: \(headers)")
-        
-        self.requestManager.get(url: url,
-                                headers: headers,
-                                successHandler: { json in
-                                    do {
-                                        let resource = try ResourceType(json: json)
-                                        successHandler(resource: resource)
-                                        return
-                                    } catch {
-                                        failureHandler(error: .ResponseDeserializationError(error: error as? JSON.Error))
-                                        return
-                                    }
-            },
-                                failureHandler: { error in failureHandler(error: error) })
-    }
-    
-    func update(credentials credentials: KnurldCredentials,
-                            locator: ResourceLocator<ResourceType>,
-                            request: ResourceUpdateRequestType,
-                            successHandler: (locator: ResourceLocator<ResourceType>) -> Void,
-                            failureHandler: (error: HTTPRequestError) -> Void)
-    {
-        let url = locator.getURL()
-        let headers = credentials.toStringMap()
-        let body = request.toJSON()
-        
-        print("UPDATE: URL: \(url) headers: \(headers) body: \(body)")
-        
-        requestManager.postJSON(url: url, headers: headers, body: body,
-                                successHandler: { json in
-                                    do {
-                                        let locator = try ResourceLocator<ResourceType>(json: json)
-                                        successHandler(locator: locator)
-                                        return
-                                    } catch {
-                                        failureHandler(error: .ResponseDeserializationError(error: error as? JSON.Error))
-                                    }
-            },
-                                failureHandler: { error in failureHandler(error: error) })
-    }
-    
-    func delete(credentials credentials: KnurldCredentials,
-                            locator: ResourceLocator<ResourceType>,
-                            successHandler: () -> Void,
-                            failureHandler: (error: HTTPRequestError) -> Void)
-    {
-        let url = locator.getURL()
-        let headers = credentials.toStringMap()
-        
-        print("DELETE: URL: \(url) headers: \(headers)")
-        
-        requestManager.delete(url: url, headers: headers, successHandler: successHandler, failureHandler: failureHandler)
-    }
-    
-    func getPage(credentials credentials: KnurldCredentials,
-                             successHandler: (page: ResourcePageType) -> Void,
-                             failureHandler: (error: HTTPRequestError) -> Void)
-    {
-        let url = self.url
-        let headers = credentials.toStringMap()
-        
-        print("GET page: URL: \(url) headers: \(headers)")
-        
-        requestManager.get(url: url, headers: headers,
-                           successHandler: { json in
-                            do {
-                                let page = try ResourcePageType(json: json)
-                                successHandler(page: page)
-                                return
-                            } catch  {
-                                failureHandler(error: .ResponseDeserializationError(error: error as? JSON.Error))
-                                return
-                            }
-                            },
-                           failureHandler: { error in failureHandler(error: error) })
-    }
-}
+/** End DELETE methods */

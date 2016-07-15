@@ -12,16 +12,7 @@ import Nimble
 
 
 let API_CALL_TIMEOUT: NSTimeInterval = 5 // seconds
-let validOAuthCredentials = ClientCredentials(clientID: TEST_CLIENT_ID, clientSecret: TEST_CLIENT_SECRET)
-
-extension ResourceLocator: Equatable {}
-func ==<T>(lhs: ResourceLocator<T>, rhs: ResourceLocator<T>) -> Bool {
-    if lhs.href == rhs.href {
-        return true
-    }
-    
-    return false
-}
+let validOAuthCredentials = OAuthCredentials(clientID: TEST_CLIENT_ID, clientSecret: TEST_CLIENT_SECRET)
 
 extension AppModel: Equatable {}
 func ==(lhs: AppModel, rhs: AppModel) -> Bool {
@@ -49,28 +40,29 @@ func randomAlphanumericString(length length: Int) -> String {
     return randomString
 }
 
-
 class AuthorizationSpec: QuickSpec {
-    let api = KnurldV1API()
-    let invalidCredentials = ClientCredentials(clientID: "asdf", clientSecret: "asdf")
-    
     override func spec() {
+        let api = KnurldV1API()
+        let invalidCredentials = OAuthCredentials(clientID: "asdf", clientSecret: "asdf")
+        
         it("returns a response when given valid credentials") {
-            var response: AuthorizationResponse? = nil
+            var knurldCredentials: KnurldCredentials? = nil
             
-            self.api.authorize(credentials: validOAuthCredentials,
-                          successHandler: { resp in response = resp },
+            api.authorize(credentials: validOAuthCredentials,
+                          developerID: TEST_DEVELOPER_ID,
+                          successHandler: { creds in knurldCredentials = creds },
                           failureHandler: { error in print("ERROR: \(error)") })
             
-            expect(response).toEventuallyNot(beNil(), timeout: API_CALL_TIMEOUT)
+            expect(knurldCredentials).toEventuallyNot(beNil(), timeout: API_CALL_TIMEOUT)
         }
         
         it("fails when given bad credentials") {
             var apiError: HTTPRequestError? = nil
             
-            self.api.authorize(credentials: self.invalidCredentials,
-                               successHandler: { _ in () },
-                               failureHandler: { error in apiError = error })
+            api.authorize(credentials: invalidCredentials,
+                          developerID: "askdjhsakdhsak",
+                          successHandler: { _ in () },
+                          failureHandler: { error in apiError = error })
             
             expect(apiError).toEventuallyNot(beNil(), timeout: API_CALL_TIMEOUT)
         }
@@ -83,8 +75,10 @@ class StatusSpec: QuickSpec {
         
         var knurldCredentials: KnurldCredentials!
         api.authorize(credentials: validOAuthCredentials,
-                      successHandler: { resp in
-                        knurldCredentials = KnurldCredentials(developerID: TEST_DEVELOPER_ID, authorizationResponse: resp) },
+                      developerID: TEST_DEVELOPER_ID,
+                      successHandler: { creds in
+                        knurldCredentials = creds
+                      },
                       failureHandler: { error in print("ERROR: \(error)") })
         sleep(UInt32(API_CALL_TIMEOUT))
         
@@ -92,14 +86,31 @@ class StatusSpec: QuickSpec {
             it("returns a response when called properly") {
                 var status: ServiceStatus? = nil
                 
-                api.getServiceStatus(credentials: knurldCredentials,
-                                     successHandler: { stat in status = stat },
-                                     failureHandler: { error in print("ERROR: \(error)") })
+                api.getStatus(credentials: knurldCredentials,
+                              successHandler: { stat in status = stat },
+                              failureHandler: { error in print("ERROR: \(error)") })
                 
                 expect(status).toEventuallyNot(beNil(), timeout: API_CALL_TIMEOUT)
             }
         }
     }
+}
+
+
+func appModelCreateSync(api: KnurldV1API, credentials: KnurldCredentials, request: AppModelCreateRequest) -> AppModelEndpoint {
+    var endpoint: AppModelEndpoint!
+    
+    api.createAppModel(credentials: credentials,
+                       request: request,
+                       successHandler: { ep in endpoint = ep },
+                       failureHandler: { error in print("ERROR: \(error)")})
+    sleep(UInt32(API_CALL_TIMEOUT))
+    
+    if endpoint == nil {
+        fail("Unable to create app model")
+    }
+    
+    return endpoint
 }
 
 class AppModelsSpec: QuickSpec {
@@ -108,22 +119,24 @@ class AppModelsSpec: QuickSpec {
         
         var knurldCredentials: KnurldCredentials!
         api.authorize(credentials: validOAuthCredentials,
-                      successHandler: { resp in
-                        knurldCredentials = KnurldCredentials(developerID: TEST_DEVELOPER_ID, authorizationResponse: resp) },
+                      developerID: TEST_DEVELOPER_ID,
+                      successHandler: { creds in
+                        knurldCredentials = creds
+            },
                       failureHandler: { error in print("ERROR: \(error)") })
         sleep(UInt32(API_CALL_TIMEOUT))
         
         describe("the create app model API") {
             it("returns a good response when called properly") {
                 let request = AppModelCreateRequest(enrollmentRepeats: 3, vocabulary: ["Toronto", "Paris", "Berlin"], verificationLength: 3)
-                var locator: ResourceLocator<AppModel>? = nil
+                var endpoint: AppModelEndpoint?
                 
-                api.appModels.create(credentials: knurldCredentials,
-                                            request: request,
-                                            successHandler: { loc in locator = loc },
+                api.createAppModel(credentials: knurldCredentials,
+                                   request: request,
+                                            successHandler: { ep in endpoint = ep },
                                             failureHandler: { error in print("ERROR: \(error)")})
                 
-                expect(locator).toEventuallyNot(beNil(), timeout: API_CALL_TIMEOUT)
+                expect(endpoint).toEventuallyNot(beNil(), timeout: API_CALL_TIMEOUT)
             }
         }
         
@@ -131,7 +144,7 @@ class AppModelsSpec: QuickSpec {
             it("returns success when given good parameters") {
                 var page: AppModelPage? = nil
                 
-                api.appModels.getPage(credentials: knurldCredentials,
+                api.getAppModelPage(credentials: knurldCredentials,
                                       successHandler: { pg in page = pg },
                                       failureHandler: { error in print("ERROR: \(error)")})
                 
@@ -141,22 +154,12 @@ class AppModelsSpec: QuickSpec {
         
         describe("the get app model API") {
             it("works on a freshly created app model") {
-                let createRequest = AppModelCreateRequest(enrollmentRepeats: 3, vocabulary: ["Toronto", "Paris", "Berlin"], verificationLength: 3)
-                var locator: ResourceLocator<AppModel>! = nil
-                
-                api.appModels.create(credentials: knurldCredentials,
-                                            request: createRequest,
-                                            successHandler: { loc in locator = loc },
-                                            failureHandler: { error in print("ERROR: \(error)")})
-                
-                sleep(UInt32(API_CALL_TIMEOUT))
-                if locator == nil {
-                    fail("Unable to create app model for retrieving")
-                    return
-                }
+                let request = AppModelCreateRequest(enrollmentRepeats: 3, vocabulary: ["Toronto", "Paris", "Berlin"], verificationLength: 3)
+                let endpoint: AppModelEndpoint! = appModelCreateSync(api, credentials: knurldCredentials, request: request)
+                if endpoint == nil { return }
                 
                 var model: AppModel! = nil
-                api.appModels.get(credentials: knurldCredentials,
+                endpoint.get(credentials: knurldCredentials,
                                          locator: locator,
                                          successHandler: { mdl in model = mdl },
                                          failureHandler: { error in print("ERROR: \(error)") })
@@ -256,8 +259,10 @@ class ConsumersSpec: QuickSpec {
         
         var knurldCredentials: KnurldCredentials!
         api.authorize(credentials: validOAuthCredentials,
-                      successHandler: { resp in
-                        knurldCredentials = KnurldCredentials(developerID: TEST_DEVELOPER_ID, authorizationResponse: resp) },
+                      developerID: TEST_DEVELOPER_ID,
+                      successHandler: { creds in
+                        knurldCredentials = creds
+            },
                       failureHandler: { error in print("ERROR: \(error)") })
         sleep(UInt32(API_CALL_TIMEOUT))
         
@@ -407,8 +412,10 @@ class EnrollmentSpec: QuickSpec {
         
         var knurldCredentials: KnurldCredentials!
         api.authorize(credentials: validOAuthCredentials,
-                      successHandler: { resp in
-                        knurldCredentials = KnurldCredentials(developerID: TEST_DEVELOPER_ID, authorizationResponse: resp) },
+                      developerID: TEST_DEVELOPER_ID,
+                      successHandler: { creds in
+                        knurldCredentials = creds
+            },
                       failureHandler: { error in print("ERROR: \(error)") })
         sleep(UInt32(API_CALL_TIMEOUT))
         
@@ -548,8 +555,10 @@ class VerificationSpec: QuickSpec {
         
         var knurldCredentials: KnurldCredentials!
         api.authorize(credentials: validOAuthCredentials,
-                      successHandler: { resp in
-                        knurldCredentials = KnurldCredentials(developerID: TEST_DEVELOPER_ID, authorizationResponse: resp) },
+                      developerID: TEST_DEVELOPER_ID,
+                      successHandler: { creds in
+                        knurldCredentials = creds
+            },
                       failureHandler: { error in print("ERROR: \(error)") })
         sleep(UInt32(API_CALL_TIMEOUT))
         
