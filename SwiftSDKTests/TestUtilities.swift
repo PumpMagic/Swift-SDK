@@ -116,3 +116,19 @@ func verificationCreateSync(api: KnurldV1API, credentials: KnurldCredentials, re
     
     return endpoint
 }
+
+func endpointURLSync(api: KnurldV1API, credentials: KnurldCredentials, request: URLEndpointAnalysisCreateRequest) -> EndpointAnalysisEndpoint! {
+    var endpoint: EndpointAnalysisEndpoint!
+    api.endpointURL(credentials: credentials,
+                    request: request,
+                    successHandler: { ep in endpoint = ep },
+                    failureHandler: { error in print("ERROR: \(error)") })
+    sleep(UInt32(API_CALL_TIMEOUT))
+    
+    if endpoint == nil {
+        fail("Unable to create consumer")
+    }
+    
+    return endpoint
+}
+

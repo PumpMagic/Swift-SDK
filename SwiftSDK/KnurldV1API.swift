@@ -22,12 +22,14 @@ struct KnurldV1APIConstants {
 class KnurldV1API {
     let requestManager: HTTPRequestManager
     
+    // Endpoints with fixed locations
     let authorization: AuthorizationEndpoint
     let status: StatusEndpoint
     let appModels: AppModelsEndpoint
     let consumers: ConsumersEndpoint
     let enrollments: EnrollmentsEndpoint
     let verifications: VerificationsEndpoint
+    let urlEndpointAnalysis: URLEndpointAnalysisEndpoint
     
     // URL constants
     static let HOST = "https://api.knurld.io"
@@ -42,9 +44,11 @@ class KnurldV1API {
         self.consumers = ConsumersEndpoint()
         self.enrollments = EnrollmentsEndpoint()
         self.verifications = VerificationsEndpoint()
+        self.urlEndpointAnalysis = URLEndpointAnalysisEndpoint()
     }
     
     // For HTTP operations, see individual extensions
+    
     
     // Aliases (consider moving these to a higher abstraction)
     func authorize(credentials credentials: OAuthCredentials,
@@ -231,5 +235,25 @@ class KnurldV1API {
     }
     
     
+    func endpointURL(credentials credentials: KnurldCredentials,
+                                 request: URLEndpointAnalysisCreateRequest,
+                                 successHandler: (EndpointAnalysisEndpoint) -> Void,
+                                 failureHandler: (HTTPRequestError) -> Void)
+    {
+        urlEndpointAnalysis.post(manager: self.requestManager,
+                                 headers: credentials,
+                                 body: request,
+                                 successHandler: { summary in
+                                    successHandler(EndpointAnalysisEndpoint(summary: summary)) },
+                                 failureHandler: failureHandler)
+    }
+    
+    func getEndpointingStatus(credentials credentials: KnurldCredentials,
+                                          endpoint: EndpointAnalysisEndpoint,
+                                          successHandler: (EndpointAnalysis) -> Void,
+                                          failureHandler: (HTTPRequestError) -> Void)
+    {
+        endpoint.get(manager: self.requestManager, headers: credentials, successHandler: successHandler, failureHandler: failureHandler)
+    }
 }
 

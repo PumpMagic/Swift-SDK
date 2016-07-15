@@ -12,8 +12,11 @@ import Nimble
 
 
 let API_CALL_TIMEOUT: NSTimeInterval = 5 // seconds
+let ENDPOINT_ANALYSIS_DELAY: NSTimeInterval = 3 // seconds
 let validOAuthCredentials = OAuthCredentials(clientID: TEST_CLIENT_ID, clientSecret: TEST_CLIENT_SECRET)
 
+let SAMPLE_AUDIO_URL = "https://www.dropbox.com/s/o5sbxrxday9pyjg/bostonivorychicago.wav?dl=1"
+let SAMPLE_AUDIO_NUM_WORDS = 3
 
 class AuthorizationSpec: QuickSpec {
     override func spec() {
@@ -148,7 +151,7 @@ class AppModelsSpec: QuickSpec {
                 api.updateAppModel(credentials: knurldCredentials,
                                    endpoint: endpoint1,
                                    request: request2,
-                                   successHandler: { loc in endpoint2 = loc },
+                                   successHandler: { ep in endpoint2 = ep },
                                    failureHandler: { error in print("ERROR: \(error)")})
                 sleep(UInt32(API_CALL_TIMEOUT))
                 if endpoint2 == nil {
@@ -156,7 +159,7 @@ class AppModelsSpec: QuickSpec {
                     return
                 }
                 
-                // Make sure the locator returned by update matches that returned by create
+                // Make sure the endpoint returned by update matches that returned by create
                 expect(endpoint1).to(equal(endpoint2))
                 
                 // Retrieve the (hopefully updated) app model
@@ -292,7 +295,7 @@ class ConsumersSpec: QuickSpec {
                     return
                 }
                 
-                // Make sure the locator returned by update matches that returned by create
+                // Make sure the endpoint returned by update matches that returned by create
                 expect(endpoint1).to(equal(endpoint2))
                 
                 //@todo verify consumer password update by attempting to log in
@@ -618,5 +621,52 @@ class VerificationSpec: QuickSpec {
                 expect(deleted).toEventually(beTrue(), timeout: API_CALL_TIMEOUT)
             }
         }
+    }
+}
+
+class EndpointAnalysisSpec: QuickSpec {
+    override func spec() {
+        let api = KnurldV1API()
+        
+        var knurldCredentials: KnurldCredentials!
+        api.authorize(credentials: validOAuthCredentials,
+                      developerID: TEST_DEVELOPER_ID,
+                      successHandler: { creds in
+                        knurldCredentials = creds
+            },
+                      failureHandler: { error in print("ERROR: \(error)") })
+        sleep(UInt32(API_CALL_TIMEOUT))
+        
+        describe("the endpoint URL endpoint") {
+            it("returns a good response when called properly") {
+                let request = URLEndpointAnalysisCreateRequest(audioURL: SAMPLE_AUDIO_URL, numWords: SAMPLE_AUDIO_NUM_WORDS)
+                var endpoint: EndpointAnalysisEndpoint?
+                api.endpointURL(credentials: knurldCredentials,
+                                request: request,
+                                successHandler: { ep in endpoint = ep },
+                                failureHandler: { error in print("ERROR: \(error)") })
+                
+                expect(endpoint).toEventuallyNot(beNil(), timeout: API_CALL_TIMEOUT)
+            }
+        }
+        
+        describe("the endpoint analysis endpoint") {
+            it("returns intervals when given a good audio file") {
+                let request = URLEndpointAnalysisCreateRequest(audioURL: SAMPLE_AUDIO_URL, numWords: SAMPLE_AUDIO_NUM_WORDS)
+                let endpoint = endpointURLSync(api, credentials: knurldCredentials, request: request)
+                if endpoint == nil { return }
+                
+                sleep(UInt32(ENDPOINT_ANALYSIS_DELAY))
+                
+                var analysis: EndpointAnalysis?
+                api.getEndpointingStatus(credentials: knurldCredentials,
+                                         endpoint: endpoint,
+                                         successHandler: { anlyss in analysis = anlyss },
+                                         failureHandler: { error in print("ERROR: \(error)") })
+                
+                expect(analysis).toEventuallyNot(beNil(), timeout: API_CALL_TIMEOUT)
+            }
+        }
+        
     }
 }
