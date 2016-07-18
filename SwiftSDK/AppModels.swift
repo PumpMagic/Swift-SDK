@@ -31,7 +31,7 @@ private struct AppModelConstants {
 }
 
 /// All parameters needed to create a Knurld application model creation request
-struct AppModelCreateRequest: JSONEncodable {
+public struct AppModelCreateRequest: JSONEncodable {
     // Mandatory fields
     let enrollmentRepeats: Int
     let vocabulary: [String]
@@ -45,20 +45,29 @@ struct AppModelCreateRequest: JSONEncodable {
     let useModelUpdate: Bool?
     let modelUpdateDailyLimit: Int?
     
-    init(enrollmentRepeats: Int, vocabulary: [String], verificationLength: Int) {
+    public init(enrollmentRepeats: Int, vocabulary: [String], verificationLength: Int) {
+        self.init(enrollmentRepeats: enrollmentRepeats, vocabulary: vocabulary, verificationLength: verificationLength, threshold: nil,
+                  autoThresholdEnable: nil, autoThresholdClearance: nil, autoThresholdMaxRise: nil, useModelUpdate: nil, modelUpdateDailyLimit: nil)
+    }
+    
+    public init(enrollmentRepeats: Int, vocabulary: [String], verificationLength: Int, threshold: Double?, autoThresholdEnable: Bool?,
+                autoThresholdClearance: Int?, autoThresholdMaxRise: Int?, useModelUpdate: Bool?, modelUpdateDailyLimit: Int?)
+    {
         self.enrollmentRepeats = enrollmentRepeats
         self.vocabulary = vocabulary
         self.verificationLength = verificationLength
         
-        self.threshold = nil
-        self.autoThresholdEnable = nil
-        self.autoThresholdClearance = nil
-        self.autoThresholdMaxRise = nil
-        self.useModelUpdate = nil
-        self.modelUpdateDailyLimit = nil
+        self.threshold = threshold
+        self.autoThresholdEnable = autoThresholdEnable
+        self.autoThresholdClearance = autoThresholdClearance
+        self.autoThresholdMaxRise = autoThresholdMaxRise
+        self.useModelUpdate = useModelUpdate
+        self.modelUpdateDailyLimit = modelUpdateDailyLimit
     }
     
-    func toJSON() -> JSON {
+    /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public func toJSON() -> JSON {
         var json: [String : JSON] = [
             AppModelConstants.enrollmentRepeatsParam: .Int(self.enrollmentRepeats),
             AppModelConstants.vocabularyParam: .Array(self.vocabulary.map(JSON.String)),
@@ -88,12 +97,20 @@ struct AppModelCreateRequest: JSONEncodable {
 }
 
 /// All parameters needed to create a Knurld application model update request
-struct AppModelUpdateRequest: JSONEncodable {
+public struct AppModelUpdateRequest: JSONEncodable {
     let enrollmentRepeats: Int?
     let threshold: Double?
     let verificationLength: Int?
     
-    func toJSON() -> JSON {
+    public init(enrollmentRepeats: Int?, threshold: Double?, verificationLength: Int?) {
+        self.enrollmentRepeats = enrollmentRepeats
+        self.threshold = threshold
+        self.verificationLength = verificationLength
+    }
+    
+    /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public func toJSON() -> JSON {
         var json: [String : JSON] = [:]
         
         if let enrollmentRepeats = self.enrollmentRepeats {
@@ -111,19 +128,21 @@ struct AppModelUpdateRequest: JSONEncodable {
 }
 
 /// A Knurld application model
-struct AppModel: JSONEncodable, JSONDecodable {
-    let enrollmentRepeats: Int
-    let vocabulary: [String]
-    let verificationLength: Int
-    let threshold: Double
-    let autoThresholdEnable: Bool
-    let autoThresholdClearance: Int
-    let autoThresholdMaxRise: Int
-    let useModelUpdate: Bool
-    let modelUpdateDailyLimit: Int
-    let href: String
+public struct AppModel: JSONEncodable, JSONDecodable {
+    public let enrollmentRepeats: Int
+    public let vocabulary: [String]
+    public let verificationLength: Int
+    public let threshold: Double
+    public let autoThresholdEnable: Bool
+    public let autoThresholdClearance: Int
+    public let autoThresholdMaxRise: Int
+    public let useModelUpdate: Bool
+    public let modelUpdateDailyLimit: Int
+    public let href: String
     
-    init(json: JSON) throws {
+    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public init(json: JSON) throws {
         self.enrollmentRepeats = try json.int(AppModelConstants.enrollmentRepeatsParam)
         self.vocabulary = try json.array(AppModelConstants.vocabularyParam).map(String.init)
         self.verificationLength = try json.int(AppModelConstants.verificationLengthParam)
@@ -136,7 +155,9 @@ struct AppModel: JSONEncodable, JSONDecodable {
         self.href = try json.string(AppModelConstants.hrefParam)
     }
     
-    func toJSON() -> JSON {
+    /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public func toJSON() -> JSON {
         return .Dictionary([
             AppModelConstants.enrollmentRepeatsParam: .Int(self.enrollmentRepeats),
             AppModelConstants.vocabularyParam: .Array(self.vocabulary.map(JSON.String)),
@@ -151,16 +172,18 @@ struct AppModel: JSONEncodable, JSONDecodable {
 }
 
 /// A subset of an application's app models with metadata and information on where the rest are
-struct AppModelPage: JSONDecodable {
-    let limit: Int
-    let next: WebAddress?
-    let items: [AppModel]
-    let prev: WebAddress?
-    let total: Int
-    let href: WebAddress
-    let offset: Int
+public struct AppModelPage: JSONDecodable {
+    public let limit: Int
+    public let next: WebAddress?
+    public let items: [AppModel]
+    public let prev: WebAddress?
+    public let total: Int
+    public let href: WebAddress
+    public let offset: Int
     
-    init(json: JSON) throws {
+    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public init(json: JSON) throws {
         self.limit = try json.int(AppModelConstants.limitParam)
         self.next = try json.string(AppModelConstants.nextParam, alongPath: [.NullBecomesNil])
         self.items = try json.array(AppModelConstants.itemsParam).map(AppModel.init)
@@ -182,8 +205,9 @@ struct AppModelsEndpoint: SupportsJSONPosts, SupportsJSONGets {
     let url: String
 }
 
-/// /app-models/{id}
-struct AppModelEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets, SupportsDeletes {
+
+public struct AppModelEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets, SupportsDeletes {
+    // ( /app-models/{id} )
     typealias PostHeadersType = KnurldCredentials
     typealias PostRequestType = AppModelUpdateRequest
     typealias PostResponseType = AppModelEndpoint
@@ -193,7 +217,9 @@ struct AppModelEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets, Sup
     
     let url: String
     
-    init(json: JSON) throws {
+    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public init(json: JSON) throws {
         self.url = try json.string(AppModelConstants.hrefParam)
     }
 }

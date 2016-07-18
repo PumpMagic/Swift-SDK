@@ -23,16 +23,17 @@ struct AuthorizationConstants {
     static let authorizationPrefix = "Bearer "
 }
 
-/// StringMapRepresentable captures items that can be represented as string:string maps
-/// This is for use with API endpoints that work with form bodies instead of JSON bodies
-protocol StringMapRepresentable {
-    func toStringMap() -> [String : String]
-}
+
 
 /// OAuth credentials
-struct OAuthCredentials: StringMapRepresentable {
+public struct OAuthCredentials: StringMapRepresentable {
     let clientID: String
     let clientSecret: String
+    
+    public init(clientID: String, clientSecret: String) {
+        self.clientID = clientID
+        self.clientSecret = clientSecret
+    }
     
     func toStringMap() -> [String : String] {
         return [AuthorizationConstants.clientIDParam: clientID, AuthorizationConstants.clientSecretParam: clientSecret]
@@ -50,11 +51,11 @@ struct AuthorizationResponse: JSONDecodable {
 }
 
 /// Knurld credentials
-struct KnurldCredentials: StringMapRepresentable {
+public struct KnurldCredentials: StringMapRepresentable {
     let developerID: String
     let authorization: String
     
-    init(developerID: String, authorization: String) {
+    public init(developerID: String, authorization: String) {
         self.developerID = developerID
         self.authorization = authorization
     }

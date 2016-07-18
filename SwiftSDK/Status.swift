@@ -17,19 +17,23 @@ private struct ServiceStatusConstants {
 }
 
 /// Knurld service health status
-struct ServiceStatus: JSONEncodable, JSONDecodable {
-    let href: WebAddress
-    let name: String
-    let version: String
+public struct ServiceStatus: JSONEncodable, JSONDecodable {
+    public let href: WebAddress
+    public let name: String
+    public let version: String
     
-    func toJSON() -> JSON {
+    /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public func toJSON() -> JSON {
         return .Dictionary([
             ServiceStatusConstants.hrefParam: .String(self.href),
             ServiceStatusConstants.nameParam: .String(self.name),
             ServiceStatusConstants.versionParam: .String(self.version)])
     }
     
-    init(json: JSON) throws {
+    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public init(json: JSON) throws {
         self.href = try json.string(ServiceStatusConstants.hrefParam)
         self.name = try json.string(ServiceStatusConstants.nameParam)
         self.version = try json.string(ServiceStatusConstants.versionParam)

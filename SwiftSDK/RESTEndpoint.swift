@@ -14,6 +14,12 @@ protocol IsAPIEndpoint {
     var url: String { get }
 }
 
+/// StringMapRepresentable captures items that can be represented as string:string maps
+/// This is for use with API endpoints that work with form bodies instead of JSON bodies
+protocol StringMapRepresentable {
+    func toStringMap() -> [String : String]
+}
+
 
 /** Begin POST methods */
 

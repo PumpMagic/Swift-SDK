@@ -43,110 +43,130 @@ private struct VerificationConstants {
     static let offsetParam = "offset"
 }
 
-struct VerificationCreateRequest: JSONEncodable, JSONDecodable {
+public struct VerificationCreateRequest: JSONEncodable, JSONDecodable {
     let consumer: String
     let appModel: String
     
-    func toJSON() -> JSON {
+    /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public func toJSON() -> JSON {
         return .Dictionary([
             VerificationConstants.consumerParam: .String(self.consumer),
             VerificationConstants.appModelParam: .String(self.appModel)])
     }
     
-    init(json: JSON) throws {
+    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public init(json: JSON) throws {
         self.consumer = try json.string(VerificationConstants.consumerParam)
         self.appModel = try json.string(VerificationConstants.appModelParam)
     }
     
-    init(consumer: String, appModel: String) {
+    public init(consumer: String, appModel: String) {
         self.consumer = consumer
         self.appModel = appModel
     }
 }
 
-struct VerificationInterval: JSONEncodable, JSONDecodable {
+public struct VerificationInterval: JSONEncodable, JSONDecodable {
     let phrase: String
     let start: Int
     let stop: Int
     
-    func toJSON() -> JSON {
+    /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public func toJSON() -> JSON {
         return .Dictionary([
             VerificationConstants.phraseParam: .String(self.phrase),
             VerificationConstants.startParam: .Int(self.start),
             VerificationConstants.stopParam: .Int(self.stop)])
     }
     
-    init(json: JSON) throws {
+    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public init(json: JSON) throws {
         self.phrase = try json.string(VerificationConstants.phraseParam)
         self.start = try json.int(VerificationConstants.startParam)
         self.stop = try json.int(VerificationConstants.stopParam)
     }
     
-    init(phrase: String, start: Int, stop: Int) {
+    public init(phrase: String, start: Int, stop: Int) {
         self.phrase = phrase
         self.start = start
         self.stop = stop
     }
 }
 
-struct VerificationUpdateRequest: JSONEncodable, JSONDecodable {
+public struct VerificationUpdateRequest: JSONEncodable, JSONDecodable {
     let verificationWav: WebAddress
     let intervals: [VerificationInterval]
     
-    func toJSON() -> JSON {
+    /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public func toJSON() -> JSON {
         return .Dictionary([
             VerificationConstants.verificationWavParam: .String(self.verificationWav),
             VerificationConstants.intervalsParam: .Array(self.intervals.map( { interval in interval.toJSON() }))
             ])
     }
     
-    init(json: JSON) throws {
+    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public init(json: JSON) throws {
         self.verificationWav = try json.string(VerificationConstants.verificationWavParam)
         self.intervals = try json.array(VerificationConstants.intervalsParam).map(VerificationInterval.init)
     }
     
-    init(verificationWav: WebAddress, intervals: [VerificationInterval]) {
+    public init(verificationWav: WebAddress, intervals: [VerificationInterval]) {
         self.verificationWav = verificationWav
         self.intervals = intervals
     }
 }
 
-struct VerificationApplication: JSONDecodable {
-    let href: String
-    let mode: String
+public struct VerificationApplication: JSONDecodable {
+    public let href: String
+    public let mode: String
     
-    init(json: JSON) throws {
+    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public init(json: JSON) throws {
         self.href = try json.string(VerificationConstants.hrefParam)
         self.mode = try json.string(VerificationConstants.modeParam)
     }
 }
 
-struct VerificationConsumer: JSONDecodable {
-    let href: String
-    let username: String
+public struct VerificationConsumer: JSONDecodable {
+    public let href: String
+    public let username: String
     
-    init(json: JSON) throws {
+    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public init(json: JSON) throws {
         self.href = try json.string(VerificationConstants.hrefParam)
         self.username = try json.string(VerificationConstants.usernameParam)
     }
 }
 
-struct VerificationData: JSONDecodable {
-    let phrase: [String]
+public struct VerificationData: JSONDecodable {
+    public let phrase: [String]
     
-    init(json: JSON) throws {
+    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public init(json: JSON) throws {
         self.phrase = try json.array(VerificationConstants.phraseParam).map(String.init)
     }
 }
 
-struct VerificationInstructions: JSONDecodable {
-    let data: VerificationData?
-    let directions: String
+public struct VerificationInstructions: JSONDecodable {
+    public let data: VerificationData?
+    public let directions: String
     //@todo let optional: [???]?
-    let requires: [String]?
-    let step: Int
+    public let requires: [String]?
+    public let step: Int
     
-    init(json: JSON) throws {
+    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public init(json: JSON) throws {
         self.data = try json.decode(VerificationConstants.dataParam, alongPath: [.NullBecomesNil, .MissingKeyBecomesNil])
         self.directions = try json.string(VerificationConstants.directionsParam)
         self.requires = try json.array(VerificationConstants.requiresParam, alongPath: [.NullBecomesNil, .MissingKeyBecomesNil])?.map(String.init)
@@ -154,17 +174,19 @@ struct VerificationInstructions: JSONDecodable {
     }
 }
 
-struct Verification: JSONDecodable {
-    let application: VerificationApplication
-    let consumer: VerificationConsumer
-    let createdTime: String
-    let href: String
-    let instructions: VerificationInstructions
-    let status: String
-    let verified: String?
-    let verified_phrases: [Bool]?
+public struct Verification: JSONDecodable {
+    public let application: VerificationApplication
+    public let consumer: VerificationConsumer
+    public let createdTime: String
+    public let href: String
+    public let instructions: VerificationInstructions
+    public let status: String
+    public let verified: String?
+    public let verified_phrases: [Bool]?
     
-    init(json: JSON) throws {
+    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public init(json: JSON) throws {
         self.application = try json.decode(VerificationConstants.appModelParam)
         self.consumer = try json.decode(VerificationConstants.consumerParam)
         self.createdTime = try json.string(VerificationConstants.createdTimeParam)
@@ -177,16 +199,18 @@ struct Verification: JSONDecodable {
 }
 
 /// A subset of an account's enrollments with metadata and information on where the rest are
-struct VerificationPage: JSONDecodable {
-    let limit: Int
-    let next: WebAddress?
-    let items: [Enrollment]
-    let prev: WebAddress?
-    let total: Int
-    let href: WebAddress
-    let offset: Int
+public struct VerificationPage: JSONDecodable {
+    public let limit: Int
+    public let next: WebAddress?
+    public let items: [Enrollment]
+    public let prev: WebAddress?
+    public let total: Int
+    public let href: WebAddress
+    public let offset: Int
     
-    init(json: JSON) throws {
+    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public init(json: JSON) throws {
         self.limit = try json.int(VerificationConstants.limitParam)
         self.next = try json.string(VerificationConstants.nextParam, alongPath: [.NullBecomesNil])
         self.items = try json.array(VerificationConstants.itemsParam).map(Enrollment.init)
@@ -210,7 +234,7 @@ struct VerificationsEndpoint: SupportsJSONPosts, SupportsJSONGets {
 }
 
 /// /verifications/{id}
-struct VerificationEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets, SupportsDeletes {
+public struct VerificationEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets, SupportsDeletes {
     typealias PostHeadersType = KnurldCredentials
     typealias PostRequestType = VerificationUpdateRequest
     typealias PostResponseType = VerificationEndpoint
@@ -220,7 +244,9 @@ struct VerificationEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets,
     
     let url: String
     
-    init(json: JSON) throws {
+    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public init(json: JSON) throws {
         self.url = try json.string(VerificationConstants.hrefParam)
     }
 }

@@ -22,11 +22,18 @@ private struct EndpointAnalysisConstants {
 }
 
 
-struct URLEndpointAnalysisCreateRequest: JSONEncodable {
+public struct URLEndpointAnalysisCreateRequest: JSONEncodable {
     let audioURL: String
     let numWords: Int
     
-    func toJSON() -> JSON {
+    public init(audioURL: String, numWords: Int) {
+        self.audioURL = audioURL
+        self.numWords = numWords
+    }
+    
+    /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public func toJSON() -> JSON {
         return .Dictionary([
             EndpointAnalysisConstants.audioURLParam: .String(self.audioURL),
             EndpointAnalysisConstants.numWordsParam: .Int(self.numWords)])
@@ -44,35 +51,40 @@ struct EndpointAnalysisSummary: JSONDecodable {
     }
 }
 
-struct EndpointAnalysisInterval: JSONDecodable {
-    let start: Int
-    let stop: Int
+public struct EndpointAnalysisInterval: JSONDecodable {
+    public let start: Int
+    public let stop: Int
     
-    init(json: JSON) throws {
+    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public init(json: JSON) throws {
         self.start = try json.int(EndpointAnalysisConstants.startParam)
         self.stop = try json.int(EndpointAnalysisConstants.stopParam)
     }
 }
 
-struct EndpointAnalysis: JSONDecodable {
-    let taskName: String
-    let taskStatus: String
-    let intervals: [EndpointAnalysisInterval]
+public struct EndpointAnalysis: JSONDecodable {
+    public let taskName: String
+    public let taskStatus: String
+    public let intervals: [EndpointAnalysisInterval]
     
-    init(json: JSON) throws {
+    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
+    /// Please don't use it!
+    public init(json: JSON) throws {
         self.taskName = try json.string(EndpointAnalysisConstants.taskNameParam)
         self.taskStatus = try json.string(EndpointAnalysisConstants.taskStatusParam)
         self.intervals = try json.array(EndpointAnalysisConstants.intervalsParam).map(EndpointAnalysisInterval.init)
     }
 }
 
-struct EndpointAnalysisEndpoint: SupportsJSONGets {
+public struct EndpointAnalysisEndpoint: SupportsJSONGets {
     typealias GetHeadersType = KnurldCredentials
     typealias GetResponseType = EndpointAnalysis
     
     let url: String
     
     init(summary: EndpointAnalysisSummary) {
+        //@todo delegate the base to whatever was passed to KnurldAPI
         self.url = EndpointCommons.DEFAULT_URL + "/endpointAnalysis/\(summary.taskName)"
     }
 }

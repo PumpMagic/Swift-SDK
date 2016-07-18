@@ -12,7 +12,7 @@ import Nimble
 
 
 extension AppModel: Equatable {}
-func ==(lhs: AppModel, rhs: AppModel) -> Bool {
+public func ==(lhs: AppModel, rhs: AppModel) -> Bool {
     if lhs.enrollmentRepeats == rhs.enrollmentRepeats &&
         lhs.vocabulary == rhs.vocabulary &&
         lhs.verificationLength == rhs.verificationLength
@@ -24,17 +24,17 @@ func ==(lhs: AppModel, rhs: AppModel) -> Bool {
 }
 
 extension AppModelEndpoint: Equatable {}
-func ==(lhs: AppModelEndpoint, rhs: AppModelEndpoint) -> Bool {
+public func ==(lhs: AppModelEndpoint, rhs: AppModelEndpoint) -> Bool {
     return lhs.url == rhs.url
 }
 
 extension ConsumerEndpoint: Equatable {}
-func ==(lhs: ConsumerEndpoint, rhs: ConsumerEndpoint) -> Bool {
+public func ==(lhs: ConsumerEndpoint, rhs: ConsumerEndpoint) -> Bool {
     return lhs.url == rhs.url
 }
 
 extension EnrollmentEndpoint: Equatable {}
-func ==(lhs: EnrollmentEndpoint, rhs: EnrollmentEndpoint) -> Bool {
+public func ==(lhs: EnrollmentEndpoint, rhs: EnrollmentEndpoint) -> Bool {
     return lhs.url == rhs.url
 }
 
@@ -56,7 +56,7 @@ func randomAlphanumericString(length length: Int) -> String {
 func appModelCreateSync(api: KnurldAPI, credentials: KnurldCredentials, request: AppModelCreateRequest) -> AppModelEndpoint! {
     var endpoint: AppModelEndpoint!
     
-    api.createAppModel(credentials: credentials,
+    api.appModels.create(credentials: credentials,
                        request: request,
                        successHandler: { ep in endpoint = ep },
                        failureHandler: { error in print("ERROR: \(error)")})
@@ -72,7 +72,7 @@ func appModelCreateSync(api: KnurldAPI, credentials: KnurldCredentials, request:
 func consumerCreateSync(api: KnurldAPI, credentials: KnurldCredentials, request: ConsumerCreateRequest) -> ConsumerEndpoint! {
     var endpoint: ConsumerEndpoint!
     
-    api.createConsumer(credentials: credentials,
+    api.consumers.create(credentials: credentials,
                        request: request,
                        successHandler: { ep in endpoint = ep },
                        failureHandler: { error in print("ERROR: \(error)")})
@@ -88,7 +88,7 @@ func consumerCreateSync(api: KnurldAPI, credentials: KnurldCredentials, request:
 func enrollmentCreateSync(api: KnurldAPI, credentials: KnurldCredentials, request: EnrollmentCreateRequest) -> EnrollmentEndpoint! {
     var endpoint: EnrollmentEndpoint!
     
-    api.createEnrollment(credentials: credentials,
+    api.enrollments.create(credentials: credentials,
                          request: request,
                          successHandler: { ep in endpoint = ep },
                          failureHandler: { error in print("ERROR: \(error)")})
@@ -104,7 +104,7 @@ func enrollmentCreateSync(api: KnurldAPI, credentials: KnurldCredentials, reques
 func verificationCreateSync(api: KnurldAPI, credentials: KnurldCredentials, request: VerificationCreateRequest) -> VerificationEndpoint! {
     var endpoint: VerificationEndpoint!
     
-    api.createVerification(credentials: credentials,
+    api.verifications.create(credentials: credentials,
                            request: request,
                            successHandler: { ep in endpoint = ep },
                            failureHandler: { error in print("ERROR: \(error)")})
@@ -119,7 +119,7 @@ func verificationCreateSync(api: KnurldAPI, credentials: KnurldCredentials, requ
 
 func endpointURLSync(api: KnurldAPI, credentials: KnurldCredentials, request: URLEndpointAnalysisCreateRequest) -> EndpointAnalysisEndpoint! {
     var endpoint: EndpointAnalysisEndpoint!
-    api.endpointURL(credentials: credentials,
+    api.endpointAnalyses.endpointURL(credentials: credentials,
                     request: request,
                     successHandler: { ep in endpoint = ep },
                     failureHandler: { error in print("ERROR: \(error)") })

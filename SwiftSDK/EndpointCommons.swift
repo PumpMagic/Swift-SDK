@@ -17,4 +17,4 @@ struct EndpointCommons {
     static let hrefParam = "href"
 }
 
-typealias WebAddress = String
+public typealias WebAddress = String

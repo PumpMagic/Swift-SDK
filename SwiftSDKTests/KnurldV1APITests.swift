@@ -26,7 +26,7 @@ class AuthorizationSpec: QuickSpec {
         it("returns a response when given valid credentials") {
             var knurldCredentials: KnurldCredentials? = nil
             
-            api.authorize(credentials: validOAuthCredentials,
+            api.authorization.authorize(credentials: validOAuthCredentials,
                           developerID: TEST_DEVELOPER_ID,
                           successHandler: { creds in knurldCredentials = creds },
                           failureHandler: { error in print("ERROR: \(error)") })
@@ -37,7 +37,7 @@ class AuthorizationSpec: QuickSpec {
         it("fails when given bad credentials") {
             var apiError: HTTPRequestError? = nil
             
-            api.authorize(credentials: invalidCredentials,
+            api.authorization.authorize(credentials: invalidCredentials,
                           developerID: "askdjhsakdhsak",
                           successHandler: { _ in () },
                           failureHandler: { error in apiError = error })
@@ -52,7 +52,7 @@ class StatusSpec: QuickSpec {
         let api = KnurldAPI()
         
         var knurldCredentials: KnurldCredentials!
-        api.authorize(credentials: validOAuthCredentials,
+        api.authorization.authorize(credentials: validOAuthCredentials,
                       developerID: TEST_DEVELOPER_ID,
                       successHandler: { creds in
                         knurldCredentials = creds
@@ -64,7 +64,7 @@ class StatusSpec: QuickSpec {
             it("returns a response when called properly") {
                 var status: ServiceStatus? = nil
                 
-                api.getStatus(credentials: knurldCredentials,
+                api.status.get(credentials: knurldCredentials,
                               successHandler: { stat in status = stat },
                               failureHandler: { error in print("ERROR: \(error)") })
                 
@@ -80,7 +80,7 @@ class AppModelsSpec: QuickSpec {
         let api = KnurldAPI()
         
         var knurldCredentials: KnurldCredentials!
-        api.authorize(credentials: validOAuthCredentials,
+        api.authorization.authorize(credentials: validOAuthCredentials,
                       developerID: TEST_DEVELOPER_ID,
                       successHandler: { creds in
                         knurldCredentials = creds
@@ -93,7 +93,7 @@ class AppModelsSpec: QuickSpec {
                 let request = AppModelCreateRequest(enrollmentRepeats: 3, vocabulary: ["Toronto", "Paris", "Berlin"], verificationLength: 3)
                 var endpoint: AppModelEndpoint?
                 
-                api.createAppModel(credentials: knurldCredentials,
+                api.appModels.create(credentials: knurldCredentials,
                                    request: request,
                                             successHandler: { ep in endpoint = ep },
                                             failureHandler: { error in print("ERROR: \(error)")})
@@ -106,7 +106,7 @@ class AppModelsSpec: QuickSpec {
             it("returns success when given good parameters") {
                 var page: AppModelPage? = nil
                 
-                api.getAppModelPage(credentials: knurldCredentials,
+                api.appModels.getPage(credentials: knurldCredentials,
                                       successHandler: { pg in page = pg },
                                       failureHandler: { error in print("ERROR: \(error)")})
                 
@@ -121,7 +121,7 @@ class AppModelsSpec: QuickSpec {
                 if endpoint == nil { return }
                 
                 var model: AppModel! = nil
-                api.getAppModel(credentials: knurldCredentials,
+                api.appModels.get(credentials: knurldCredentials,
                                 endpoint: endpoint,
                                 successHandler: { mdl in model = mdl },
                                 failureHandler: { error in print("ERROR: \(error)") })
@@ -148,7 +148,7 @@ class AppModelsSpec: QuickSpec {
                 // Update the app model
                 let request2 = AppModelUpdateRequest(enrollmentRepeats: targetEnrollmentRepeats, threshold: nil, verificationLength: nil)
                 var endpoint2: AppModelEndpoint! = nil
-                api.updateAppModel(credentials: knurldCredentials,
+                api.appModels.update(credentials: knurldCredentials,
                                    endpoint: endpoint1,
                                    request: request2,
                                    successHandler: { ep in endpoint2 = ep },
@@ -164,7 +164,7 @@ class AppModelsSpec: QuickSpec {
                 
                 // Retrieve the (hopefully updated) app model
                 var modelRetrieved: AppModel! = nil
-                api.getAppModel(credentials: knurldCredentials,
+                api.appModels.get(credentials: knurldCredentials,
                                 endpoint: endpoint2,
                                 successHandler: { mdl in modelRetrieved = mdl },
                                 failureHandler: { error in print("ERROR: \(error)") })
@@ -188,7 +188,7 @@ class AppModelsSpec: QuickSpec {
                 
                 // Delete the app model
                 var deleted: Bool = false
-                api.deleteAppModel(credentials: knurldCredentials,
+                api.appModels.delete(credentials: knurldCredentials,
                                    endpoint: endpoint,
                                    successHandler: { deleted = true },
                                    failureHandler: { error in print("ERROR: \(error)")})
@@ -205,7 +205,7 @@ class ConsumersSpec: QuickSpec {
         let api = KnurldAPI()
         
         var knurldCredentials: KnurldCredentials!
-        api.authorize(credentials: validOAuthCredentials,
+        api.authorization.authorize(credentials: validOAuthCredentials,
                       developerID: TEST_DEVELOPER_ID,
                       successHandler: { creds in
                         knurldCredentials = creds
@@ -222,7 +222,7 @@ class ConsumersSpec: QuickSpec {
                 let consumerCreateRequest = ConsumerCreateRequest(username: username, password: password, gender: gender)
                 var endpoint: ConsumerEndpoint? = nil
                 
-                api.createConsumer(credentials: knurldCredentials,
+                api.consumers.create(credentials: knurldCredentials,
                                    request: consumerCreateRequest,
                                    successHandler: { ep in endpoint = ep },
                                    failureHandler: { error in print("ERROR: \(error)")})
@@ -235,7 +235,7 @@ class ConsumersSpec: QuickSpec {
             it("returns success when given good parameters") {
                 var page: ConsumerPage? = nil
                 
-                api.getConsumerPage(credentials: knurldCredentials,
+                api.consumers.getPage(credentials: knurldCredentials,
                                     successHandler: { pg in page = pg },
                                     failureHandler: { error in print("ERROR: \(error)")})
                 
@@ -256,7 +256,7 @@ class ConsumersSpec: QuickSpec {
                 
                 // Retrieve the just-created consumer
                 var consumer: Consumer! = nil
-                api.getConsumer(credentials: knurldCredentials,
+                api.consumers.get(credentials: knurldCredentials,
                                 endpoint: endpoint,
                                 successHandler: { cnsmr in consumer = cnsmr },
                                 failureHandler: { error in print("ERROR: \(error)") })
@@ -284,7 +284,7 @@ class ConsumersSpec: QuickSpec {
                 // Update the consumer
                 let request2 = ConsumerUpdateRequest(password: "bjkhjklsdhlkdjaskfl")
                 var endpoint2: ConsumerEndpoint! = nil
-                api.updateConsumer(credentials: knurldCredentials,
+                api.consumers.update(credentials: knurldCredentials,
                                    endpoint: endpoint1,
                                    request: request2,
                                    successHandler: { ep in endpoint2 = ep },
@@ -315,7 +315,7 @@ class ConsumersSpec: QuickSpec {
                 
                 // Delete the app model
                 var deleted: Bool = false
-                api.deleteConsumer(credentials: knurldCredentials,
+                api.consumers.delete(credentials: knurldCredentials,
                                    endpoint: endpoint,
                                    successHandler: { deleted = true },
                                    failureHandler: { error in print("ERROR: \(error)")})
@@ -333,7 +333,7 @@ class EnrollmentSpec: QuickSpec {
         let api = KnurldAPI()
         
         var knurldCredentials: KnurldCredentials!
-        api.authorize(credentials: validOAuthCredentials,
+        api.authorization.authorize(credentials: validOAuthCredentials,
                       developerID: TEST_DEVELOPER_ID,
                       successHandler: { creds in
                         knurldCredentials = creds
@@ -377,7 +377,7 @@ class EnrollmentSpec: QuickSpec {
                 let request = EnrollmentCreateRequest(consumer: consumerEndpoint.url, appModel: appModelEndpoint.url)
                 var endpoint: EnrollmentEndpoint? = nil
                 
-                api.createEnrollment(credentials: knurldCredentials,
+                api.enrollments.create(credentials: knurldCredentials,
                                        request: request,
                                        successHandler: { ep in endpoint = ep },
                                        failureHandler: { error in print("ERROR: \(error)")})
@@ -395,7 +395,7 @@ class EnrollmentSpec: QuickSpec {
                 
                 var page: EnrollmentPage? = nil
                 
-                api.getEnrollmentPage(credentials: knurldCredentials,
+                api.enrollments.getPage(credentials: knurldCredentials,
                                         successHandler: { pg in page = pg },
                                         failureHandler: { error in print("ERROR: \(error)")})
                 
@@ -412,7 +412,7 @@ class EnrollmentSpec: QuickSpec {
                 
                 // Retrieve the just-created enrollment
                 var enrollment: Enrollment! = nil
-                api.getEnrollment(credentials: knurldCredentials,
+                api.enrollments.get(credentials: knurldCredentials,
                                   endpoint: enrollmentEndpoint,
                                   successHandler: { enrlmnt in enrollment = enrlmnt },
                                   failureHandler: { error in print("ERROR: \(error)") })
@@ -436,7 +436,7 @@ class EnrollmentSpec: QuickSpec {
                 // Update the enrollment
                 var endpoint: EnrollmentEndpoint! = nil
                 let request = EnrollmentUpdateRequest(enrollmentWav: "bjkhjklsdhlkdjaskfl", intervals: [EnrollmentInterval(phrase: "beep", start: 1, stop: 5)])
-                api.updateEnrollment(credentials: knurldCredentials,
+                api.enrollments.update(credentials: knurldCredentials,
                                      endpoint: enrollmentEndpoint,
                                      request: request,
                                      successHandler: { ep in endpoint = ep },
@@ -463,7 +463,7 @@ class EnrollmentSpec: QuickSpec {
                 
                 // Delete the enrollment
                 var deleted: Bool = false
-                api.deleteEnrollment(credentials: knurldCredentials,
+                api.enrollments.delete(credentials: knurldCredentials,
                                      endpoint: enrollmentEndpoint,
                                      successHandler: { deleted = true },
                                      failureHandler: { error in print("ERROR: \(error)")})
@@ -480,7 +480,7 @@ class VerificationSpec: QuickSpec {
         let api = KnurldAPI()
         
         var knurldCredentials: KnurldCredentials!
-        api.authorize(credentials: validOAuthCredentials,
+        api.authorization.authorize(credentials: validOAuthCredentials,
                       developerID: TEST_DEVELOPER_ID,
                       successHandler: { creds in
                         knurldCredentials = creds
@@ -529,7 +529,7 @@ class VerificationSpec: QuickSpec {
                 let request = VerificationCreateRequest(consumer: consumerEndpoint.url, appModel: appModelEndpoint.url)
                 var endpoint: VerificationEndpoint? = nil
                 
-                api.createVerification(credentials: knurldCredentials,
+                api.verifications.create(credentials: knurldCredentials,
                                        request: request,
                                        successHandler: { ep in endpoint = ep },
                                        failureHandler: { error in print("ERROR: \(error)")})
@@ -547,7 +547,7 @@ class VerificationSpec: QuickSpec {
                 
                 var page: VerificationPage? = nil
                 
-                api.getVerificationPage(credentials: knurldCredentials,
+                api.verifications.getPage(credentials: knurldCredentials,
                                         successHandler: { pg in page = pg },
                                         failureHandler: { error in print("ERROR: \(error)")})
                 
@@ -564,7 +564,7 @@ class VerificationSpec: QuickSpec {
                 
                 // Retrieve the just-created verification
                 var verification: Verification! = nil
-                api.getVerification(credentials: knurldCredentials,
+                api.verifications.get(credentials: knurldCredentials,
                                       endpoint: verificationEndpoint,
                                       successHandler: { vrfctn in verification = vrfctn },
                                       failureHandler: { error in print("ERROR: \(error)") })
@@ -588,7 +588,7 @@ class VerificationSpec: QuickSpec {
                 // Update the verification
                 let request = VerificationUpdateRequest(verificationWav: "bjkhjklsdhlkdjaskfl", intervals: [VerificationInterval(phrase: "beep", start: 1, stop: 5)])
                 var endpoint: VerificationEndpoint! = nil
-                api.updateVerification(credentials: knurldCredentials,
+                api.verifications.update(credentials: knurldCredentials,
                                        endpoint: verificationEndpoint,
                                        request: request,
                                        successHandler: { ep in endpoint = ep },
@@ -613,7 +613,7 @@ class VerificationSpec: QuickSpec {
                 
                 // Delete the verification
                 var deleted: Bool = false
-                api.deleteVerification(credentials: knurldCredentials,
+                api.verifications.delete(credentials: knurldCredentials,
                                        endpoint: verificationEndpoint,
                                        successHandler: { deleted = true },
                                        failureHandler: { error in print("ERROR: \(error)")})
@@ -629,7 +629,7 @@ class EndpointAnalysisSpec: QuickSpec {
         let api = KnurldAPI()
         
         var knurldCredentials: KnurldCredentials!
-        api.authorize(credentials: validOAuthCredentials,
+        api.authorization.authorize(credentials: validOAuthCredentials,
                       developerID: TEST_DEVELOPER_ID,
                       successHandler: { creds in
                         knurldCredentials = creds
@@ -641,7 +641,7 @@ class EndpointAnalysisSpec: QuickSpec {
             it("returns a good response when called properly") {
                 let request = URLEndpointAnalysisCreateRequest(audioURL: SAMPLE_AUDIO_URL, numWords: SAMPLE_AUDIO_NUM_WORDS)
                 var endpoint: EndpointAnalysisEndpoint?
-                api.endpointURL(credentials: knurldCredentials,
+                api.endpointAnalyses.endpointURL(credentials: knurldCredentials,
                                 request: request,
                                 successHandler: { ep in endpoint = ep },
                                 failureHandler: { error in print("ERROR: \(error)") })
@@ -659,7 +659,7 @@ class EndpointAnalysisSpec: QuickSpec {
                 sleep(UInt32(ENDPOINT_ANALYSIS_DELAY))
                 
                 var analysis: EndpointAnalysis?
-                api.getEndpointingStatus(credentials: knurldCredentials,
+                api.endpointAnalyses.get(credentials: knurldCredentials,
                                          endpoint: endpoint,
                                          successHandler: { anlyss in analysis = anlyss },
                                          failureHandler: { error in print("ERROR: \(error)") })
