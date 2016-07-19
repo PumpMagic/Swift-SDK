@@ -51,6 +51,20 @@ protocol SupportsHeaderlessStringMapPosts: SupportsPosts {
                       failureHandler: (error: HTTPRequestError) -> Void)
 }
 
+/*
+protocol SupportsEmptyPosts: SupportsPosts {
+    associatedtype PostHeadersType: StringMapRepresentable
+    associatedtype PostRequestType = Void
+    associatedtype PostResponseType: JSONDecodable
+    
+    func post(manager manager: HTTPRequestManager,
+                      headers: PostHeadersType,
+                      body: Void,
+                      successHandler: (response: PostResponseType) -> Void,
+                      failureHandler: (error: HTTPRequestError) -> Void)
+}
+*/
+ 
 protocol SupportsJSONPosts: SupportsPosts {
     associatedtype PostHeadersType: StringMapRepresentable
     associatedtype PostRequestType: JSONEncodable

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8840C9BD1D30A61400C501A3 /* HTTPRequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8840C9BC1D30A61400C501A3 /* HTTPRequestManager.swift */; };
+		88440CB51D3DBC8D00829747 /* Calls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88440CB41D3DBC8D00829747 /* Calls.swift */; };
 		884E3C2C1D39A10300FF5B8C /* EndpointCommons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884E3C2B1D39A10300FF5B8C /* EndpointCommons.swift */; };
 		889CB5F01D34273700B74330 /* Freddy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 889CB5EF1D34273700B74330 /* Freddy.framework */; };
 		889CB5F41D3478DD00B74330 /* AppModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889CB5F31D3478DD00B74330 /* AppModels.swift */; };
@@ -40,6 +41,7 @@
 
 /* Begin PBXFileReference section */
 		8840C9BC1D30A61400C501A3 /* HTTPRequestManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPRequestManager.swift; sourceTree = "<group>"; };
+		88440CB41D3DBC8D00829747 /* Calls.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Calls.swift; sourceTree = "<group>"; };
 		884E3C2B1D39A10300FF5B8C /* EndpointCommons.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndpointCommons.swift; sourceTree = "<group>"; };
 		889CB5EF1D34273700B74330 /* Freddy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Freddy.framework; path = "Carthage/Checkouts/Freddy/build/Debug-iphoneos/Freddy.framework"; sourceTree = "<group>"; };
 		889CB5F31D3478DD00B74330 /* AppModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppModels.swift; sourceTree = "<group>"; };
@@ -96,6 +98,7 @@
 				88BED1391D35628D004FB426 /* Consumers.swift */,
 				88BED13D1D37046C004FB426 /* Enrollments.swift */,
 				88BED13F1D380670004FB426 /* Verifications.swift */,
+				88440CB41D3DBC8D00829747 /* Calls.swift */,
 				88BED1431D3975DF004FB426 /* EndpointAnalysis.swift */,
 			);
 			name = Endpoints;
@@ -270,6 +273,7 @@
 				889CB5F81D34795500B74330 /* Status.swift in Sources */,
 				88BED1401D380670004FB426 /* Verifications.swift in Sources */,
 				88BED13A1D35628D004FB426 /* Consumers.swift in Sources */,
+				88440CB51D3DBC8D00829747 /* Calls.swift in Sources */,
 				88BED1441D3975DF004FB426 /* EndpointAnalysis.swift in Sources */,
 				88BED13E1D37046C004FB426 /* Enrollments.swift in Sources */,
 			);

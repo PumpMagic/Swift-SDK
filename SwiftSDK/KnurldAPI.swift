@@ -292,6 +292,54 @@ public class Verifications {
     }
 }
 
+/// Call-related Knurld API endpoints.
+/// Access this from your KnurldAPI instance's `calls` member, e.g. `api.calls.create(...)`
+public class Calls {
+    let calls: CallsEndpoint
+    let requestManager: HTTPRequestManager
+    
+    init(url: String, requestManager: HTTPRequestManager) {
+        self.calls = CallsEndpoint(url: url)
+        self.requestManager = requestManager
+    }
+    
+    /// Create a call.
+    public func create(credentials credentials: KnurldCredentials,
+                                   request: CallCreateRequest,
+                                   successHandler: (CallEndpoint) -> Void,
+                                   failureHandler: (HTTPRequestError) -> Void)
+    {
+        self.calls.post(manager: self.requestManager, headers: credentials, body: request, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    /// Get a page of calls.
+    public func getPage(credentials credentials: KnurldCredentials,
+                                    successHandler: (CallPage) -> Void,
+                                    failureHandler: (HTTPRequestError) -> Void)
+    {
+        self.calls.get(manager: self.requestManager, headers: credentials, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    /// Get a call.
+    public func get(credentials credentials: KnurldCredentials,
+                                endpoint: CallEndpoint,
+                                successHandler: (Call) -> Void,
+                                failureHandler: (HTTPRequestError) -> Void)
+    {
+        endpoint.get(manager: self.requestManager, headers: credentials, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    /// Terminate a call.
+    public func terminate(credentials credentials: KnurldCredentials,
+                                   endpoint: CallEndpoint,
+                                   request: CallTerminateRequest,
+                                   successHandler: (CallEndpoint) -> Void,
+                                   failureHandler: (HTTPRequestError) -> Void)
+    {
+        endpoint.post(manager: self.requestManager, headers: credentials, body: request, successHandler: successHandler, failureHandler: failureHandler)
+    }
+}
+
 public class EndpointAnalyses {
     let urlAnalyses: URLEndpointAnalysisEndpoint
     let fileAnalyses: FileEndpointAnalysisEndpoint
@@ -374,6 +422,9 @@ public class KnurldAPI {
     /// Verification endpoints
     public let verifications: Verifications
     
+    /// Call endpoints
+    public let calls: Calls
+    
     /// Endpoint analysis endpoints
     public let endpointAnalyses: EndpointAnalyses
     
@@ -392,6 +443,7 @@ public class KnurldAPI {
         self.consumers = Consumers(consumersURL: url + "/consumers", consumersAuthURL: url + "/consumers/token", requestManager: self.requestManager)
         self.enrollments = Enrollments(url: url + "/enrollments", requestManager: self.requestManager)
         self.verifications = Verifications(url: url + "/verifications", requestManager: self.requestManager)
+        self.calls = Calls(url: url + "/calls", requestManager: self.requestManager)
         self.endpointAnalyses = EndpointAnalyses(urlAnalysesURL: url + "/endpointAnalysis/url", fileAnalysesURL: url + "/endpointAnalysis/file",requestManager: self.requestManager)
     }
     
