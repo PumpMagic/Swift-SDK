@@ -18,6 +18,9 @@ let validOAuthCredentials = OAuthCredentials(clientID: TEST_CLIENT_ID, clientSec
 let SAMPLE_AUDIO_URL = "https://www.dropbox.com/s/o5sbxrxday9pyjg/bostonivorychicago.wav?dl=1"
 let SAMPLE_AUDIO_NUM_WORDS = 3
 
+let TEST_FILE_PATH = "/Users/rconway/Downloads/Canada_Pyramid_Dallas.wav"
+let TEST_FILE_NUM_WORDS = 3
+
 class AuthorizationSpec: QuickSpec {
     override func spec() {
         let api = KnurldAPI()
@@ -645,6 +648,25 @@ class EndpointAnalysisSpec: QuickSpec {
                                 request: request,
                                 successHandler: { ep in endpoint = ep },
                                 failureHandler: { error in print("ERROR: \(error)") })
+                
+                expect(endpoint).toEventuallyNot(beNil(), timeout: API_CALL_TIMEOUT)
+            }
+        }
+        
+        describe("the endpoint file endpoint") {
+            it("returns a good response when called properly") {
+                // load the data
+                guard let rawData = NSData(contentsOfFile: TEST_FILE_PATH) else {
+                    print("Unable to load test file")
+                    exit(1)
+                }
+                
+                let request = FileEndpointAnalysisCreateRequest(audioFile: rawData, numWords: TEST_FILE_NUM_WORDS)
+                var endpoint: EndpointAnalysisEndpoint?
+                api.endpointAnalyses.endpointFile(credentials: knurldCredentials,
+                                                 request: request,
+                                                 successHandler: { ep in endpoint = ep },
+                                                 failureHandler: { error in print("ERROR: \(error)") })
                 
                 expect(endpoint).toEventuallyNot(beNil(), timeout: API_CALL_TIMEOUT)
             }

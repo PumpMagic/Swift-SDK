@@ -20,6 +20,10 @@ protocol StringMapRepresentable {
     func toStringMap() -> [String : String]
 }
 
+protocol StringNSDataDictionaryRepresentable {
+    func toStringNSDataDictionary() -> [String : NSData]
+}
+
 
 /** Begin POST methods */
 
@@ -50,6 +54,18 @@ protocol SupportsHeaderlessStringMapPosts: SupportsPosts {
 protocol SupportsJSONPosts: SupportsPosts {
     associatedtype PostHeadersType: StringMapRepresentable
     associatedtype PostRequestType: JSONEncodable
+    associatedtype PostResponseType: JSONDecodable
+    
+    func post(manager manager: HTTPRequestManager,
+                      headers: PostHeadersType,
+                      body: PostRequestType,
+                      successHandler: (response: PostResponseType) -> Void,
+                      failureHandler: (error: HTTPRequestError) -> Void)
+}
+
+protocol SupportsMultipartPosts: SupportsPosts {
+    associatedtype PostHeadersType: StringMapRepresentable
+    associatedtype PostRequestType: StringNSDataDictionaryRepresentable
     associatedtype PostResponseType: JSONDecodable
     
     func post(manager manager: HTTPRequestManager,
@@ -107,6 +123,34 @@ extension SupportsJSONPosts {
                                             }
             },
                                           failureHandler: { error in failureHandler(error: error) })
+    }
+}
+
+extension SupportsMultipartPosts {
+    func post(manager manager: HTTPRequestManager,
+                      headers: PostHeadersType,
+                      body: PostRequestType,
+                      successHandler: (response: PostResponseType) -> Void,
+                      failureHandler: (error: HTTPRequestError) -> Void)
+    {
+        let url = self.url
+        let headers = headers.toStringMap()
+        let body = body.toStringNSDataDictionary()
+        
+        manager.postMultipart(url: url,
+                              headers: headers,
+                              bodies: body,
+                              successHandler: { json in
+                                do {
+                                    let authorizationResponse = try PostResponseType(json: json)
+                                    successHandler(response: authorizationResponse)
+                                    return
+                                } catch {
+                                    failureHandler(error: .ResponseDeserializationError(error: error as? JSON.Error))
+                                    return
+                                }
+                              },
+                              failureHandler: { error in failureHandler(error: error) })
     }
 }
 

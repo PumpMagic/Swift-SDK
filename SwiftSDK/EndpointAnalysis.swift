@@ -19,6 +19,8 @@ private struct EndpointAnalysisConstants {
     static let intervalsParam = "intervals"
     static let startParam = "start"
     static let stopParam = "stop"
+    
+    static let audioFileParam = "filename"
 }
 
 
@@ -37,6 +39,22 @@ public struct URLEndpointAnalysisCreateRequest: JSONEncodable {
         return .Dictionary([
             EndpointAnalysisConstants.audioURLParam: .String(self.audioURL),
             EndpointAnalysisConstants.numWordsParam: .Int(self.numWords)])
+    }
+}
+
+public struct FileEndpointAnalysisCreateRequest: StringNSDataDictionaryRepresentable {
+    let audioFile: NSData
+    let numWords: Int?
+    
+    public init(audioFile: NSData, numWords: Int?) {
+        self.audioFile = audioFile
+        self.numWords = numWords
+    }
+    
+    //@todo use num_words... doesn't do anything for now
+    func toStringNSDataDictionary() -> [String : NSData] {
+        return [EndpointAnalysisConstants.audioFileParam: self.audioFile]
+            //,EndpointAnalysisConstants.numWordsParam: self.numWords]
     }
 }
 
@@ -92,6 +110,14 @@ public struct EndpointAnalysisEndpoint: SupportsJSONGets {
 struct URLEndpointAnalysisEndpoint: SupportsJSONPosts {
     typealias PostHeadersType = KnurldCredentials
     typealias PostRequestType = URLEndpointAnalysisCreateRequest
+    typealias PostResponseType = EndpointAnalysisSummary
+    
+    let url: String
+}
+
+struct FileEndpointAnalysisEndpoint: SupportsMultipartPosts {
+    typealias PostHeadersType = KnurldCredentials
+    typealias PostRequestType = FileEndpointAnalysisCreateRequest
     typealias PostResponseType = EndpointAnalysisSummary
     
     let url: String

@@ -154,6 +154,39 @@ class HTTPRequestManager {
         }
     }
     
+    /// Perform an HTTP POST, with a multipart body and expecting JSON in return.
+    func postMultipart(url url: String, headers: [String: String]?, bodies: [String : NSData], successHandler: (JSON) -> Void, failureHandler: (HTTPRequestError) -> Void)
+    {
+        // Generate a boundary
+        let boundary = HTTPRequestManager.generateBoundary()
+        
+        // Append the content-type header
+        var newHeaders: [String : String] = [:]
+        if let headers = headers {
+            newHeaders = headers
+        }
+        newHeaders.updateValue("multipart/form-data; boundary=\(boundary)", forKey: "Content-Type")
+        
+        // Generate the body
+        let body = NSMutableData()
+        for (paramName, paramValue) in bodies {
+            HTTPRequestManager.appendStringToNSData(str: "--\(boundary)\r\n", target: body)
+            HTTPRequestManager.appendStringToNSData(str: "Content-Disposition: form-data; name=\"\(paramName)\"\r\n\r\n", target: body)
+            body.appendData(paramValue)
+        }
+        HTTPRequestManager.appendStringToNSData(str: "--\(boundary)\r\n", target: body)
+        
+        // Execute the request
+        executeRequest(method: "POST", url: url, headers: newHeaders, body: body, responseExpected: true,
+                       successHandler: { maybeResponse in
+                        guard let response = maybeResponse else {
+                            failureHandler(.NoDataReturned)
+                            return
+                        }
+                        successHandler(response)
+            }, failureHandler: failureHandler)
+    }
+    
     
     /// Execute an HTTP request, optionally looking for JSON data in the response.
     private func executeRequest(method method: String, url: String, headers: [String: String]?, body: NSData?, responseExpected: Bool, successHandler: (JSON?) -> Void, failureHandler: (HTTPRequestError) -> Void)
@@ -249,6 +282,21 @@ class HTTPRequestManager {
                     return
                 }
             }
+        }
+    }
+    
+    /// Create boundary string for a multipart/form-data request
+    static func generateBoundary() -> String {
+        return "----------\(NSUUID().UUIDString)"
+    }
+    
+    static func appendStringToNSData(str str: String, target: NSMutableData) {
+        let data = str.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
+        if let data = data {
+            target.appendData(data)
+        } else {
+            // Foundation docs suggest this should never happen...
+            print("ERROR! Unable to convert string to data")
         }
     }
 }

@@ -294,10 +294,12 @@ public class Verifications {
 
 public class EndpointAnalyses {
     let urlAnalyses: URLEndpointAnalysisEndpoint
+    let fileAnalyses: FileEndpointAnalysisEndpoint
     let requestManager: HTTPRequestManager
     
-    init(urlAnalysesURL: String, requestManager: HTTPRequestManager) {
+    init(urlAnalysesURL: String, fileAnalysesURL: String, requestManager: HTTPRequestManager) {
         self.urlAnalyses = URLEndpointAnalysisEndpoint(url: urlAnalysesURL)
+        self.fileAnalyses = FileEndpointAnalysisEndpoint(url: fileAnalysesURL)
         self.requestManager = requestManager
     }
     
@@ -313,6 +315,20 @@ public class EndpointAnalyses {
                                  successHandler: { summary in
                                     successHandler(EndpointAnalysisEndpoint(summary: summary)) },
                                  failureHandler: failureHandler)
+    }
+    
+    /// Perform endpoint analysis on an audio sample given the sample contents
+    public func endpointFile(credentials credentials: KnurldCredentials,
+                                         request: FileEndpointAnalysisCreateRequest,
+                                         successHandler: (EndpointAnalysisEndpoint) -> Void,
+                                         failureHandler: (HTTPRequestError) -> Void)
+    {
+        fileAnalyses.post(manager: self.requestManager,
+                          headers: credentials,
+                          body: request,
+                          successHandler: { summary in
+                            successHandler(EndpointAnalysisEndpoint(summary: summary)) },
+                          failureHandler: failureHandler)
     }
     
     /// Get the progress or results of an endpoint analysis.
@@ -376,7 +392,7 @@ public class KnurldAPI {
         self.consumers = Consumers(consumersURL: url + "/consumers", consumersAuthURL: url + "/consumers/token", requestManager: self.requestManager)
         self.enrollments = Enrollments(url: url + "/enrollments", requestManager: self.requestManager)
         self.verifications = Verifications(url: url + "/verifications", requestManager: self.requestManager)
-        self.endpointAnalyses = EndpointAnalyses(urlAnalysesURL: url + "/endpointAnalysis/url", requestManager: self.requestManager)
+        self.endpointAnalyses = EndpointAnalyses(urlAnalysesURL: url + "/endpointAnalysis/url", fileAnalysesURL: url + "/endpointAnalysis/file",requestManager: self.requestManager)
     }
     
     /// Initialize a Knurld API using a custom URL, instead of e.g. "https://api.knurld.io"
