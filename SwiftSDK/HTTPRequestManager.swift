@@ -13,14 +13,21 @@ import Foundation
 import Freddy
 
 
-/// HTTPRequestError captures all reasons that an HTTP request made through HTTPRequestManager could fail.
+/// All reasons why an HTTP request can fail.
 public enum HTTPRequestError {
+    /// The request's URL string was malformed.
     case InvalidURL
+    /// The request parameters could not be serialized.
     case RequestSerializationError
+    /// The HTTP exchange did not complete, probably because of a poor or absent network connection.
     case NetworkError
+    /// The request expected data to be sent back in response, but none was received.
     case NoDataReturned
+    /// A response was received, but with an HTTP status code indicating failure.
     case HTTPError(code: Int, body: String?)
+    /// A response was received, but it was unable to be packed into JSON.
     case ResponseDeserializationError(error: JSON.Error?)
+    /// The request failed internally. Please report any observed instances of this case.
     case InternalError
 }
 

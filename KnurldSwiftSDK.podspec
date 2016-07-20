@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
   spec.name = "KnurldSwiftSDK"
   spec.version = "1.0.0"
-  spec.summary = "Knurld Swift SDK."
+  spec.summary = "The Knurld Swift SDK wraps the Knurld web API."
   spec.homepage = "https://github.com/pumpmagic/SwiftSDK"
   spec.license = { type: 'Intellisis', file: 'LICENSE' }
   spec.authors = { "Ryan Conway" => 'rconway@knurld.com' }

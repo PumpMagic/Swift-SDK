@@ -41,7 +41,7 @@ public struct OAuthCredentials: StringMapRepresentable {
 }
 
 /// Knurld OAuth authorization response
-/// @warn This is not a complete representation
+/// @warn This representation is incomplete
 struct AuthorizationResponse: JSONDecodable {
     let accessToken: String
     

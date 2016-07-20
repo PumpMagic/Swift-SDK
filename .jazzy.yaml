@@ -1,0 +1,10 @@
+module: SwiftSDK
+output: docs
+clean: true
+xcodebuild_arguments: [-workspace, SwiftSDK.xcworkspace, -scheme, SwiftSDK]
+sdk: iphoneos
+author: Knurld
+author_url: https://www.knurld.io/
+copyright: Copyright 2016, Intellisis Inc. All rights reserved.
+#podspec: KnurldSwiftSDK.podspec
+#hide_documentation_coverage: true

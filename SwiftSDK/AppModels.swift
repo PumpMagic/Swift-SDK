@@ -30,26 +30,29 @@ private struct AppModelConstants {
     static let offsetParam = "offset"
 }
 
-/// All parameters needed to create a Knurld application model creation request
+/// All parameters involved in requesting a Knurld application model ("app model").
+/// For further information on all relevant properties, please see the Knurld Developer Guide.
 public struct AppModelCreateRequest: JSONEncodable {
     // Mandatory fields
-    let enrollmentRepeats: Int
-    let vocabulary: [String]
-    let verificationLength: Int
+    public let enrollmentRepeats: Int
+    public let vocabulary: [String]
+    public let verificationLength: Int
     
     // Optional fields
-    let threshold: Double?
-    let autoThresholdEnable: Bool?
-    let autoThresholdClearance: Int?
-    let autoThresholdMaxRise: Int?
-    let useModelUpdate: Bool?
-    let modelUpdateDailyLimit: Int?
+    public let threshold: Double?
+    public let autoThresholdEnable: Bool?
+    public let autoThresholdClearance: Int?
+    public let autoThresholdMaxRise: Int?
+    public let useModelUpdate: Bool?
+    public let modelUpdateDailyLimit: Int?
     
+    /// Initialize a request, not specifying any optional parameters
     public init(enrollmentRepeats: Int, vocabulary: [String], verificationLength: Int) {
         self.init(enrollmentRepeats: enrollmentRepeats, vocabulary: vocabulary, verificationLength: verificationLength, threshold: nil,
                   autoThresholdEnable: nil, autoThresholdClearance: nil, autoThresholdMaxRise: nil, useModelUpdate: nil, modelUpdateDailyLimit: nil)
     }
     
+    /// Initialize a request, specifying optional parameters
     public init(enrollmentRepeats: Int, vocabulary: [String], verificationLength: Int, threshold: Double?, autoThresholdEnable: Bool?,
                 autoThresholdClearance: Int?, autoThresholdMaxRise: Int?, useModelUpdate: Bool?, modelUpdateDailyLimit: Int?)
     {
@@ -65,8 +68,7 @@ public struct AppModelCreateRequest: JSONEncodable {
         self.modelUpdateDailyLimit = modelUpdateDailyLimit
     }
     
-    /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Convert this type into JSON (for internal use only)
     public func toJSON() -> JSON {
         var json: [String : JSON] = [
             AppModelConstants.enrollmentRepeatsParam: .Int(self.enrollmentRepeats),
