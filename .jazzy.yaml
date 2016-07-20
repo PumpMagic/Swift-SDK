@@ -8,3 +8,83 @@ author_url: https://www.knurld.io/
 copyright: Copyright 2016, Intellisis Inc. All rights reserved.
 #podspec: KnurldSwiftSDK.podspec
 #hide_documentation_coverage: true
+
+custom_categories:
+  - name: Main Class
+    children:
+      - KnurldAPI
+  - name: Endpoint Families
+    children:
+      - AppModels
+      - Authorization
+      - Calls
+      - Consumers
+      - EndpointAnalyses
+      - Enrollments
+      - Status
+      - Verifications
+  - name: Application Models
+    children:
+      - AppModelCreateRequest
+      - AppModelEndpoint
+      - AppModel
+      - AppModelPage
+      - AppModelUpdateRequest
+  - name: Authorization
+    children:
+      - KnurldCredentials
+      - OAuthCredentials
+  - name: Calls
+    children:
+      - CallCreateRequest
+      - CallEndpoint
+      - Call
+      - CallPage
+      - CallTerminateRequest
+  - name: Consumers
+    children:
+      - ConsumerCreateRequest
+      - ConsumerEndpoint
+      - Consumer
+      - ConsumerPage
+      - ConsumerUpdateRequest
+      - ConsumerAuthenticateRequest
+      - ConsumerCredentials
+      - ConsumerToken
+  - name: Endpoint Analyses
+    children:
+      - EndpointAnalysisEndpoint
+      - EndpointAnalysis
+      - EndpointAnalysisInterval
+      - FileEndpointAnalysisCreateRequest
+      - URLEndpointAnalysisCreateRequest
+  - name: Enrollments
+    children:
+      - EnrollmentCreateRequest
+      - EnrollmentEndpoint
+      - Enrollment
+      - EnrollmentPage
+      - EnrollmentApplication
+      - EnrollmentConsumer
+      - EnrollmentInstructions
+      - EnrollmentData
+      - EnrollmentInterval
+      - EnrollmentUpdateRequest
+  - name: Status
+    children:
+      - ServiceStatus
+  - name: Verifications
+    children:
+      - VerificationCreateRequest
+      - VerificationEndpoint
+      - Verification
+      - VerificationPage
+      - VerificationApplication
+      - VerificationConsumer
+      - VerificationInstructions
+      - VerificationData
+      - VerificationInterval
+      - VerificationUpdateRequest
+  - name: Miscellaneous
+    children:
+      - HTTPRequestError
