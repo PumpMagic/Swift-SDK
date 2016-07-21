@@ -44,8 +44,8 @@ private struct VerificationConstants {
 }
 
 public struct VerificationCreateRequest: JSONEncodable, JSONDecodable {
-    let consumer: String
-    let appModel: String
+    public let consumer: String
+    public let appModel: String
     
     /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
     /// Please don't use it!
@@ -69,9 +69,9 @@ public struct VerificationCreateRequest: JSONEncodable, JSONDecodable {
 }
 
 public struct VerificationInterval: JSONEncodable, JSONDecodable {
-    let phrase: String
-    let start: Int
-    let stop: Int
+    public let phrase: String
+    public let start: Int
+    public let stop: Int
     
     /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
     /// Please don't use it!
@@ -98,8 +98,8 @@ public struct VerificationInterval: JSONEncodable, JSONDecodable {
 }
 
 public struct VerificationUpdateRequest: JSONEncodable, JSONDecodable {
-    let verificationWav: WebAddress
-    let intervals: [VerificationInterval]
+    public let verificationWav: WebAddress
+    public let intervals: [VerificationInterval]
     
     /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
     /// Please don't use it!

@@ -7,7 +7,7 @@ author: Knurld
 author_url: https://www.knurld.io/
 copyright: Copyright 2016, Intellisis Inc. All rights reserved.
 #podspec: KnurldSwiftSDK.podspec
-#hide_documentation_coverage: true
+hide_documentation_coverage: true
 
 custom_categories:
   - name: Main Class

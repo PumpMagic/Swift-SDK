@@ -43,8 +43,8 @@ private struct EnrollmentConstants {
 }
 
 public struct EnrollmentCreateRequest: JSONEncodable, JSONDecodable {
-    let consumer: String
-    let appModel: String
+    public let consumer: String
+    public let appModel: String
     
     /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
     /// Please don't use it!
@@ -68,9 +68,9 @@ public struct EnrollmentCreateRequest: JSONEncodable, JSONDecodable {
 }
 
 public struct EnrollmentInterval: JSONEncodable, JSONDecodable {
-    let phrase: String
-    let start: Int
-    let stop: Int
+    public let phrase: String
+    public let start: Int
+    public let stop: Int
     
     /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
     /// Please don't use it!
@@ -97,8 +97,8 @@ public struct EnrollmentInterval: JSONEncodable, JSONDecodable {
 }
 
 public struct EnrollmentUpdateRequest: JSONEncodable, JSONDecodable {
-    let enrollmentWav: WebAddress
-    let intervals: [EnrollmentInterval]
+    public let enrollmentWav: WebAddress
+    public let intervals: [EnrollmentInterval]
     
     /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
     /// Please don't use it!
@@ -123,8 +123,8 @@ public struct EnrollmentUpdateRequest: JSONEncodable, JSONDecodable {
 }
 
 public struct EnrollmentApplication: JSONDecodable {
-    let href: String
-    let mode: String
+    public let href: String
+    public let mode: String
     
     public init(json: JSON) throws {
         self.href = try json.string(EnrollmentConstants.hrefParam)
@@ -133,8 +133,8 @@ public struct EnrollmentApplication: JSONDecodable {
 }
 
 public struct EnrollmentConsumer: JSONDecodable {
-    let href: String
-    let username: String
+    public let href: String
+    public let username: String
     
     public init(json: JSON) throws {
         self.href = try json.string(EnrollmentConstants.hrefParam)
@@ -143,8 +143,8 @@ public struct EnrollmentConsumer: JSONDecodable {
 }
 
 public struct EnrollmentData: JSONDecodable {
-    let phrase: [String]
-    let repeats: Int
+    public let phrase: [String]
+    public let repeats: Int
     
     public init(json: JSON) throws {
         self.phrase = try json.array(EnrollmentConstants.phraseParam).map(String.init)
@@ -153,11 +153,11 @@ public struct EnrollmentData: JSONDecodable {
 }
 
 public struct EnrollmentInstructions: JSONDecodable {
-    let data: EnrollmentData?
-    let directions: String
-    //@todo let optional: [???]?
-    let requires: [String]?
-    let step: Int
+    public let data: EnrollmentData?
+    public let directions: String
+    //@todo public let optional: [???]?
+    public let requires: [String]?
+    public let step: Int
     
     /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
     /// Please don't use it!

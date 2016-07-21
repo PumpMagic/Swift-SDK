@@ -27,8 +27,8 @@ struct AuthorizationConstants {
 
 /// OAuth credentials
 public struct OAuthCredentials: StringMapRepresentable {
-    let clientID: String
-    let clientSecret: String
+    public let clientID: String
+    public let clientSecret: String
     
     public init(clientID: String, clientSecret: String) {
         self.clientID = clientID
@@ -52,8 +52,8 @@ struct AuthorizationResponse: JSONDecodable {
 
 /// Knurld credentials
 public struct KnurldCredentials: StringMapRepresentable {
-    let developerID: String
-    let authorization: String
+    public let developerID: String
+    public let authorization: String
     
     public init(developerID: String, authorization: String) {
         self.developerID = developerID

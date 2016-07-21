@@ -25,8 +25,8 @@ private struct EndpointAnalysisConstants {
 
 
 public struct URLEndpointAnalysisCreateRequest: JSONEncodable {
-    let audioURL: String
-    let numWords: Int
+    public let audioURL: String
+    public let numWords: Int
     
     public init(audioURL: String, numWords: Int) {
         self.audioURL = audioURL
@@ -43,8 +43,8 @@ public struct URLEndpointAnalysisCreateRequest: JSONEncodable {
 }
 
 public struct FileEndpointAnalysisCreateRequest: StringNSDataDictionaryRepresentable {
-    let audioFile: NSData
-    let numWords: Int?
+    public let audioFile: NSData
+    public let numWords: Int?
     
     public init(audioFile: NSData, numWords: Int?) {
         self.audioFile = audioFile
@@ -60,8 +60,8 @@ public struct FileEndpointAnalysisCreateRequest: StringNSDataDictionaryRepresent
 
 
 struct EndpointAnalysisSummary: JSONDecodable {
-    let taskName: String
-    let taskStatus: String
+    public let taskName: String
+    public let taskStatus: String
     
     init(json: JSON) throws {
         self.taskName = try json.string(EndpointAnalysisConstants.taskNameParam)

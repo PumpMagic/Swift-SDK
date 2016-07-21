@@ -32,7 +32,7 @@ private struct CallConstants {
 }
 
 public struct CallCreateRequest: JSONEncodable, JSONDecodable {
-    let number: String
+    public let number: String
     
     /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
     /// Please don't use it!

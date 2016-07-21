@@ -29,9 +29,9 @@ private struct ConsumerConstants {
 }
 
 public struct ConsumerCreateRequest: JSONEncodable, JSONDecodable {
-    let username: String
-    let password: String
-    let gender: String
+    public let username: String
+    public let password: String
+    public let gender: String
     
     /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
     /// Please don't use it!
@@ -58,7 +58,7 @@ public struct ConsumerCreateRequest: JSONEncodable, JSONDecodable {
 }
 
 public struct ConsumerUpdateRequest: JSONEncodable, JSONDecodable {
-    let password: String
+    public let password: String
     
     /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
     /// Please don't use it!
@@ -78,8 +78,8 @@ public struct ConsumerUpdateRequest: JSONEncodable, JSONDecodable {
 }
 
 public struct ConsumerAuthenticateRequest: JSONEncodable, JSONDecodable {
-    let username: String
-    let password: String
+    public let username: String
+    public let password: String
     
     /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
     /// Please don't use it!
@@ -146,7 +146,7 @@ public struct ConsumerPage: JSONDecodable {
 }
 
 public struct ConsumerToken: JSONEncodable, JSONDecodable {
-    let token: String
+    public let token: String
     
     /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
     /// Please don't use it!
@@ -161,8 +161,8 @@ public struct ConsumerToken: JSONEncodable, JSONDecodable {
 
 /// Knurld credentials
 public struct ConsumerCredentials: StringMapRepresentable {
-    let developerID: String
-    let authorization: String
+    public let developerID: String
+    public let authorization: String
     
     init(developerID: String, authorization: String) {
         self.developerID = developerID

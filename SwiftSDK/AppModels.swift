@@ -100,9 +100,9 @@ public struct AppModelCreateRequest: JSONEncodable {
 
 /// All parameters needed to create a Knurld application model update request
 public struct AppModelUpdateRequest: JSONEncodable {
-    let enrollmentRepeats: Int?
-    let threshold: Double?
-    let verificationLength: Int?
+    public let enrollmentRepeats: Int?
+    public let threshold: Double?
+    public let verificationLength: Int?
     
     public init(enrollmentRepeats: Int?, threshold: Double?, verificationLength: Int?) {
         self.enrollmentRepeats = enrollmentRepeats
