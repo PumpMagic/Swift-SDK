@@ -17,7 +17,7 @@ import Foundation
 /// Methods for working with authorization-related Knurld API endpoints.
 ///
 /// This class is instantiated as a child of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
-/// `authorization` member. That is, `api.authorization.authorize(...)`
+/// `authorization` member. For example, `api.authorization.authorize(...)`
 public class Authorization {
     let authorization: AuthorizationEndpoint
     let requestManager: HTTPRequestManager
@@ -45,7 +45,7 @@ public class Authorization {
 /// Methods for working with status-related Knurld API endpoints.
 ///
 /// This class is instantiated as a child of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
-/// `status` member. That is, `api.status.get(...)`
+/// `status` member. For example, `api.status.get(...)`
 public class Status {
     let status: StatusEndpoint
     let requestManager: HTTPRequestManager
@@ -55,7 +55,7 @@ public class Status {
         self.requestManager = requestManager
     }
     
-    /// Get the Knurld API status
+    /// Get the Knurld API status.
     public func get(credentials credentials: KnurldCredentials,
                                successHandler: (ServiceStatus) -> Void,
                                failureHandler: (HTTPRequestError) -> Void)
@@ -67,7 +67,7 @@ public class Status {
 /// Methods for working with application model-related Knurld API endpoints.
 ///
 /// This class is instantiated as a child of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
-/// `appModels` member. That is, `api.appModels.create(...)`
+/// `appModels` member. For example, `api.appModels.create(...)`
 public class AppModels {
     let appModels: AppModelsEndpoint
     let requestManager: HTTPRequestManager
@@ -77,7 +77,7 @@ public class AppModels {
         self.requestManager = requestManager
     }
     
-    /// Create an application model.
+    /// Create an application model ("app model").
     public func create(credentials credentials: KnurldCredentials,
                                     request: AppModelCreateRequest,
                                     successHandler: (AppModelEndpoint) -> Void,
@@ -126,7 +126,7 @@ public class AppModels {
 /// Methods for working with consumer-related Knurld API endpoints.
 ///
 /// This class is instantiated as a child of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
-/// `consumers` member. That is, `api.consumers.create(...)`
+/// `consumers` member. For example, `api.consumers.create(...)`
 public class Consumers {
     let consumers: ConsumersEndpoint
     let consumerAuthenticate: AuthenticateConsumerEndpoint
@@ -184,13 +184,26 @@ public class Consumers {
     }
     
     
-    //@todo consumer auth
+    /// Authenticate a consumer.
+    public func authenticate(credentials credentials: KnurldCredentials,
+                                         request: ConsumerAuthenticateRequest,
+                                         successHandler: (KnurldCredentials) -> Void,
+                                         failureHandler: (HTTPRequestError) -> Void)
+    {
+        self.consumerAuthenticate.post(manager: self.requestManager,
+                                       headers: credentials,
+                                       body: request,
+                                       successHandler: { consumerToken in
+                                        successHandler(KnurldCredentials(consumerToken: consumerToken, adminCredentials: credentials))
+                                       },
+                                       failureHandler: failureHandler)
+    }
 }
 
 /// Methods for working with enrollment-related Knurld API endpoints.
 ///
 /// This class is instantiated as a child of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
-/// `enrollments` member. That is, `api.enrollments.create(...)`
+/// `enrollments` member. For example, `api.enrollments.create(...)`
 public class Enrollments {
     let enrollments: EnrollmentsEndpoint
     let requestManager: HTTPRequestManager
@@ -249,7 +262,7 @@ public class Enrollments {
 /// Methods for working with verification-related Knurld API endpoints.
 ///
 /// This class is instantiated as a child of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
-/// `verifications` member. That is, `api.verifications.create(...)`
+/// `verifications` member. For example, `api.verifications.create(...)`
 public class Verifications {
     let verifications: VerificationsEndpoint
     let requestManager: HTTPRequestManager
@@ -308,7 +321,7 @@ public class Verifications {
 /// Methods for working with call-related Knurld API endpoints.
 ///
 /// This class is instantiated as a child of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
-/// `calls` member. That is, `api.calls.create(...)`
+/// `calls` member. For example, `api.calls.create(...)`
 public class Calls {
     let calls: CallsEndpoint
     let requestManager: HTTPRequestManager
@@ -358,7 +371,7 @@ public class Calls {
 /// Methods for working with endpoint analysis-related Knurld API endpoints.
 ///
 /// This class is instantiated as a child of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
-/// `endpointAnalyses` member. That is, `api.endpointAnalyses.endpointURL(...)`
+/// `endpointAnalyses` member. For example, `api.endpointAnalyses.endpointURL(...)`
 public class EndpointAnalyses {
     let urlAnalyses: URLEndpointAnalysisEndpoint
     let fileAnalyses: FileEndpointAnalysisEndpoint
@@ -410,7 +423,19 @@ public class EndpointAnalyses {
 
 
 
-/// KnurldAPI abstracts out the Knurld web API.
+/// KnurldAPI abstracts out the Knurld web API. It's the Knurld Swift SDK's highest-level data type, and your main entry point into it.
+///
+/// To use the Swift SDK, create a single instance of KnurldAPI, and then route all of your API requests through that instance, like so:
+///
+/// ```swift
+/// let api = KnurldAPI()
+/// api.authorization.authorize(...)
+/// api.status.get(...)
+/// api.appModels.create(...)
+/// ```
+///
+/// For more information on what API calls this class supports, check out its constituent endpoint family
+/// classes, like `Authorization`, `Status` and `AppModels`.
 public class KnurldAPI {
     let requestManager: HTTPRequestManager
     
@@ -447,7 +472,7 @@ public class KnurldAPI {
     /// Endpoint analysis endpoints. See documentation of the `EndpointAnalyses` class.
     public let endpointAnalyses: EndpointAnalyses
     
-    /// Initialize a Knurld API using a custom URL and version path, instead of e.g. "https://api.knurld.io" and "/v1".
+    /// Initialize a Knurld API using a custom URL and version path, instead of e.g. `"https://api.knurld.io"` and `"/v1"`.
     public init(baseURL: String, versionPath: String) {
         self.requestManager = HTTPRequestManager()
         
@@ -466,7 +491,7 @@ public class KnurldAPI {
         self.endpointAnalyses = EndpointAnalyses(urlAnalysesURL: url + "/endpointAnalysis/url", fileAnalysesURL: url + "/endpointAnalysis/file",requestManager: self.requestManager)
     }
     
-    /// Initialize a Knurld API using a custom URL, instead of e.g. "https://api.knurld.io".
+    /// Initialize a Knurld API using a custom URL, instead of e.g. `"https://api.knurld.io"`.
     public convenience init(url: String) {
         self.init(baseURL: url, versionPath: EndpointCommons.DEFAULT_VERSION_PATH)
     }

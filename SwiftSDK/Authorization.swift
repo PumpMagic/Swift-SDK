@@ -65,6 +65,11 @@ public struct KnurldCredentials: StringMapRepresentable {
         self.authorization = AuthorizationConstants.authorizationPrefix + authorizationResponse.accessToken
     }
     
+    init(consumerToken: ConsumerToken, adminCredentials: KnurldCredentials) {
+        self.developerID = AuthorizationConstants.developerIDPrefix + consumerToken.token
+        self.authorization = adminCredentials.authorization
+    }
+    
     func toStringMap() -> [String : String] {
         return [AuthorizationConstants.developerIDParam: developerID, AuthorizationConstants.authorizationParam: authorization]
     }

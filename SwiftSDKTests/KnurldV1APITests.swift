@@ -274,6 +274,41 @@ class ConsumersSpec: QuickSpec {
                 expect(deleted).toEventually(beTrue(), timeout: API_CALL_TIMEOUT_NSTIMEINTERVAL)
             }
         }
+        
+        describe("the authenticate consumer API") {
+            it("works on a freshly created consumer") {
+                let username = randomAlphanumericString(length: 10)
+                let password = randomAlphanumericString(length: 10)
+                let gender = "M"
+                
+                // Create a consumer
+                let request1 = ConsumerCreateRequest(username: username, password: password, gender: gender)
+                guard let _ = requestSync(method: api.consumers.create, credentials: knurldCredentials, arg1: request1) else {
+                    fail("Unable to create consumer")
+                    return
+                }
+                
+                // Authenticate the consumer
+                let request2 = ConsumerAuthenticateRequest(username: username, password: password)
+                guard let consumerCredentials = requestSync(method: api.consumers.authenticate, credentials: knurldCredentials, arg1: request2) else {
+                    fail("Unable to authenticate consumer")
+                    return
+                }
+                
+                expect(consumerCredentials.authorization).to(equal(knurldCredentials.authorization))
+            }
+            
+            it("fails when given garbage credentials") {
+                let request = ConsumerAuthenticateRequest(username: "aljsdhkjqhwq", password: "alsjhdlak")
+                var failed: Bool = false
+                api.consumers.authenticate(credentials: knurldCredentials,
+                                           request: request,
+                                           successHandler: { _ in () },
+                                           failureHandler: { _ in failed = true })
+                
+                expect(failed).toEventually(beTrue(), timeout: API_CALL_TIMEOUT_NSTIMEINTERVAL)
+            }
+        }
     }
 }
 

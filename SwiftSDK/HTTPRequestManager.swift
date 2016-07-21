@@ -146,6 +146,7 @@ class HTTPRequestManager {
             newHeaders = headers
         }
         newHeaders.updateValue("application/json", forKey: "Content-Type")
+        print("OUT: \(body)")
         
         // Try encoding the body and executing the request. If serialization fails, call the failure handler immediately
         do {
@@ -156,6 +157,7 @@ class HTTPRequestManager {
                                 failureHandler(.NoDataReturned)
                                 return
                             }
+                            print("IN: \(response)")
                             successHandler(response)
                            }, failureHandler: failureHandler)
         } catch {
@@ -283,7 +285,6 @@ class HTTPRequestManager {
                 
                 do {
                     let json = try JSON(data: data)
-                    print("Received JSON: \(json)")
                     successHandler(json)
                     return
                 } catch {
