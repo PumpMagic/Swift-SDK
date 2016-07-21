@@ -25,11 +25,12 @@ struct AuthorizationConstants {
 
 
 
-/// OAuth credentials
+/// OAuth credentials, used to create Knurld credentials.
 public struct OAuthCredentials: StringMapRepresentable {
     public let clientID: String
     public let clientSecret: String
     
+    /// Initialize a set of credentials.
     public init(clientID: String, clientSecret: String) {
         self.clientID = clientID
         self.clientSecret = clientSecret
@@ -40,8 +41,9 @@ public struct OAuthCredentials: StringMapRepresentable {
     }
 }
 
-/// Knurld OAuth authorization response
-/// @warn This representation is incomplete
+
+// @warn This representation is incomplete
+/// Knurld OAuth authorization response.
 struct AuthorizationResponse: JSONDecodable {
     let accessToken: String
     
@@ -50,11 +52,12 @@ struct AuthorizationResponse: JSONDecodable {
     }
 }
 
-/// Knurld credentials
+/// Credentials used when working with the majority of Knurld API calls.
 public struct KnurldCredentials: StringMapRepresentable {
     public let developerID: String
     public let authorization: String
     
+    /// Initialize a set of credentials.
     public init(developerID: String, authorization: String) {
         self.developerID = developerID
         self.authorization = authorization

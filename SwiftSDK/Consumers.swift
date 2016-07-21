@@ -28,78 +28,62 @@ private struct ConsumerConstants {
     static let offsetParam = "offset"
 }
 
-public struct ConsumerCreateRequest: JSONEncodable, JSONDecodable {
+/// All parameters involved in requesting the creation of a Knurld consumer.
+public struct ConsumerCreateRequest: JSONEncodable {
     public let username: String
     public let password: String
     public let gender: String
     
-    /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize a request.
+    public init(username: String, password: String, gender: String) {
+        self.username = username
+        self.password = password
+        self.gender = gender
+    }
+    
+    /// Convert to JSON.
     public func toJSON() -> JSON {
         return .Dictionary([
             ConsumerConstants.usernameParam: .String(self.username),
             ConsumerConstants.passwordParam: .String(self.password),
             ConsumerConstants.genderParam: .String(self.gender)])
     }
-    
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
-    public init(json: JSON) throws {
-        self.username = try json.string(ConsumerConstants.usernameParam)
-        self.password = try json.string(ConsumerConstants.passwordParam)
-        self.gender = try json.string(ConsumerConstants.genderParam)
-    }
-    
-    public init(username: String, password: String, gender: String) {
-        self.username = username
-        self.password = password
-        self.gender = gender
-    }
 }
 
-public struct ConsumerUpdateRequest: JSONEncodable, JSONDecodable {
+public struct ConsumerUpdateRequest: JSONEncodable {
     public let password: String
     
-    /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
-    public func toJSON() -> JSON {
-        return .Dictionary([ConsumerConstants.passwordParam: .String(self.password)])
-    }
-    
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
-    public init(json: JSON) throws {
-        self.password = try json.string(ConsumerConstants.passwordParam)
-    }
-    
+    /// Initialize a request.
     public init(password: String) {
         self.password = password
     }
+    
+    /// Convert to JSON.
+    public func toJSON() -> JSON {
+        return .Dictionary([ConsumerConstants.passwordParam: .String(self.password)])
+    }
 }
 
-public struct ConsumerAuthenticateRequest: JSONEncodable, JSONDecodable {
+/// All parameters needed to create a Knurld consumer authentication request.
+public struct ConsumerAuthenticateRequest: JSONEncodable {
     public let username: String
     public let password: String
     
-    /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize a request.
+    public init(username: String, password: String) {
+        self.username = username
+        self.password = password
+    }
+    
+    /// Convert to JSON.
     public func toJSON() -> JSON {
         return .Dictionary([
             ConsumerConstants.usernameParam: .String(self.username),
             ConsumerConstants.passwordParam: .String(self.password)])
     }
-    
-    public init(json: JSON) throws {
-        self.username = try json.string(ConsumerConstants.usernameParam)
-        self.password = try json.string(ConsumerConstants.passwordParam)
-    }
-    
-    public init(username: String, password: String) {
-        self.username = username
-        self.password = password
-    }
 }
 
+/// A Knurld consumer.
 public struct Consumer: JSONDecodable {
     public let username: String
     public let gender: String
@@ -109,8 +93,7 @@ public struct Consumer: JSONDecodable {
     public let role: String
     public let href: String
     
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.username = try json.string(ConsumerConstants.usernameParam)
         self.gender = try json.string(ConsumerConstants.genderParam)
@@ -122,7 +105,7 @@ public struct Consumer: JSONDecodable {
     }
 }
 
-/// A subset of an account's consumers with metadata and information on where the rest are
+/// A subset of an account's consumers with metadata and information on where the rest are.
 public struct ConsumerPage: JSONDecodable {
     public let limit: Int
     public let next: WebAddress?
@@ -132,8 +115,7 @@ public struct ConsumerPage: JSONDecodable {
     public let href: WebAddress
     public let offset: Int
     
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.limit = try json.int(ConsumerConstants.limitParam)
         self.next = try json.string(ConsumerConstants.nextParam, alongPath: [.NullBecomesNil])
@@ -145,21 +127,17 @@ public struct ConsumerPage: JSONDecodable {
     }
 }
 
-public struct ConsumerToken: JSONEncodable, JSONDecodable {
+/// A consumer token, for use in generating Knurld credentials.
+public struct ConsumerToken: JSONDecodable {
     public let token: String
     
-    /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
-    public func toJSON() -> JSON {
-        return .Dictionary([ConsumerConstants.tokenParam: .String(self.token)])
-    }
-    
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.token = try json.string(ConsumerConstants.tokenParam)
     }
 }
 
-/// Knurld credentials
+/// Consumer credentials.
 public struct ConsumerCredentials: StringMapRepresentable {
     public let developerID: String
     public let authorization: String
@@ -191,7 +169,7 @@ struct ConsumersEndpoint: SupportsJSONPosts, SupportsJSONGets {
     let url: String
 }
 
-/// /consumers/{id}
+/// A consumer API endpoint.
 public struct ConsumerEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets, SupportsDeletes {
     typealias PostHeadersType = KnurldCredentials
     typealias PostRequestType = ConsumerUpdateRequest
@@ -202,8 +180,7 @@ public struct ConsumerEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGe
     
     let url: String
     
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.url = try json.string(ConsumerConstants.hrefParam)
     }

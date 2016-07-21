@@ -24,17 +24,18 @@ private struct EndpointAnalysisConstants {
 }
 
 
+/// All parameters involved in requesting the analysis of an audio file given its URL.
 public struct URLEndpointAnalysisCreateRequest: JSONEncodable {
     public let audioURL: String
     public let numWords: Int
     
+    /// Initialize a request.
     public init(audioURL: String, numWords: Int) {
         self.audioURL = audioURL
         self.numWords = numWords
     }
     
-    /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Convert to JSON.
     public func toJSON() -> JSON {
         return .Dictionary([
             EndpointAnalysisConstants.audioURLParam: .String(self.audioURL),
@@ -42,10 +43,12 @@ public struct URLEndpointAnalysisCreateRequest: JSONEncodable {
     }
 }
 
+/// All parameters involved in requesting the analysis of an audio file given its contents.
 public struct FileEndpointAnalysisCreateRequest: StringNSDataDictionaryRepresentable {
     public let audioFile: NSData
     public let numWords: Int?
     
+    /// Initialize a request.
     public init(audioFile: NSData, numWords: Int?) {
         self.audioFile = audioFile
         self.numWords = numWords
@@ -60,8 +63,8 @@ public struct FileEndpointAnalysisCreateRequest: StringNSDataDictionaryRepresent
 
 
 struct EndpointAnalysisSummary: JSONDecodable {
-    public let taskName: String
-    public let taskStatus: String
+    let taskName: String
+    let taskStatus: String
     
     init(json: JSON) throws {
         self.taskName = try json.string(EndpointAnalysisConstants.taskNameParam)
@@ -69,25 +72,25 @@ struct EndpointAnalysisSummary: JSONDecodable {
     }
 }
 
+/// A period of time during which human voice was detected.
 public struct EndpointAnalysisInterval: JSONDecodable {
     public let start: Int
     public let stop: Int
     
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Convert to JSON.
     public init(json: JSON) throws {
         self.start = try json.int(EndpointAnalysisConstants.startParam)
         self.stop = try json.int(EndpointAnalysisConstants.stopParam)
     }
 }
 
+/// An endpoint analysis.
 public struct EndpointAnalysis: JSONDecodable {
     public let taskName: String
     public let taskStatus: String
     public let intervals: [EndpointAnalysisInterval]
     
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Convert to JSON.
     public init(json: JSON) throws {
         self.taskName = try json.string(EndpointAnalysisConstants.taskNameParam)
         self.taskStatus = try json.string(EndpointAnalysisConstants.taskStatusParam)
@@ -95,11 +98,12 @@ public struct EndpointAnalysis: JSONDecodable {
     }
 }
 
+/// An endpoint analysis API endpoint.
 public struct EndpointAnalysisEndpoint: SupportsJSONGets {
     typealias GetHeadersType = KnurldCredentials
     typealias GetResponseType = EndpointAnalysis
     
-    let url: String
+    public let url: String
     
     init(summary: EndpointAnalysisSummary) {
         //@todo delegate the base to whatever was passed to KnurldAPI

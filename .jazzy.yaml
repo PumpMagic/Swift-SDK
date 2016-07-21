@@ -15,14 +15,22 @@ custom_categories:
       - KnurldAPI
   - name: Endpoint Families
     children:
-      - AppModels
       - Authorization
-      - Calls
-      - Consumers
-      - EndpointAnalyses
-      - Enrollments
       - Status
+      - AppModels
+      - Consumers
+      - Enrollments
       - Verifications
+      - Calls
+      - EndpointAnalyses
+
+  - name: Authorization
+    children:
+      - OAuthCredentials
+      - KnurldCredentials
+  - name: Status
+    children:
+      - ServiceStatus
   - name: Application Models
     children:
       - AppModelCreateRequest
@@ -30,17 +38,6 @@ custom_categories:
       - AppModel
       - AppModelPage
       - AppModelUpdateRequest
-  - name: Authorization
-    children:
-      - KnurldCredentials
-      - OAuthCredentials
-  - name: Calls
-    children:
-      - CallCreateRequest
-      - CallEndpoint
-      - Call
-      - CallPage
-      - CallTerminateRequest
   - name: Consumers
     children:
       - ConsumerCreateRequest
@@ -51,13 +48,6 @@ custom_categories:
       - ConsumerAuthenticateRequest
       - ConsumerCredentials
       - ConsumerToken
-  - name: Endpoint Analyses
-    children:
-      - EndpointAnalysisEndpoint
-      - EndpointAnalysis
-      - EndpointAnalysisInterval
-      - FileEndpointAnalysisCreateRequest
-      - URLEndpointAnalysisCreateRequest
   - name: Enrollments
     children:
       - EnrollmentCreateRequest
@@ -70,9 +60,6 @@ custom_categories:
       - EnrollmentData
       - EnrollmentInterval
       - EnrollmentUpdateRequest
-  - name: Status
-    children:
-      - ServiceStatus
   - name: Verifications
     children:
       - VerificationCreateRequest
@@ -85,6 +72,20 @@ custom_categories:
       - VerificationData
       - VerificationInterval
       - VerificationUpdateRequest
+  - name: Calls
+    children:
+      - CallCreateRequest
+      - CallEndpoint
+      - Call
+      - CallPage
+      - CallTerminateRequest
+  - name: Endpoint Analyses
+    children:
+      - EndpointAnalysisEndpoint
+      - EndpointAnalysis
+      - EndpointAnalysisInterval
+      - FileEndpointAnalysisCreateRequest
+      - URLEndpointAnalysisCreateRequest
   - name: Miscellaneous
     children:
       - HTTPRequestError

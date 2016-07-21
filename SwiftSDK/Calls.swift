@@ -31,32 +31,31 @@ private struct CallConstants {
     static let offsetParam = "offset"
 }
 
-public struct CallCreateRequest: JSONEncodable, JSONDecodable {
+/// All parameters involved in requesting the creation of a Knurld call.
+public struct CallCreateRequest: JSONEncodable {
     public let number: String
     
-    /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
-    public func toJSON() -> JSON {
-        return .Dictionary([CallConstants.numberParam: .String(self.number)])
-    }
-    
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
-    public init(json: JSON) throws {
-        self.number = try json.string(CallConstants.numberParam)
-    }
-    
+    /// Initialize a request.
     public init(number: String) {
         self.number = number
     }
+    
+    /// Convert to JSON.
+    public func toJSON() -> JSON {
+        return .Dictionary([CallConstants.numberParam: .String(self.number)])
+    }
 }
 
+/// All parameters involved in requesting the termination of a Knurld call.
+/// (There are none.)
 public struct CallTerminateRequest: JSONEncodable {
+    /// Convert to JSON.
     public func toJSON() -> JSON {
         return .Null
     }
 }
 
+/// A call.
 public struct Call: JSONDecodable {
     public let audio: String?
     public let connectedTime: String?
@@ -69,8 +68,7 @@ public struct Call: JSONDecodable {
     public let status: String
     public let timeout: Int
     
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.audio = try json.string(CallConstants.audioParam)
         self.connectedTime = try json.string(CallConstants.connectedTimeParam, alongPath: .NullBecomesNil)
@@ -84,7 +82,7 @@ public struct Call: JSONDecodable {
     }
 }
 
-/// A subset of an account's calls with metadata and information on where the rest are
+/// A subset of an account's calls with metadata and information on where the rest are.
 public struct CallPage: JSONDecodable {
     public let limit: Int
     public let next: WebAddress?
@@ -94,8 +92,7 @@ public struct CallPage: JSONDecodable {
     public let href: WebAddress
     public let offset: Int
     
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.limit = try json.int(CallConstants.limitParam)
         self.next = try json.string(CallConstants.nextParam, alongPath: [.NullBecomesNil])
@@ -119,7 +116,7 @@ struct CallsEndpoint: SupportsJSONPosts, SupportsJSONGets {
     let url: String
 }
 
-/// /calls/{id}
+/// A call API endpoint.
 public struct CallEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets {
     typealias PostHeadersType = KnurldCredentials
     typealias PostRequestType = CallTerminateRequest
@@ -128,10 +125,9 @@ public struct CallEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets {
     typealias GetResponseType = Call
     typealias DeleteHeadersType = KnurldCredentials
     
-    let url: String
+    public let url: String
     
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.url = try json.string(CallConstants.hrefParam)
     }

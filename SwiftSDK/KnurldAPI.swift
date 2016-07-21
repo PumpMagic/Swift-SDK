@@ -16,7 +16,7 @@ import Foundation
 
 /// Methods for working with authorization-related Knurld API endpoints.
 ///
-/// This class is instantiated as a child of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
+/// This class is instantiated as a member of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
 /// `authorization` member. For example, `api.authorization.authorize(...)`
 public class Authorization {
     let authorization: AuthorizationEndpoint
@@ -44,7 +44,7 @@ public class Authorization {
 
 /// Methods for working with status-related Knurld API endpoints.
 ///
-/// This class is instantiated as a child of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
+/// This class is instantiated as a member of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
 /// `status` member. For example, `api.status.get(...)`
 public class Status {
     let status: StatusEndpoint
@@ -66,7 +66,7 @@ public class Status {
 
 /// Methods for working with application model-related Knurld API endpoints.
 ///
-/// This class is instantiated as a child of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
+/// This class is instantiated as a member of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
 /// `appModels` member. For example, `api.appModels.create(...)`
 public class AppModels {
     let appModels: AppModelsEndpoint
@@ -125,7 +125,7 @@ public class AppModels {
 
 /// Methods for working with consumer-related Knurld API endpoints.
 ///
-/// This class is instantiated as a child of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
+/// This class is instantiated as a member of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
 /// `consumers` member. For example, `api.consumers.create(...)`
 public class Consumers {
     let consumers: ConsumersEndpoint
@@ -202,7 +202,7 @@ public class Consumers {
 
 /// Methods for working with enrollment-related Knurld API endpoints.
 ///
-/// This class is instantiated as a child of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
+/// This class is instantiated as a member of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
 /// `enrollments` member. For example, `api.enrollments.create(...)`
 public class Enrollments {
     let enrollments: EnrollmentsEndpoint
@@ -261,7 +261,7 @@ public class Enrollments {
 
 /// Methods for working with verification-related Knurld API endpoints.
 ///
-/// This class is instantiated as a child of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
+/// This class is instantiated as a member of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
 /// `verifications` member. For example, `api.verifications.create(...)`
 public class Verifications {
     let verifications: VerificationsEndpoint
@@ -320,7 +320,7 @@ public class Verifications {
 
 /// Methods for working with call-related Knurld API endpoints.
 ///
-/// This class is instantiated as a child of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
+/// This class is instantiated as a member of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
 /// `calls` member. For example, `api.calls.create(...)`
 public class Calls {
     let calls: CallsEndpoint
@@ -370,7 +370,7 @@ public class Calls {
 
 /// Methods for working with endpoint analysis-related Knurld API endpoints.
 ///
-/// This class is instantiated as a child of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
+/// This class is instantiated as a member of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
 /// `endpointAnalyses` member. For example, `api.endpointAnalyses.endpointURL(...)`
 public class EndpointAnalyses {
     let urlAnalyses: URLEndpointAnalysisEndpoint

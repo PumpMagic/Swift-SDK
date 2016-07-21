@@ -43,38 +43,39 @@ private struct VerificationConstants {
     static let offsetParam = "offset"
 }
 
-public struct VerificationCreateRequest: JSONEncodable, JSONDecodable {
+/// All parameters involved in requesting the creation of a Knurld verification.
+public struct VerificationCreateRequest: JSONEncodable {
     public let consumer: String
     public let appModel: String
     
-    /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize a request.
+    public init(consumer: String, appModel: String) {
+        self.consumer = consumer
+        self.appModel = appModel
+    }
+    
+    /// Convert to JSON.
     public func toJSON() -> JSON {
         return .Dictionary([
             VerificationConstants.consumerParam: .String(self.consumer),
             VerificationConstants.appModelParam: .String(self.appModel)])
     }
-    
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
-    public init(json: JSON) throws {
-        self.consumer = try json.string(VerificationConstants.consumerParam)
-        self.appModel = try json.string(VerificationConstants.appModelParam)
-    }
-    
-    public init(consumer: String, appModel: String) {
-        self.consumer = consumer
-        self.appModel = appModel
-    }
 }
 
+/// An interval of time during which a phrase is spoken.
 public struct VerificationInterval: JSONEncodable, JSONDecodable {
     public let phrase: String
     public let start: Int
     public let stop: Int
     
-    /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize an interval.
+    public init(phrase: String, start: Int, stop: Int) {
+        self.phrase = phrase
+        self.start = start
+        self.stop = stop
+    }
+    
+    /// Convert to JSON.
     public func toJSON() -> JSON {
         return .Dictionary([
             VerificationConstants.phraseParam: .String(self.phrase),
@@ -82,81 +83,69 @@ public struct VerificationInterval: JSONEncodable, JSONDecodable {
             VerificationConstants.stopParam: .Int(self.stop)])
     }
     
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.phrase = try json.string(VerificationConstants.phraseParam)
         self.start = try json.int(VerificationConstants.startParam)
         self.stop = try json.int(VerificationConstants.stopParam)
     }
-    
-    public init(phrase: String, start: Int, stop: Int) {
-        self.phrase = phrase
-        self.start = start
-        self.stop = stop
-    }
 }
 
-public struct VerificationUpdateRequest: JSONEncodable, JSONDecodable {
+/// All parameters needed to create a Knurld verification update request.
+public struct VerificationUpdateRequest: JSONEncodable {
     public let verificationWav: WebAddress
     public let intervals: [VerificationInterval]
     
-    /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize a request.
+    public init(verificationWav: WebAddress, intervals: [VerificationInterval]) {
+        self.verificationWav = verificationWav
+        self.intervals = intervals
+    }
+    
+    /// Convert to JSON.
     public func toJSON() -> JSON {
         return .Dictionary([
             VerificationConstants.verificationWavParam: .String(self.verificationWav),
             VerificationConstants.intervalsParam: .Array(self.intervals.map( { interval in interval.toJSON() }))
             ])
     }
-    
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
-    public init(json: JSON) throws {
-        self.verificationWav = try json.string(VerificationConstants.verificationWavParam)
-        self.intervals = try json.array(VerificationConstants.intervalsParam).map(VerificationInterval.init)
-    }
-    
-    public init(verificationWav: WebAddress, intervals: [VerificationInterval]) {
-        self.verificationWav = verificationWav
-        self.intervals = intervals
-    }
 }
 
+/// Information on the application associated with a verification.
 public struct VerificationApplication: JSONDecodable {
     public let href: String
     public let mode: String
     
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.href = try json.string(VerificationConstants.hrefParam)
         self.mode = try json.string(VerificationConstants.modeParam)
     }
 }
 
+/// Information on the consumer associated with a verification.
 public struct VerificationConsumer: JSONDecodable {
     public let href: String
     public let username: String
     
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.href = try json.string(VerificationConstants.hrefParam)
         self.username = try json.string(VerificationConstants.usernameParam)
     }
 }
 
+/// Information on the phrases spoken in a verification.
 public struct VerificationData: JSONDecodable {
     public let phrase: [String]
     
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.phrase = try json.array(VerificationConstants.phraseParam).map(String.init)
     }
 }
 
+/// Instruction on completing a verification.
 public struct VerificationInstructions: JSONDecodable {
     public let data: VerificationData?
     public let directions: String
@@ -164,8 +153,7 @@ public struct VerificationInstructions: JSONDecodable {
     public let requires: [String]?
     public let step: Int
     
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.data = try json.decode(VerificationConstants.dataParam, alongPath: [.NullBecomesNil, .MissingKeyBecomesNil])
         self.directions = try json.string(VerificationConstants.directionsParam)
@@ -174,6 +162,7 @@ public struct VerificationInstructions: JSONDecodable {
     }
 }
 
+/// A verification.
 public struct Verification: JSONDecodable {
     public let application: VerificationApplication
     public let consumer: VerificationConsumer
@@ -184,8 +173,7 @@ public struct Verification: JSONDecodable {
     public let verified: String?
     public let verified_phrases: [Bool]?
     
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.application = try json.decode(VerificationConstants.appModelParam)
         self.consumer = try json.decode(VerificationConstants.consumerParam)
@@ -198,7 +186,7 @@ public struct Verification: JSONDecodable {
     }
 }
 
-/// A subset of an account's enrollments with metadata and information on where the rest are
+/// A subset of an account's enrollments with metadata and information on where the rest are.
 public struct VerificationPage: JSONDecodable {
     public let limit: Int
     public let next: WebAddress?
@@ -208,8 +196,7 @@ public struct VerificationPage: JSONDecodable {
     public let href: WebAddress
     public let offset: Int
     
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.limit = try json.int(VerificationConstants.limitParam)
         self.next = try json.string(VerificationConstants.nextParam, alongPath: [.NullBecomesNil])
@@ -233,7 +220,7 @@ struct VerificationsEndpoint: SupportsJSONPosts, SupportsJSONGets {
     let url: String
 }
 
-/// /verifications/{id}
+/// A verification API endpoint.
 public struct VerificationEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets, SupportsDeletes {
     typealias PostHeadersType = KnurldCredentials
     typealias PostRequestType = VerificationUpdateRequest
@@ -242,10 +229,9 @@ public struct VerificationEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJS
     typealias GetResponseType = Verification
     typealias DeleteHeadersType = KnurldCredentials
     
-    let url: String
+    public let url: String
     
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.url = try json.string(VerificationConstants.hrefParam)
     }

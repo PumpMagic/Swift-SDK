@@ -42,38 +42,39 @@ private struct EnrollmentConstants {
     static let offsetParam = "offset"
 }
 
-public struct EnrollmentCreateRequest: JSONEncodable, JSONDecodable {
+/// All parameters involved in requesting the creation of a Knurld enrollment.
+public struct EnrollmentCreateRequest: JSONEncodable {
     public let consumer: String
     public let appModel: String
     
-    /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize a request.
+    public init(consumer: String, appModel: String) {
+        self.consumer = consumer
+        self.appModel = appModel
+    }
+    
+    /// Convert to JSON.
     public func toJSON() -> JSON {
         return .Dictionary([
             EnrollmentConstants.consumerParam: .String(self.consumer),
             EnrollmentConstants.appModelParam: .String(self.appModel)])
     }
-    
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
-    public init(json: JSON) throws {
-        self.consumer = try json.string(EnrollmentConstants.consumerParam)
-        self.appModel = try json.string(EnrollmentConstants.appModelParam)
-    }
-    
-    public init(consumer: String, appModel: String) {
-        self.consumer = consumer
-        self.appModel = appModel
-    }
 }
 
+/// An interval of time during which a phrase is spoken.
 public struct EnrollmentInterval: JSONEncodable, JSONDecodable {
     public let phrase: String
     public let start: Int
     public let stop: Int
     
-    /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize an interval.
+    public init(phrase: String, start: Int, stop: Int) {
+        self.phrase = phrase
+        self.start = start
+        self.stop = stop
+    }
+    
+    /// Convert to JSON.
     public func toJSON() -> JSON {
         return .Dictionary([
             EnrollmentConstants.phraseParam: .String(self.phrase),
@@ -81,77 +82,71 @@ public struct EnrollmentInterval: JSONEncodable, JSONDecodable {
             EnrollmentConstants.stopParam: .Int(self.stop)])
     }
     
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.phrase = try json.string(EnrollmentConstants.phraseParam)
         self.start = try json.int(EnrollmentConstants.startParam)
         self.stop = try json.int(EnrollmentConstants.stopParam)
     }
-    
-    public init(phrase: String, start: Int, stop: Int) {
-        self.phrase = phrase
-        self.start = start
-        self.stop = stop
-    }
 }
 
-public struct EnrollmentUpdateRequest: JSONEncodable, JSONDecodable {
+/// All parameters needed to create a Knurld enrollment update request.
+public struct EnrollmentUpdateRequest: JSONEncodable {
     public let enrollmentWav: WebAddress
     public let intervals: [EnrollmentInterval]
     
-    /// This function is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize a request.
+    public init(enrollmentWav: WebAddress, intervals: [EnrollmentInterval]) {
+        self.enrollmentWav = enrollmentWav
+        self.intervals = intervals
+    }
+    
+    /// Convert to JSON.
     public func toJSON() -> JSON {
         return .Dictionary([
             EnrollmentConstants.enrollmentWavParam: .String(self.enrollmentWav),
             EnrollmentConstants.intervalsParam: .Array(self.intervals.map( { interval in interval.toJSON() }))
             ])
     }
-    
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
-    public init(json: JSON) throws {
-        self.enrollmentWav = try json.string(EnrollmentConstants.enrollmentWavParam)
-        self.intervals = try json.array(EnrollmentConstants.intervalsParam).map(EnrollmentInterval.init)
-    }
-    
-    public init(enrollmentWav: WebAddress, intervals: [EnrollmentInterval]) {
-        self.enrollmentWav = enrollmentWav
-        self.intervals = intervals
-    }
 }
 
+/// Information on the application associated with an enrollment.
 public struct EnrollmentApplication: JSONDecodable {
     public let href: String
     public let mode: String
     
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.href = try json.string(EnrollmentConstants.hrefParam)
         self.mode = try json.string(EnrollmentConstants.modeParam)
     }
 }
 
+/// Information on the consumer associated with an enrollment.
 public struct EnrollmentConsumer: JSONDecodable {
     public let href: String
     public let username: String
     
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.href = try json.string(EnrollmentConstants.hrefParam)
         self.username = try json.string(EnrollmentConstants.usernameParam)
     }
 }
 
+/// Information on the phrases to speak for an enrollment.
 public struct EnrollmentData: JSONDecodable {
     public let phrase: [String]
     public let repeats: Int
     
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.phrase = try json.array(EnrollmentConstants.phraseParam).map(String.init)
         self.repeats = try json.int(EnrollmentConstants.repeatsParam)
     }
 }
 
+/// Instruction on completing an enrollment.
 public struct EnrollmentInstructions: JSONDecodable {
     public let data: EnrollmentData?
     public let directions: String
@@ -159,8 +154,7 @@ public struct EnrollmentInstructions: JSONDecodable {
     public let requires: [String]?
     public let step: Int
     
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.data = try json.decode(EnrollmentConstants.dataParam, alongPath: [.NullBecomesNil, .MissingKeyBecomesNil])
         self.directions = try json.string(EnrollmentConstants.directionsParam)
@@ -169,6 +163,7 @@ public struct EnrollmentInstructions: JSONDecodable {
     }
 }
 
+/// An enrollment.
 public struct Enrollment: JSONDecodable {
     public let application: EnrollmentApplication
     public let consumer: EnrollmentConsumer
@@ -177,8 +172,7 @@ public struct Enrollment: JSONDecodable {
     public let instructions: EnrollmentInstructions
     public let status: String
     
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.application = try json.decode(EnrollmentConstants.appModelParam)
         self.consumer = try json.decode(EnrollmentConstants.consumerParam)
@@ -189,7 +183,7 @@ public struct Enrollment: JSONDecodable {
     }
 }
 
-/// A subset of an account's enrollments with metadata and information on where the rest are
+/// A subset of an account's enrollments with metadata and information on where the rest are.
 public struct EnrollmentPage: JSONDecodable {
     public let limit: Int
     public let next: WebAddress?
@@ -199,8 +193,7 @@ public struct EnrollmentPage: JSONDecodable {
     public let href: WebAddress
     public let offset: Int
     
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.limit = try json.int(EnrollmentConstants.limitParam)
         self.next = try json.string(EnrollmentConstants.nextParam, alongPath: [.NullBecomesNil])
@@ -224,7 +217,7 @@ struct EnrollmentsEndpoint: SupportsJSONPosts, SupportsJSONGets {
     let url: String
 }
 
-/// /enrollments/{id}
+/// An enrollment API endpoint.
 public struct EnrollmentEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets, SupportsDeletes {
     typealias PostHeadersType = KnurldCredentials
     typealias PostRequestType = EnrollmentUpdateRequest
@@ -233,10 +226,9 @@ public struct EnrollmentEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSON
     typealias GetResponseType = Enrollment
     typealias DeleteHeadersType = KnurldCredentials
     
-    let url: String
+    public let url: String
     
-    /// This initializer is only public because Swift protocol conformance of public protocols cannot be internal.
-    /// Please don't use it!
+    /// Initialize from JSON.
     public init(json: JSON) throws {
         self.url = try json.string(EnrollmentConstants.hrefParam)
     }
