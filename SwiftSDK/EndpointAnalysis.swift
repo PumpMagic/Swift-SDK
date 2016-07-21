@@ -105,9 +105,8 @@ public struct EndpointAnalysisEndpoint: SupportsJSONGets {
     
     public let url: String
     
-    init(summary: EndpointAnalysisSummary) {
-        //@todo delegate the base to whatever was passed to KnurldAPI
-        self.url = EndpointCommons.DEFAULT_URL + "/endpointAnalysis/\(summary.taskName)"
+    init(summary: EndpointAnalysisSummary, analysisEndpointURL: String) {
+        self.url = analysisEndpointURL + "/\(summary.taskName)"
     }
 }
 

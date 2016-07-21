@@ -146,7 +146,7 @@ class HTTPRequestManager {
             newHeaders = headers
         }
         newHeaders.updateValue("application/json", forKey: "Content-Type")
-        print("OUT: \(body)")
+        print("\(body) --> \(url)")
         
         // Try encoding the body and executing the request. If serialization fails, call the failure handler immediately
         do {
@@ -157,7 +157,7 @@ class HTTPRequestManager {
                                 failureHandler(.NoDataReturned)
                                 return
                             }
-                            print("IN: \(response)")
+                            print("\(response) <-- \(url)")
                             successHandler(response)
                            }, failureHandler: failureHandler)
         } catch {
@@ -177,6 +177,7 @@ class HTTPRequestManager {
             newHeaders = headers
         }
         newHeaders.updateValue("multipart/form-data; boundary=\(boundary)", forKey: "Content-Type")
+        print("(multipart) --> \(url)")
         
         // Generate the body
         let body = NSMutableData()
@@ -194,6 +195,7 @@ class HTTPRequestManager {
                             failureHandler(.NoDataReturned)
                             return
                         }
+                        print("\(response) <-- \(url)")
                         successHandler(response)
             }, failureHandler: failureHandler)
     }

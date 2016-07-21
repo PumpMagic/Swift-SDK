@@ -614,13 +614,12 @@ class EndpointAnalysisSpec: QuickSpec {
                 
                 sleep(UInt32(ENDPOINT_ANALYSIS_DELAY))
                 
-                var analysis: EndpointAnalysis?
-                api.endpointAnalyses.get(credentials: knurldCredentials,
-                                         endpoint: endpoint,
-                                         successHandler: { anlyss in analysis = anlyss },
-                                         failureHandler: { error in print("ERROR: \(error)") })
+                guard let analysis = requestSync(method: api.endpointAnalyses.get, credentials: knurldCredentials, arg1: endpoint) else {
+                    fail("Unable to get results of endpoint analysis")
+                    return
+                }
                 
-                expect(analysis).toEventuallyNot(beNil(), timeout: API_CALL_TIMEOUT_NSTIMEINTERVAL)
+                print("Endpoint analysis results: \(analysis)")
             }
         }
         

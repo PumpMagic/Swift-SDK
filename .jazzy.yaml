@@ -81,11 +81,11 @@ custom_categories:
       - CallTerminateRequest
   - name: Endpoint Analyses
     children:
+      - URLEndpointAnalysisCreateRequest
+      - FileEndpointAnalysisCreateRequest
       - EndpointAnalysisEndpoint
       - EndpointAnalysis
       - EndpointAnalysisInterval
-      - FileEndpointAnalysisCreateRequest
-      - URLEndpointAnalysisCreateRequest
   - name: Miscellaneous
     children:
       - HTTPRequestError

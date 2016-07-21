@@ -11,7 +11,6 @@
 import Foundation
 
 
-
 // User-facing convenience abstractions of endpoint families
 
 /// Methods for working with authorization-related Knurld API endpoints.
@@ -376,11 +375,13 @@ public class EndpointAnalyses {
     let urlAnalyses: URLEndpointAnalysisEndpoint
     let fileAnalyses: FileEndpointAnalysisEndpoint
     let requestManager: HTTPRequestManager
+    let analysesURL: String
     
-    init(urlAnalysesURL: String, fileAnalysesURL: String, requestManager: HTTPRequestManager) {
-        self.urlAnalyses = URLEndpointAnalysisEndpoint(url: urlAnalysesURL)
-        self.fileAnalyses = FileEndpointAnalysisEndpoint(url: fileAnalysesURL)
+    init(analysesURL: String, urlAnalysesURL: String, fileAnalysesURL: String, requestManager: HTTPRequestManager) {
+        self.urlAnalyses = URLEndpointAnalysisEndpoint(url: analysesURL + urlAnalysesURL)
+        self.fileAnalyses = FileEndpointAnalysisEndpoint(url: analysesURL + fileAnalysesURL)
         self.requestManager = requestManager
+        self.analysesURL = analysesURL
     }
     
     /// Perform endpoint analysis on an audio sample given its URL.
@@ -393,7 +394,7 @@ public class EndpointAnalyses {
                                  headers: credentials,
                                  body: request,
                                  successHandler: { summary in
-                                    successHandler(EndpointAnalysisEndpoint(summary: summary)) },
+                                    successHandler(EndpointAnalysisEndpoint(summary: summary, analysisEndpointURL: self.analysesURL)) },
                                  failureHandler: failureHandler)
     }
     
@@ -407,7 +408,7 @@ public class EndpointAnalyses {
                           headers: credentials,
                           body: request,
                           successHandler: { summary in
-                            successHandler(EndpointAnalysisEndpoint(summary: summary)) },
+                            successHandler(EndpointAnalysisEndpoint(summary: summary, analysisEndpointURL: self.analysesURL)) },
                           failureHandler: failureHandler)
     }
     
@@ -437,6 +438,10 @@ public class EndpointAnalyses {
 /// For more information on what API calls this class supports, check out its constituent endpoint family
 /// classes, like `Authorization`, `Status` and `AppModels`.
 public class KnurldAPI {
+    static let DEFAULT_BASE_URL = "https://api.knurld.io"
+    static let DEFAULT_VERSION_PATH = "/v1"
+    static let DEFAULT_URL = KnurldAPI.DEFAULT_BASE_URL + KnurldAPI.DEFAULT_VERSION_PATH
+    
     let requestManager: HTTPRequestManager
     
     // Base URL of the API, e.g. "https://api.knurld.io"
@@ -488,17 +493,20 @@ public class KnurldAPI {
         self.enrollments = Enrollments(url: url + "/enrollments", requestManager: self.requestManager)
         self.verifications = Verifications(url: url + "/verifications", requestManager: self.requestManager)
         self.calls = Calls(url: url + "/calls", requestManager: self.requestManager)
-        self.endpointAnalyses = EndpointAnalyses(urlAnalysesURL: url + "/endpointAnalysis/url", fileAnalysesURL: url + "/endpointAnalysis/file",requestManager: self.requestManager)
+        self.endpointAnalyses = EndpointAnalyses(analysesURL: url + "/endpointAnalysis",
+                                                 urlAnalysesURL: "/url",
+                                                 fileAnalysesURL: "/file",
+                                                 requestManager: self.requestManager)
     }
     
     /// Initialize a Knurld API using a custom URL, instead of e.g. `"https://api.knurld.io"`.
     public convenience init(url: String) {
-        self.init(baseURL: url, versionPath: EndpointCommons.DEFAULT_VERSION_PATH)
+        self.init(baseURL: url, versionPath: KnurldAPI.DEFAULT_VERSION_PATH)
     }
     
     /// Initialize a Knurld API using the default URL.
     public convenience init() {
-        self.init(baseURL: EndpointCommons.DEFAULT_BASE_URL, versionPath: EndpointCommons.DEFAULT_VERSION_PATH)
+        self.init(baseURL: KnurldAPI.DEFAULT_BASE_URL, versionPath: KnurldAPI.DEFAULT_VERSION_PATH)
     }
 }
 
