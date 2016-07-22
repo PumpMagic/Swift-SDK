@@ -44,7 +44,7 @@ public struct URLEndpointAnalysisCreateRequest: JSONEncodable {
 }
 
 /// All parameters involved in requesting the analysis of an audio file given its contents.
-public struct FileEndpointAnalysisCreateRequest: StringNSDataDictionaryRepresentable {
+public struct FileEndpointAnalysisCreateRequest: MultipartRepresentable {
     public let audioFile: NSData
     public let numWords: Int?
     
@@ -55,8 +55,8 @@ public struct FileEndpointAnalysisCreateRequest: StringNSDataDictionaryRepresent
     }
     
     //@todo use num_words... doesn't do anything for now
-    func toStringNSDataDictionary() -> [String : NSData] {
-        return [EndpointAnalysisConstants.audioFileParam: self.audioFile]
+    func toMultipart() -> [String : (String, NSData)] {
+        return [EndpointAnalysisConstants.audioFileParam: ("audio/wav", self.audioFile)]
             //,EndpointAnalysisConstants.numWordsParam: self.numWords]
     }
 }

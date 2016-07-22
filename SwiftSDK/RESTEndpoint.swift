@@ -20,8 +20,10 @@ protocol StringMapRepresentable {
     func toStringMap() -> [String : String]
 }
 
-protocol StringNSDataDictionaryRepresentable {
-    func toStringNSDataDictionary() -> [String : NSData]
+/// Represents set(s) of data that can be represented as bodies in a multipart HTTP request
+/// Keys are parameter names; values are (content type, data) tuples
+protocol MultipartRepresentable {
+    func toMultipart() -> [String : (String, NSData)]
 }
 
 
@@ -79,7 +81,7 @@ protocol SupportsJSONPosts: SupportsPosts {
 
 protocol SupportsMultipartPosts: SupportsPosts {
     associatedtype PostHeadersType: StringMapRepresentable
-    associatedtype PostRequestType: StringNSDataDictionaryRepresentable
+    associatedtype PostRequestType: MultipartRepresentable
     associatedtype PostResponseType: JSONDecodable
     
     func post(manager manager: HTTPRequestManager,
@@ -149,7 +151,7 @@ extension SupportsMultipartPosts {
     {
         let url = self.url
         let headers = headers.toStringMap()
-        let body = body.toStringNSDataDictionary()
+        let body = body.toMultipart()
         
         manager.postMultipart(url: url,
                               headers: headers,

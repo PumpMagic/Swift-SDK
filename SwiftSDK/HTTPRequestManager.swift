@@ -118,6 +118,7 @@ class HTTPRequestManager {
             newHeaders = headers
         }
         newHeaders.updateValue("application/x-www-form-urlencoded", forKey: "Content-Type")
+        print("(urlencoded) --> \(url)")
         
         // Try encoding the body and executing the request. If serialization fails, call the failure handler immediately
         do {
@@ -128,6 +129,7 @@ class HTTPRequestManager {
                                 failureHandler(.NoDataReturned)
                                 return
                             }
+                            print("\(response) <-- \(url)")
                             successHandler(response)
                 }, failureHandler: failureHandler)
         } catch {
@@ -166,7 +168,7 @@ class HTTPRequestManager {
     }
     
     /// Perform an HTTP POST, with a multipart body and expecting JSON in return.
-    func postMultipart(url url: String, headers: [String: String]?, bodies: [String : NSData], successHandler: (JSON) -> Void, failureHandler: (HTTPRequestError) -> Void)
+    func postMultipart(url url: String, headers: [String: String]?, bodies: [String : (String, NSData)], successHandler: (JSON) -> Void, failureHandler: (HTTPRequestError) -> Void)
     {
         // Generate a boundary
         let boundary = HTTPRequestManager.generateBoundary()
@@ -183,10 +185,11 @@ class HTTPRequestManager {
         let body = NSMutableData()
         for (paramName, paramValue) in bodies {
             HTTPRequestManager.appendStringToNSData(str: "--\(boundary)\r\n", target: body)
-            HTTPRequestManager.appendStringToNSData(str: "Content-Disposition: form-data; name=\"\(paramName)\"\r\n\r\n", target: body)
-            body.appendData(paramValue)
+            HTTPRequestManager.appendStringToNSData(str: "Content-Disposition: form-data; name=\"\(paramName)\"\r\n", target: body)
+            HTTPRequestManager.appendStringToNSData(str: "Content-Type: \(paramValue.0)\r\n\r\n", target: body)
+            body.appendData(paramValue.1)
         }
-        HTTPRequestManager.appendStringToNSData(str: "--\(boundary)\r\n", target: body)
+        HTTPRequestManager.appendStringToNSData(str: "\r\n--\(boundary)--\r\n", target: body)
         
         // Execute the request
         executeRequest(method: "POST", url: url, headers: newHeaders, body: body, responseExpected: true,
@@ -290,6 +293,7 @@ class HTTPRequestManager {
                     successHandler(json)
                     return
                 } catch {
+                    print("Unable to convert to JSON. Raw response: \(String(data: data, encoding: NSUTF8StringEncoding))")
                     failureHandler(.ResponseDeserializationError(error: error as? JSON.Error))
                     return
                 }
@@ -299,7 +303,7 @@ class HTTPRequestManager {
     
     /// Create boundary string for a multipart/form-data request
     static func generateBoundary() -> String {
-        return "----------\(NSUUID().UUIDString)"
+        return "knurldswiftsdk.\(NSUUID().UUIDString)"
     }
     
     static func appendStringToNSData(str str: String, target: NSMutableData) {

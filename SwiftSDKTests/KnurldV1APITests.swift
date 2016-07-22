@@ -45,7 +45,10 @@ class AuthorizationSpec: QuickSpec {
 class StatusSpec: QuickSpec {
     override func spec() {
         let api = KnurldAPI()
-        let knurldCredentials = makeCredentials(api: api)
+        guard let knurldCredentials = makeCredentials(api: api) else {
+            print("Can't run status tests. Unable to get credentials!")
+            return
+        }
         
         describe("the get status API") {
             it("returns a response when called properly") {
@@ -65,7 +68,10 @@ class StatusSpec: QuickSpec {
 class AppModelsSpec: QuickSpec {
     override func spec() {
         let api = KnurldAPI()
-        let knurldCredentials = makeCredentials(api: api)
+        guard let knurldCredentials = makeCredentials(api: api) else {
+            print("Can't run app model tests. Unable to get credentials!")
+            return
+        }
         
         describe("the create app model API") {
             it("returns a good response when called properly") {
@@ -169,7 +175,10 @@ class AppModelsSpec: QuickSpec {
 class ConsumersSpec: QuickSpec {
     override func spec() {
         let api = KnurldAPI()
-        let knurldCredentials = makeCredentials(api: api)
+        guard let knurldCredentials = makeCredentials(api: api) else {
+            print("Can't run consumer tests. Unable to get credentials!")
+            return
+        }
         
         describe("the create consumer API") {
             it("returns a good response when called properly") {
@@ -317,7 +326,10 @@ class ConsumersSpec: QuickSpec {
 class EnrollmentSpec: QuickSpec {
     override func spec() {
         let api = KnurldAPI()
-        let knurldCredentials = makeCredentials(api: api)
+        guard let knurldCredentials = makeCredentials(api: api) else {
+            print("Can't run enrollment tests. Unable to get credentials!")
+            return
+        }
         
         var appModelEndpoint: AppModelEndpoint!
         var consumerEndpoint: ConsumerEndpoint!
@@ -442,7 +454,10 @@ class EnrollmentSpec: QuickSpec {
 class VerificationSpec: QuickSpec {
     override func spec() {
         let api = KnurldAPI()
-        let knurldCredentials = makeCredentials(api: api)
+        guard let knurldCredentials = makeCredentials(api: api) else {
+            print("Can't run verification tests. Unable to get credentials!")
+            return
+        }
         
         var appModelEndpoint: AppModelEndpoint!
         var consumerEndpoint: ConsumerEndpoint!
@@ -570,7 +585,10 @@ class VerificationSpec: QuickSpec {
 class EndpointAnalysisSpec: QuickSpec {
     override func spec() {
         let api = KnurldAPI()
-        let knurldCredentials = makeCredentials(api: api)
+        guard let knurldCredentials = makeCredentials(api: api) else {
+            print("Can't run endpoint analysis tests. Unable to get credentials!")
+            return
+        }
         
         describe("the endpoint URL endpoint") {
             it("returns a good response when called properly") {
