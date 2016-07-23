@@ -60,3 +60,10 @@ Create an instance of `KnurldAPI` and execute all of your requests against its m
         print("Knurld API version is \(status.version)")
     }
     ```
+
+## Development
+1. Clone this repository
+1. Install Carthage on your system, if it isn't already installed
+1. From the repository root, run `./bin/setup` to pull Carthage dependencies
+1. Open SwiftSDK.xcworkspace in Xcode and develop
+1. If running tests, populate your Knurld API credentials in SwiftSDKTests/TestCredentials.swift
