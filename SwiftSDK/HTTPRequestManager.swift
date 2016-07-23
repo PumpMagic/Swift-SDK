@@ -118,7 +118,6 @@ class HTTPRequestManager {
             newHeaders = headers
         }
         newHeaders.updateValue("application/x-www-form-urlencoded", forKey: "Content-Type")
-        print("(urlencoded) --> \(url)")
         
         // Try encoding the body and executing the request. If serialization fails, call the failure handler immediately
         do {
@@ -129,7 +128,6 @@ class HTTPRequestManager {
                                 failureHandler(.NoDataReturned)
                                 return
                             }
-                            print("\(response) <-- \(url)")
                             successHandler(response)
                 }, failureHandler: failureHandler)
         } catch {
@@ -148,7 +146,6 @@ class HTTPRequestManager {
             newHeaders = headers
         }
         newHeaders.updateValue("application/json", forKey: "Content-Type")
-        print("\(body) --> \(url)")
         
         // Try encoding the body and executing the request. If serialization fails, call the failure handler immediately
         do {
@@ -159,7 +156,6 @@ class HTTPRequestManager {
                                 failureHandler(.NoDataReturned)
                                 return
                             }
-                            print("\(response) <-- \(url)")
                             successHandler(response)
                            }, failureHandler: failureHandler)
         } catch {
@@ -179,7 +175,6 @@ class HTTPRequestManager {
             newHeaders = headers
         }
         newHeaders.updateValue("multipart/form-data; boundary=\(boundary)", forKey: "Content-Type")
-        print("(multipart) --> \(url)")
         
         // Generate the body
         let body = NSMutableData()
@@ -198,7 +193,6 @@ class HTTPRequestManager {
                             failureHandler(.NoDataReturned)
                             return
                         }
-                        print("\(response) <-- \(url)")
                         successHandler(response)
             }, failureHandler: failureHandler)
     }
@@ -250,7 +244,6 @@ class HTTPRequestManager {
     {
         if let _ = error {
             // The request did not complete successfully (regardless of return code)
-            print("Network error: \(error.debugDescription)")
             failureHandler(.NetworkError)
             return
         } else {
@@ -262,8 +255,6 @@ class HTTPRequestManager {
                     failureHandler(.InternalError)
                     return
                 }
-                
-                print("HTTP response code: \(httpResponse.statusCode)")
                 
                 let code = httpResponse.statusCode
                 if !(HTTPRequestManager.acceptableHTTPResponses ~= code) {
@@ -293,7 +284,6 @@ class HTTPRequestManager {
                     successHandler(json)
                     return
                 } catch {
-                    print("Unable to convert to JSON. Raw response: \(String(data: data, encoding: NSUTF8StringEncoding))")
                     failureHandler(.ResponseDeserializationError(error: error as? JSON.Error))
                     return
                 }
@@ -310,9 +300,7 @@ class HTTPRequestManager {
         let data = str.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
         if let data = data {
             target.appendData(data)
-        } else {
-            // Foundation docs suggest this should never happen...
-            print("ERROR! Unable to convert string to data")
         }
+        // Foundation docs suggest that the dataUsingEncoding call above will never return nil...
     }
 }
