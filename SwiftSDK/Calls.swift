@@ -10,6 +10,12 @@ import Foundation
 import Freddy
 
 
+/// WARNING!
+///
+/// The calls endpoints do not work in version 1 of the Knurld API.
+/// Do not use these data types.
+
+/*
 private struct CallConstants {
     static let numberParam = "number"
     static let hrefParam = "href"
@@ -133,3 +139,61 @@ public struct CallEndpoint: JSONDecodable, SupportsJSONPosts, SupportsJSONGets {
     }
 }
 
+ 
+// For KnurldAPI.swift
+
+/// Methods for working with call-related Knurld API endpoints.
+///
+/// This class is instantiated as a member of `KnurldAPI`. Use its methods by routing requests through your `KnurldAPI` singleton's
+/// `calls` member. For example, `api.calls.create(...)`
+public class Calls {
+    let calls: CallsEndpoint
+    let requestManager: HTTPRequestManager
+    
+    init(url: String, requestManager: HTTPRequestManager) {
+        self.calls = CallsEndpoint(url: url)
+        self.requestManager = requestManager
+    }
+    
+    /// Create a call.
+    public func create(credentials credentials: KnurldCredentials,
+                                   request: CallCreateRequest,
+                                   successHandler: (CallEndpoint) -> Void,
+                                   failureHandler: (HTTPRequestError) -> Void)
+    {
+        self.calls.post(manager: self.requestManager, headers: credentials, body: request, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    /// Get a page of calls.
+    public func getPage(credentials credentials: KnurldCredentials,
+                                    successHandler: (CallPage) -> Void,
+                                    failureHandler: (HTTPRequestError) -> Void)
+    {
+        self.calls.get(manager: self.requestManager, headers: credentials, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    /// Get a call.
+    public func get(credentials credentials: KnurldCredentials,
+                                endpoint: CallEndpoint,
+                                successHandler: (Call) -> Void,
+                                failureHandler: (HTTPRequestError) -> Void)
+    {
+        endpoint.get(manager: self.requestManager, headers: credentials, successHandler: successHandler, failureHandler: failureHandler)
+    }
+    
+    /// Terminate a call.
+    public func terminate(credentials credentials: KnurldCredentials,
+                                      endpoint: CallEndpoint,
+                                      request: CallTerminateRequest,
+                                      successHandler: (CallEndpoint) -> Void,
+                                      failureHandler: (HTTPRequestError) -> Void)
+    {
+        endpoint.post(manager: self.requestManager, headers: credentials, body: request, successHandler: successHandler, failureHandler: failureHandler)
+    }
+}
+ 
+/// Call endpoints. See documentation of the `Calls` class.
+public let calls: Calls
+ 
+self.calls = Calls(url: url + "/calls", requestManager: self.requestManager)
+*/
