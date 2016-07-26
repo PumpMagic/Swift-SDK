@@ -15,6 +15,8 @@ Add the Knurld Swift SDK to your `Cartfile`:
 
 `github "knurld/Swift-SDK" ~> 1.0`
 
+Make sure to link both the KnurldSDK **and** Freddy frameworks; the Knurld SDK depends on Freddy for working with JSON.
+
 ### CocoaPods
 Add the Knurld Swift SDK to your `Podfile`:
 
