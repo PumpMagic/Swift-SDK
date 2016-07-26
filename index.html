@@ -234,20 +234,17 @@
             
             <a href='#knurld-swift-sdk' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h1 id='knurld-swift-sdk'>Knurld Swift SDK</h1>
 
-<p>The Knurld Swift SDK wraps the Knurld web API to simplify integration of Knurld&rsquo;s voice verification services into your iOS applications.</p>
+<p>The Knurld Swift SDK wraps the Knurld web API to simplify integration of Knurld&rsquo;s voice verification services with your iOS applications.</p>
 
-<p>For information on the Knurld API, especially to learn the significance and expected values of each API call&rsquo;s data types, please see the <a href="https://developer.knurld.io/developer-guide">developer guide</a>. This SDK&rsquo;s documentation omits detailed information on the API specifics and assumes user familiarity with all API endpoints used.</p>
+<p>To learn more about Knurld, please visit us at <a href="https://www.knurld.io/">https://www.knurld.io</a>.</p>
+<a href='#communication' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='communication'>Communication</h2>
 
-<p>For information on Knurld, please visit us at <a href="https://www.knurld.io/">https://www.knurld.io</a>.</p>
+<p>If you encounter any issues using this SDK, please reach out to our development team at <a href="mailto:developer@knurld.com">developer@knurld.com</a>.</p>
 <a href='#requirements' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='requirements'>Requirements</h2>
 
 <ul>
 <li>iOS 8.0+</li>
-<li>Freddy</li>
 </ul>
-<a href='#communication' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='communication'>Communication</h2>
-
-<p>For help using this SDK, please reach out to us on GitHub or via email at <a href="mailto:help@knurld.com">help@knurld.com</a>.</p>
 <a href='#installation' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='installation'>Installation</h2>
 <a href='#carthage' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h3 id='carthage'>Carthage</h3>
 
@@ -267,35 +264,41 @@
 <li><p>Create an instance of <code>KnurldAPI</code>:</p>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">api</span> <span class="o">=</span> <span class="kt">KnurldAPI</span><span class="p">()</span>
 </code></pre></li>
-<li><p>Get an access token using your Knurld credentials:</p>
+<li><p>Get an access token using your API credentials:</p>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">oAuthCredentials</span> <span class="o">=</span> <span class="kt">OAuthCredentials</span><span class="p">(</span><span class="nv">clientID</span><span class="p">:</span> <span class="s">"your client ID"</span><span class="p">,</span>
                                         <span class="nv">clientSecret</span><span class="p">:</span> <span class="s">"your client secret"</span><span class="p">)</span>
-<span class="k">var</span> <span class="nv">knurldCredentials</span><span class="p">:</span> <span class="kt">KnurldCredentials</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span>
+<span class="k">var</span> <span class="nv">knurldCredentials</span><span class="p">:</span> <span class="kt">KnurldCredentials</span><span class="p">?</span>
 <span class="n">api</span><span class="o">.</span><span class="n">authorization</span><span class="o">.</span><span class="nf">authorize</span><span class="p">(</span><span class="nv">credentials</span><span class="p">:</span> <span class="n">oAuthCredentials</span><span class="p">,</span>
                             <span class="nv">developerID</span><span class="p">:</span> <span class="s">"your developer ID"</span><span class="p">,</span>
-                            <span class="nv">successHandler</span><span class="p">:</span> <span class="p">{</span> <span class="n">creds</span> <span class="k">in</span> <span class="n">knurldCredentials</span> <span class="o">=</span> <span class="n">creds</span> <span class="p">},</span>
-                            <span class="nv">failureHandler</span><span class="p">:</span> <span class="p">{</span> <span class="n">error</span> <span class="k">in</span> <span class="nf">print</span><span class="p">(</span><span class="s">"ERROR: </span><span class="se">\(</span><span class="n">error</span><span class="se">)</span><span class="s">"</span><span class="p">)</span> <span class="p">})</span>
+                            <span class="nv">successHandler</span><span class="p">:</span> <span class="p">{</span> <span class="n">knurldCredentials</span> <span class="o">=</span> <span class="nv">$0</span> <span class="p">},</span>
+                            <span class="nv">failureHandler</span><span class="p">:</span> <span class="p">{</span> <span class="nf">print</span><span class="p">(</span><span class="s">"ERROR: </span><span class="se">\(</span><span class="nv">$0</span><span class="se">)</span><span class="s">"</span><span class="p">)</span> <span class="p">})</span>
 </code></pre></li>
 <li><p>Once <code>knurldCredentials</code> is non-nil, ask the API for its status:</p>
-<pre class="highlight swift"><code><span class="k">var</span> <span class="nv">status</span><span class="p">:</span> <span class="kt">ServiceStatus</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span>
+<pre class="highlight swift"><code><span class="k">var</span> <span class="nv">status</span><span class="p">:</span> <span class="kt">ServiceStatus</span><span class="p">?</span>
 <span class="n">api</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="nf">get</span><span class="p">(</span><span class="nv">credentials</span><span class="p">:</span> <span class="n">knurldCredentials</span><span class="p">,</span>
-               <span class="nv">successHandler</span><span class="p">:</span> <span class="p">{</span> <span class="n">stat</span> <span class="k">in</span> <span class="n">status</span> <span class="o">=</span> <span class="n">stat</span> <span class="p">},</span>
-               <span class="nv">failureHandler</span><span class="p">:</span> <span class="p">{</span> <span class="n">error</span> <span class="k">in</span> <span class="nf">print</span><span class="p">(</span><span class="s">"ERROR: </span><span class="se">\(</span><span class="n">error</span><span class="se">)</span><span class="s">"</span><span class="p">)</span> <span class="p">})</span>
+               <span class="nv">successHandler</span><span class="p">:</span> <span class="p">{</span> <span class="n">status</span> <span class="o">=</span> <span class="nv">$0</span> <span class="p">},</span>
+               <span class="nv">failureHandler</span><span class="p">:</span> <span class="p">{</span> <span class="nf">print</span><span class="p">(</span><span class="s">"ERROR: </span><span class="se">\(</span><span class="nv">$0</span><span class="se">)</span><span class="s">"</span><span class="p">)</span> <span class="p">})</span>
 </code></pre></li>
-<li><p>Once <code>status</code> is non-nil, it will contain the Knurld service status, and can be checked like</p>
+<li><p>Once <code>status</code> is non-nil, it will contain the Knurld service status.</p>
 <pre class="highlight swift"><code><span class="k">if</span> <span class="k">let</span> <span class="nv">status</span> <span class="o">=</span> <span class="n">status</span> <span class="p">{</span>
     <span class="nf">print</span><span class="p">(</span><span class="s">"Knurld API version is </span><span class="se">\(</span><span class="n">status</span><span class="o">.</span><span class="n">version</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></li>
 </ol>
+<a href='#documentation' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='documentation'>Documentation</h2>
+
+<p>Full documentation of the SDK is at <a href="https://knurld.github.io/Swift-SDK/">https://knurld.github.io/Swift-SDK/</a>. The SDK documentation assumes familiarity with the Knurld web API.</p>
+
+<p>For details on the Knurld web API, especially to learn its call flow and the significance of each call&rsquo;s data types, please see the <a href="https://developer.knurld.io/developer-guide">Knurld developer guide</a>.</p>
 <a href='#development' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='development'>Development</h2>
 
+<p>To develop this SDK:</p>
+
 <ol>
-<li>Clone this repository</li>
 <li>Install Carthage on your system, if it isn&rsquo;t already installed</li>
-<li>From the repository root, run <code>./bin/setup</code> to pull Carthage dependencies</li>
+<li>Clone the SDK repository and run <code>./bin/setup</code> from the repository root</li>
 <li>Open KnurldSDK.xcworkspace in Xcode and develop</li>
-<li>If running tests, populate your Knurld API credentials in KnurldSDKTests/TestCredentials.swift</li>
+<li>To test, populate your Knurld API credentials in <code>KnurldSDKTests/TestCredentials.swift</code> and run Product -&gt; Test in Xcode</li>
 </ol>
 
           </section>
