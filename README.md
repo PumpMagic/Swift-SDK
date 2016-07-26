@@ -69,4 +69,4 @@ To develop this SDK:
 1. Install Carthage on your system, if it isn't already installed
 1. Clone the SDK repository and run `./bin/setup` from the repository root
 1. Open KnurldSDK.xcworkspace in Xcode and develop
-1. To test, populate your Knurld API credentials in KnurldSDKTests/TestCredentials.swift and running Product -> Test in Xcode
+1. To test, populate your Knurld API credentials in `KnurldSDKTests/TestCredentials.swift` and run Product -> Test in Xcode
