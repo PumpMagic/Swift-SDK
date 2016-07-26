@@ -12,13 +12,14 @@ import Freddy
 
 private struct VerificationConstants {
     static let consumerParam = "consumer"
-    static let appModelParam = "application"
+    static let appModelParam = "app-model"
     static let hrefParam = "href"
     
     static let verificationWavParam = "verification.wav"
     static let intervalsParam = "intervals"
     
     static let phraseParam = "phrase"
+    static let phrasesParam = "phrases"
     static let startParam = "start"
     static let stopParam = "stop"
     
@@ -137,11 +138,11 @@ public struct VerificationConsumer: JSONDecodable {
 
 /// Information on the phrases spoken in a verification.
 public struct VerificationData: JSONDecodable {
-    public let phrase: [String]
+    public let phrases: [String]
     
     /// Initialize from JSON.
     public init(json: JSON) throws {
-        self.phrase = try json.array(VerificationConstants.phraseParam).map(String.init)
+        self.phrases = try json.array(VerificationConstants.phrasesParam).map(String.init)
     }
 }
 
@@ -170,7 +171,7 @@ public struct Verification: JSONDecodable {
     public let href: String
     public let instructions: VerificationInstructions
     public let status: String
-    public let verified: String?
+    public let verified: Bool?
     public let verified_phrases: [Bool]?
     
     /// Initialize from JSON.
@@ -181,16 +182,16 @@ public struct Verification: JSONDecodable {
         self.href = try json.string(VerificationConstants.hrefParam)
         self.instructions = try json.decode(VerificationConstants.instructionsParam)
         self.status = try json.string(VerificationConstants.statusParam)
-        self.verified = try json.string(VerificationConstants.verifiedParam, alongPath: [.NullBecomesNil, .MissingKeyBecomesNil])
+        self.verified = try json.bool(VerificationConstants.verifiedParam, alongPath: [.NullBecomesNil, .MissingKeyBecomesNil])
         self.verified_phrases = try json.array(VerificationConstants.verifiedPhrasesParam, alongPath: [.NullBecomesNil, .MissingKeyBecomesNil])?.map(Bool.init)
     }
 }
 
-/// A subset of an account's enrollments with metadata and information on where the rest are.
+/// A subset of an account's verifications with metadata and information on where the rest are.
 public struct VerificationPage: JSONDecodable {
     public let limit: Int
     public let next: WebAddress?
-    public let items: [Enrollment]
+    public let items: [Verification]
     public let prev: WebAddress?
     public let total: Int
     public let href: WebAddress
@@ -200,7 +201,7 @@ public struct VerificationPage: JSONDecodable {
     public init(json: JSON) throws {
         self.limit = try json.int(VerificationConstants.limitParam)
         self.next = try json.string(VerificationConstants.nextParam, alongPath: [.NullBecomesNil])
-        self.items = try json.array(VerificationConstants.itemsParam).map(Enrollment.init)
+        self.items = try json.array(VerificationConstants.itemsParam).map(Verification.init)
         self.prev = try json.string(VerificationConstants.prevParam, alongPath: [.NullBecomesNil])
         self.total = try json.int(VerificationConstants.totalParam)
         self.href = try json.string(VerificationConstants.hrefParam)

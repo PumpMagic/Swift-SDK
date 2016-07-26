@@ -11,7 +11,7 @@ import Nimble
 @testable import SwiftSDK
 
 
-let API_CALL_TIMEOUT = 5 // seconds
+let API_CALL_TIMEOUT = 10 // seconds
 let API_CALL_TIMEOUT_NSTIMEINTERVAL = NSTimeInterval(API_CALL_TIMEOUT)
 let NANOS_PER_SECOND: Int64 = 1000000000
 
