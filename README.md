@@ -1,13 +1,13 @@
 # Knurld Swift SDK
-The Knurld Swift SDK wraps the Knurld web API to simplify integration of Knurld's voice verification services into your iOS applications.
+The Knurld Swift SDK wraps the Knurld web API to simplify integration of Knurld's voice verification services with your iOS applications.
 
-For information on Knurld, please visit us at [https://www.knurld.io](https://www.knurld.io/).
+To learn more about Knurld, please visit us at [https://www.knurld.io](https://www.knurld.io/).
+
+## Communication
+If you encounter any issues using this SDK, please reach out to our development team at developer@knurld.com.
 
 ## Requirements
 * iOS 8.0+
-
-## Communication
-If you encounter any issues using this SDK, please reach out to the Knurld development team at developer@knurld.com.
 
 ## Installation
 ### Carthage
