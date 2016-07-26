@@ -3,7 +3,7 @@
 //  KnurldSDK
 //
 //  A very simple HTTP request library written on top of NSURLSession.
-//  Written as an alternative to Alamofire to avoid AF's nonideal error reporting and implicit behavior.
+//  Written as an alternative to Alamofire.
 //
 //  Created by Ryan Conway on 7/8/16.
 //  Copyright © 2016 Knurld. All rights reserved.

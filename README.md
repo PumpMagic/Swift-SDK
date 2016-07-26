@@ -13,7 +13,7 @@ If you encounter any issues using this SDK, please reach out to our development 
 ### Carthage
 Add the Knurld Swift SDK to your `Cartfile`:
 
-`github "knurld/SwiftSDK" ~> 1.0`
+`github "knurld/Swift-SDK" ~> 1.0`
 
 ### CocoaPods
 Add the Knurld Swift SDK to your `Podfile`:
