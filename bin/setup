@@ -10,5 +10,5 @@ fi
 carthage update --platform iOS --use-submodules --no-use-binaries
 
 # Rename the test credentials template file
-mv KnurldSDKTests/TestCredentials.swift.example KnurldSDKTests/TestCredentials.swift
+cp KnurldSDKTests/TestCredentials.swift.example KnurldSDKTests/TestCredentials.swift
 echo "If you're running tests, make sure to populate your Knurld API credentials in TestCredentials.swift!"
