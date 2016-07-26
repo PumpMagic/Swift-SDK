@@ -1,6 +1,6 @@
 //
 //  HTTPRequestManager.swift
-//  SwiftSDK
+//  KnurldSDK
 //
 //  A very simple HTTP request library written on top of NSURLSession.
 //  Written as an alternative to Alamofire to avoid AF's nonideal error reporting and implicit behavior.

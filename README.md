@@ -21,7 +21,7 @@ Add the Knurld Swift SDK to your `Cartfile`:
 ### CocoaPods
 Add the Knurld Swift SDK to your `Podfile`:
 
-`pod 'KnurldSwiftSDK', '~> 1.0'`
+`pod 'KnurldSDK', '~> 1.0'`
 
 ## Usage
 Create an instance of `KnurldAPI` and execute all of your requests against its members. For example, to check the status of the Knurld services:
@@ -65,5 +65,5 @@ Create an instance of `KnurldAPI` and execute all of your requests against its m
 1. Clone this repository
 1. Install Carthage on your system, if it isn't already installed
 1. From the repository root, run `./bin/setup` to pull Carthage dependencies
-1. Open SwiftSDK.xcworkspace in Xcode and develop
-1. If running tests, populate your Knurld API credentials in SwiftSDKTests/TestCredentials.swift
+1. Open KnurldSDK.xcworkspace in Xcode and develop
+1. If running tests, populate your Knurld API credentials in KnurldSDKTests/TestCredentials.swift

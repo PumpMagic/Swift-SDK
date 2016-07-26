@@ -20,8 +20,8 @@
 		88BED1401D380670004FB426 /* Verifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BED13F1D380670004FB426 /* Verifications.swift */; };
 		88BED1421D396829004FB426 /* TestUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BED1411D396829004FB426 /* TestUtilities.swift */; };
 		88BED1441D3975DF004FB426 /* EndpointAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BED1431D3975DF004FB426 /* EndpointAnalysis.swift */; };
-		88DDFE1A1D2ED47800C3C14D /* SwiftSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 88DDFE191D2ED47800C3C14D /* SwiftSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		88DDFE211D2ED47800C3C14D /* SwiftSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88DDFE161D2ED47800C3C14D /* SwiftSDK.framework */; };
+		88DDFE1A1D2ED47800C3C14D /* KnurldSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 88DDFE191D2ED47800C3C14D /* KnurldSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		88DDFE211D2ED47800C3C14D /* KnurldSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88DDFE161D2ED47800C3C14D /* KnurldSDK.framework */; };
 		88DDFE261D2ED47800C3C14D /* KnurldV1APITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DDFE251D2ED47800C3C14D /* KnurldV1APITests.swift */; };
 		88DDFE361D2EE0A500C3C14D /* KnurldAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DDFE351D2EE0A500C3C14D /* KnurldAPI.swift */; };
 		88DDFE381D2EE0F900C3C14D /* TestCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DDFE371D2EE0F900C3C14D /* TestCredentials.swift */; };
@@ -35,7 +35,7 @@
 			containerPortal = 88DDFE0D1D2ED47800C3C14D /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 88DDFE151D2ED47800C3C14D;
-			remoteInfo = SwiftSDK;
+			remoteInfo = KnurldSDK;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -53,10 +53,10 @@
 		88BED13F1D380670004FB426 /* Verifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Verifications.swift; sourceTree = "<group>"; };
 		88BED1411D396829004FB426 /* TestUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestUtilities.swift; sourceTree = "<group>"; };
 		88BED1431D3975DF004FB426 /* EndpointAnalysis.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndpointAnalysis.swift; sourceTree = "<group>"; };
-		88DDFE161D2ED47800C3C14D /* SwiftSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		88DDFE191D2ED47800C3C14D /* SwiftSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftSDK.h; sourceTree = "<group>"; };
+		88DDFE161D2ED47800C3C14D /* KnurldSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KnurldSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		88DDFE191D2ED47800C3C14D /* KnurldSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KnurldSDK.h; sourceTree = "<group>"; };
 		88DDFE1B1D2ED47800C3C14D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		88DDFE201D2ED47800C3C14D /* SwiftSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		88DDFE201D2ED47800C3C14D /* KnurldSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KnurldSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		88DDFE251D2ED47800C3C14D /* KnurldV1APITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnurldV1APITests.swift; sourceTree = "<group>"; };
 		88DDFE271D2ED47800C3C14D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		88DDFE351D2EE0A500C3C14D /* KnurldAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KnurldAPI.swift; sourceTree = "<group>"; };
@@ -80,7 +80,7 @@
 			files = (
 				88DDFE3C1D2EF9A300C3C14D /* Nimble.framework in Frameworks */,
 				88DDFE3A1D2EF99B00C3C14D /* Quick.framework in Frameworks */,
-				88DDFE211D2ED47800C3C14D /* SwiftSDK.framework in Frameworks */,
+				88DDFE211D2ED47800C3C14D /* KnurldSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,8 +108,8 @@
 			isa = PBXGroup;
 			children = (
 				88DDFE341D2ED67A00C3C14D /* Frameworks */,
-				88DDFE181D2ED47800C3C14D /* SwiftSDK */,
-				88DDFE241D2ED47800C3C14D /* SwiftSDKTests */,
+				88DDFE181D2ED47800C3C14D /* KnurldSDK */,
+				88DDFE241D2ED47800C3C14D /* KnurldSDKTests */,
 				88DDFE171D2ED47800C3C14D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -117,25 +117,25 @@
 		88DDFE171D2ED47800C3C14D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				88DDFE161D2ED47800C3C14D /* SwiftSDK.framework */,
-				88DDFE201D2ED47800C3C14D /* SwiftSDKTests.xctest */,
+				88DDFE161D2ED47800C3C14D /* KnurldSDK.framework */,
+				88DDFE201D2ED47800C3C14D /* KnurldSDKTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		88DDFE181D2ED47800C3C14D /* SwiftSDK */ = {
+		88DDFE181D2ED47800C3C14D /* KnurldSDK */ = {
 			isa = PBXGroup;
 			children = (
-				88DDFE191D2ED47800C3C14D /* SwiftSDK.h */,
+				88DDFE191D2ED47800C3C14D /* KnurldSDK.h */,
 				88DDFE1B1D2ED47800C3C14D /* Info.plist */,
 				88DDFE351D2EE0A500C3C14D /* KnurldAPI.swift */,
 				884E3C2A1D39A0C700FF5B8C /* Endpoints */,
 				8840C9BC1D30A61400C501A3 /* HTTPRequestManager.swift */,
 			);
-			path = SwiftSDK;
+			path = KnurldSDK;
 			sourceTree = "<group>";
 		};
-		88DDFE241D2ED47800C3C14D /* SwiftSDKTests */ = {
+		88DDFE241D2ED47800C3C14D /* KnurldSDKTests */ = {
 			isa = PBXGroup;
 			children = (
 				88DDFE251D2ED47800C3C14D /* KnurldV1APITests.swift */,
@@ -143,7 +143,7 @@
 				88DDFE271D2ED47800C3C14D /* Info.plist */,
 				88DDFE371D2EE0F900C3C14D /* TestCredentials.swift */,
 			);
-			path = SwiftSDKTests;
+			path = KnurldSDKTests;
 			sourceTree = "<group>";
 		};
 		88DDFE341D2ED67A00C3C14D /* Frameworks */ = {
@@ -163,16 +163,16 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				88DDFE1A1D2ED47800C3C14D /* SwiftSDK.h in Headers */,
+				88DDFE1A1D2ED47800C3C14D /* KnurldSDK.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		88DDFE151D2ED47800C3C14D /* SwiftSDK */ = {
+		88DDFE151D2ED47800C3C14D /* KnurldSDK */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 88DDFE2A1D2ED47800C3C14D /* Build configuration list for PBXNativeTarget "SwiftSDK" */;
+			buildConfigurationList = 88DDFE2A1D2ED47800C3C14D /* Build configuration list for PBXNativeTarget "KnurldSDK" */;
 			buildPhases = (
 				88DDFE111D2ED47800C3C14D /* Sources */,
 				88DDFE121D2ED47800C3C14D /* Frameworks */,
@@ -183,14 +183,14 @@
 			);
 			dependencies = (
 			);
-			name = SwiftSDK;
-			productName = SwiftSDK;
-			productReference = 88DDFE161D2ED47800C3C14D /* SwiftSDK.framework */;
+			name = KnurldSDK;
+			productName = KnurldSDK;
+			productReference = 88DDFE161D2ED47800C3C14D /* KnurldSDK.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		88DDFE1F1D2ED47800C3C14D /* SwiftSDKTests */ = {
+		88DDFE1F1D2ED47800C3C14D /* KnurldSDKTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 88DDFE2D1D2ED47900C3C14D /* Build configuration list for PBXNativeTarget "SwiftSDKTests" */;
+			buildConfigurationList = 88DDFE2D1D2ED47900C3C14D /* Build configuration list for PBXNativeTarget "KnurldSDKTests" */;
 			buildPhases = (
 				88DDFE1C1D2ED47800C3C14D /* Sources */,
 				88DDFE1D1D2ED47800C3C14D /* Frameworks */,
@@ -201,9 +201,9 @@
 			dependencies = (
 				88DDFE231D2ED47800C3C14D /* PBXTargetDependency */,
 			);
-			name = SwiftSDKTests;
-			productName = SwiftSDKTests;
-			productReference = 88DDFE201D2ED47800C3C14D /* SwiftSDKTests.xctest */;
+			name = KnurldSDKTests;
+			productName = KnurldSDKTests;
+			productReference = 88DDFE201D2ED47800C3C14D /* KnurldSDKTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -225,7 +225,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 88DDFE101D2ED47800C3C14D /* Build configuration list for PBXProject "SwiftSDK" */;
+			buildConfigurationList = 88DDFE101D2ED47800C3C14D /* Build configuration list for PBXProject "KnurldSDK" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -237,8 +237,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				88DDFE151D2ED47800C3C14D /* SwiftSDK */,
-				88DDFE1F1D2ED47800C3C14D /* SwiftSDKTests */,
+				88DDFE151D2ED47800C3C14D /* KnurldSDK */,
+				88DDFE1F1D2ED47800C3C14D /* KnurldSDKTests */,
 			);
 		};
 /* End PBXProject section */
@@ -295,7 +295,7 @@
 /* Begin PBXTargetDependency section */
 		88DDFE231D2ED47800C3C14D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 88DDFE151D2ED47800C3C14D /* SwiftSDK */;
+			target = 88DDFE151D2ED47800C3C14D /* KnurldSDK */;
 			targetProxy = 88DDFE221D2ED47800C3C14D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -407,10 +407,10 @@
 					"$(PROJECT_DIR)/Carthage/Checkouts/Gloss/build/Debug-iphoneos",
 					"$(PROJECT_DIR)/Carthage/Checkouts/Freddy/build/Debug-iphoneos",
 				);
-				INFOPLIST_FILE = SwiftSDK/Info.plist;
+				INFOPLIST_FILE = KnurldSDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.knurld.SwiftSDK;
+				PRODUCT_BUNDLE_IDENTIFIER = io.knurld.KnurldSDK;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
@@ -433,10 +433,10 @@
 					"$(PROJECT_DIR)/Carthage/Checkouts/Gloss/build/Debug-iphoneos",
 					"$(PROJECT_DIR)/Carthage/Checkouts/Freddy/build/Debug-iphoneos",
 				);
-				INFOPLIST_FILE = SwiftSDK/Info.plist;
+				INFOPLIST_FILE = KnurldSDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.knurld.SwiftSDK;
+				PRODUCT_BUNDLE_IDENTIFIER = io.knurld.KnurldSDK;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
@@ -446,9 +446,9 @@
 		88DDFE2E1D2ED47900C3C14D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				INFOPLIST_FILE = SwiftSDKTests/Info.plist;
+				INFOPLIST_FILE = KnurldSDKTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.knurld.SwiftSDKTests;
+				PRODUCT_BUNDLE_IDENTIFIER = io.knurld.KnurldSDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -456,9 +456,9 @@
 		88DDFE2F1D2ED47900C3C14D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				INFOPLIST_FILE = SwiftSDKTests/Info.plist;
+				INFOPLIST_FILE = KnurldSDKTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.knurld.SwiftSDKTests;
+				PRODUCT_BUNDLE_IDENTIFIER = io.knurld.KnurldSDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -466,7 +466,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		88DDFE101D2ED47800C3C14D /* Build configuration list for PBXProject "SwiftSDK" */ = {
+		88DDFE101D2ED47800C3C14D /* Build configuration list for PBXProject "KnurldSDK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				88DDFE281D2ED47800C3C14D /* Debug */,
@@ -475,7 +475,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		88DDFE2A1D2ED47800C3C14D /* Build configuration list for PBXNativeTarget "SwiftSDK" */ = {
+		88DDFE2A1D2ED47800C3C14D /* Build configuration list for PBXNativeTarget "KnurldSDK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				88DDFE2B1D2ED47800C3C14D /* Debug */,
@@ -484,7 +484,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		88DDFE2D1D2ED47900C3C14D /* Build configuration list for PBXNativeTarget "SwiftSDKTests" */ = {
+		88DDFE2D1D2ED47900C3C14D /* Build configuration list for PBXNativeTarget "KnurldSDKTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				88DDFE2E1D2ED47900C3C14D /* Debug */,

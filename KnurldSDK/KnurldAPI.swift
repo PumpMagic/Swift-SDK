@@ -1,6 +1,6 @@
 //
 //  KnurldAPI.swift
-//  SwiftSDK
+//  KnurldSDK
 //
 //  An abstraction of the Knurld web API.
 //

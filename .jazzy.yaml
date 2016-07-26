@@ -1,12 +1,12 @@
-module: SwiftSDK
+module: KnurldSDK
 output: docs
 clean: true
-xcodebuild_arguments: [-workspace, SwiftSDK.xcworkspace, -scheme, SwiftSDK]
+xcodebuild_arguments: [-workspace, KnurldSDK.xcworkspace, -scheme, KnurldSDK]
 sdk: iphoneos
 author: Knurld
 author_url: https://www.knurld.io/
 copyright: Copyright 2016, Intellisis Inc. All rights reserved.
-#podspec: KnurldSwiftSDK.podspec
+#podspec: KnurldSDK.podspec
 hide_documentation_coverage: true
 
 custom_categories:
@@ -21,7 +21,6 @@ custom_categories:
       - Consumers
       - Enrollments
       - Verifications
-      - Calls
       - EndpointAnalyses
 
   - name: Authorization
@@ -72,13 +71,6 @@ custom_categories:
       - VerificationData
       - VerificationInterval
       - VerificationUpdateRequest
-  - name: Calls
-    children:
-      - CallCreateRequest
-      - CallEndpoint
-      - Call
-      - CallPage
-      - CallTerminateRequest
   - name: Endpoint Analyses
     children:
       - URLEndpointAnalysisCreateRequest

@@ -1,5 +1,5 @@
 Pod::Spec.new do |spec|
-  spec.name = 'KnurldSwiftSDK'
+  spec.name = 'KnurldSDK'
   spec.version = '1.0.0'
   spec.author = { 'Ryan Conway' => 'rconway@knurld.com' }
   spec.social_media_url = 'http://twitter.com/knurld'
@@ -14,5 +14,5 @@ Pod::Spec.new do |spec|
   spec.dependency 'Freddy', '~> 2.1'
   spec.requires_arc = true
 
-  spec.source_files = 'SwiftSDK/**/*.{h,swift}'
+  spec.source_files = 'KnurldSDK/**/*.{h,swift}'
 end

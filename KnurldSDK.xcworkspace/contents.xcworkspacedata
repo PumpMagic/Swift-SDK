@@ -11,6 +11,6 @@
       location = "group:Carthage/Checkouts/Nimble/Nimble.xcodeproj">
    </FileRef>
    <FileRef
-      location = "container:SwiftSDK.xcodeproj">
+      location = "container:KnurldSDK.xcodeproj">
    </FileRef>
 </Workspace>

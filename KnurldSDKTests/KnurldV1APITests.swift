@@ -1,6 +1,6 @@
 //
-//  SwiftSDKTests.swift
-//  SwiftSDKTests
+//  KnurldSDKTests.swift
+//  KnurldSDKTests
 //
 //  Created by Ryan Conway on 7/7/16.
 //  Copyright © 2016 Knurld. All rights reserved.
@@ -8,7 +8,7 @@
 
 import Quick
 import Nimble
-@testable import SwiftSDK
+@testable import KnurldSDK
 
 
 let ENDPOINT_ANALYSIS_DELAY: NSTimeInterval = 5 // seconds

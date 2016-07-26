@@ -1,6 +1,6 @@
 //
 //  Verifications.swift
-//  SwiftSDK
+//  KnurldSDK
 //
 //  Created by Ryan Conway on 7/14/16.
 //  Copyright © 2016 Knurld. All rights reserved.
