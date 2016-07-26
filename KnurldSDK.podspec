@@ -3,7 +3,7 @@ Pod::Spec.new do |spec|
   spec.version = '1.0.0'
   spec.author = { 'Ryan Conway' => 'rconway@knurld.com' }
   spec.social_media_url = 'http://twitter.com/knurld'
-  spec.license = { :type => 'Intellisis', :file => 'LICENSE' }
+  spec.license = { :type => 'BSD', :file => 'LICENSE' }
   spec.homepage = 'https://github.com/PumpMagic/Swift-SDK'
   spec.source = { :git => 'https://github.com/pumpmagic/SwiftSDK.git', :tag => "v#{spec.version}", :submodules => true }
   spec.summary = "Simplifies integration of Knurld's voice verification services with your iOS applications."
