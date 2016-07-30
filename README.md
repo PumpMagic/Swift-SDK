@@ -13,14 +13,14 @@ If you encounter any issues using this SDK, please reach out to our development 
 ### Carthage
 Add the Knurld Swift SDK to your `Cartfile`:
 
-`github "knurld/Swift-SDK" ~> 1.0`
+`github "knurld/Swift-SDK"`
 
 Make sure to link both the KnurldSDK **and** Freddy frameworks; the Knurld SDK depends on Freddy for working with JSON.
 
 ### CocoaPods
 Add the Knurld Swift SDK to your `Podfile`:
 
-`pod 'KnurldSDK', '~> 1.0'`
+`pod 'KnurldSDK', :git => 'https://github.com/knurld/Swift-SDK.git'`
 
 ## Usage
 Create an instance of `KnurldAPI` and execute all of your requests against its members. For example, to check the status of the Knurld services:
